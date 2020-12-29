@@ -1,0 +1,79 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - master
+    - main
+  paths:
+    include:
+    - azure-pipelines.yml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: build
+  jobs:
+  - job: build
+
+    pool:
+      vmImage: ubuntu-latest
+
+    variables:
+      sdkVersion: 3.1.x
+      buildConfiguration: 'Release'
+
+    steps:
+    - task: UseDotNet@2
+      displayName: dotnet sdk 2.x
+      inputs:
+        packageType: 'sdk'
+        version: '2.x'
+
+    - task: SonarCloudPrepare@1
+      continueOnError: True
+      inputs:
+        SonarCloud: 'SonarCloud'
+        organization: '2011-fakebook-project3'
+        scannerMode: 'MSBuild'
+        projectKey: '2011-fakebook-project3_posts'
+
+    - task: UseDotNet@2
+      continueOnError: True
+      displayName: 'Use .NET 5 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '5.x'
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+        workingDirectory: ''
+
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: dotnet build
+      workingDirectory: ''
+
+    - task: DotNetCoreCLI@2
+      continueOnError: True
+      displayName: dotnet test
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+        publishTestResults: true
+        workingDirectory: ''
+
+    - script: dotnet publish --configuration $(buildConfiguration) --output publish
+      displayName: dotnet publish
+      workingDirectory: ''
+
+    - task: SonarCloudAnalyze@1
+      continueOnError: True
+      displayName: sonar run analysis
+
+    - task: SonarCloudPublish@1
+      continueOnError: True
+      displayName: sonar analysis publish
+      inputs:
+        pollingTimeoutSec: '300'
