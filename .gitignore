@@ -350,3 +350,5 @@ MigrationBackup/
 .ionide/
 .vscode/tasks.json
 .vscode/launch.json
+posts-service/.vscode/tasks.json
+posts-service/.vscode/launch.json
