@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 
-
 namespace FakebookPosts.DataModel
 {
     public class FakebookPostsContext : DbContext 
