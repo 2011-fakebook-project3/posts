@@ -14,7 +14,7 @@ namespace Fakebook.Posts.Domain {
         public ICollection<Comment> Comments { get; set; }
 
         public Post() {
-            Comments = new List<Comment>();
+            Comments = new HashSet<Comment>();
         }
     }
 }
