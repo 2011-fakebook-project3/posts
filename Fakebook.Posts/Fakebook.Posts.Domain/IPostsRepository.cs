@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.Domain {
     public interface IPostsRepository : ICollection<Post>, IEnumerable<Post>, IAsyncEnumerable<Post>
     {
-        public ValueTask<bool> AddAsync(Post post);
+        public ValueTask<Post> AddAsync(Post post);
         // public ValueTask<bool> RemoveAsync(Post post);
     }
 }
