@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using FakebookPosts.DataModel;
 using Fakebook.Posts.Domain;
+using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Xunit;
 
@@ -21,22 +22,28 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Post post = new Domain.Post
+            Domain.Models.Post post = new Domain.Models.Post
             {
-                
+                Content = "New Content",
+                CreatedAt = DateTime.Now,
+                UserId = 1
             };
 
-            bool result;
-
+            ValueTask<Domain.Models.Post> result;
 
             //Act
             using (var context = new FakebookPostsContext(options))
             {
                 context.Database.EnsureCreated();
                 var repo = new PostsRepository(context);
+                result = repo.AddAsync(post);
                
             }
 
+            //Assert
+            Assert.True(result.Result.Content == post.Content);
+            Assert.True(result.Result.UserId == post.UserId);
+            Assert.True(result.Result.CreatedAt == post.CreatedAt);
 
         }
     }
