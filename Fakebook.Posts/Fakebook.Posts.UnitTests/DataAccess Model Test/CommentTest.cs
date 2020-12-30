@@ -64,17 +64,29 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
                 Assert.Equal(1, testComment.UserId);
             }
             [Fact]
-            public void PostTest5()
+            public void CommentTest5()
             {
                 //Arrange
 
                 //Act
-                testComment.Id = 1;
+                testComment.PostId = 1;
 
                 //Assert
-                Assert.Equal(1, testComment.Id);
+                Assert.Equal(1, testComment.PostId);
             }
-            public void Dispose()
+            [Fact]
+             public void CommentTest6()
+             {
+                //Arrange
+
+                //Act
+                var date = DateTime.Now;
+                testComment.CreatedAt = date;
+
+                //Assert
+                Assert.Equal(date, testComment.CreatedAt);
+             }
+        public void Dispose()
             {
                 testComment = null;
             }
