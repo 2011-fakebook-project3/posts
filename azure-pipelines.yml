@@ -1,9 +1,9 @@
-# ASP.NET
 # trigger on main pull
 trigger:
   branches:
     include:
     - main
+
 # initial build
 stages:
 - stage: build
@@ -19,8 +19,10 @@ stages:
         repository: $(imageName)
         command: 'build'
         Dockerfile: 'Fakebook.Posts/Dockerfile'
+
 # sonar cloud
 - stage: sonarCloud
+  dependsOn: []
   jobs:
   - job: build
     pool:
@@ -35,6 +37,7 @@ stages:
       inputs:
         packageType: sdk
         version: 2.x
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SonarCloud Token'
@@ -43,23 +46,27 @@ stages:
         projectKey: '2011-fakebook-project3_posts'
         extraProperties: |
           sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
-          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
-        packageType: 'sdk'
-        version: '5.x'
-        installationPath: $(Agent.ToolsDirectory)/dotnet
-        workingDirectory: 'Fakebook.Posts.RestApi/'
+        workingDirectory: '$(Agent.ToolsDirectory)/dotnet'
+
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: dotnet build
+      workingDirectory: $(targetSolution)
+
     - task: DotNetCoreCLI@2
       displayName: dotnet test
       inputs:
         command: 'test'
         arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
-        workingDirectory: 'Fakebook.Posts/'
+        workingDirectory: 'Fakebook.Posts'
+
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
+
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
       inputs:
