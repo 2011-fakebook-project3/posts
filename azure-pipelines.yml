@@ -25,12 +25,6 @@ stages:
   dependsOn: []
   jobs:
   - job: build
-    pool:
-      vmImage: ubuntu-latest
-    variables:
-      buildConfiguration: 'Release'
-      directory: 'Fakebook.Posts/Fakebook.Posts.WebApi'
-
     steps:
     - task: UseDotNet@2
       displayName: Use sdk 2.x
