@@ -66,8 +66,10 @@ stages:
 
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
+      condition: always()
 
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
       inputs:
         pollingTimeoutSec: '300'
+      condition: always()
