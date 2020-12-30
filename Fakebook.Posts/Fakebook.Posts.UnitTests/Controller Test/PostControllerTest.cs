@@ -1,4 +1,8 @@
-﻿using Fakebook.Posts.Domain.Models;
+﻿using Fakebook.Posts.Domain;
+using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi.Controllers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -11,6 +15,8 @@ namespace Fakebook.Posts.UnitTests.Controller_Test
 {
     public class PostControllerTest
     {
+        readonly PostsController postController = new PostsController();
+
         [Fact]
         public async Task PostController_PostAsync()
         {
@@ -30,9 +36,21 @@ namespace Fakebook.Posts.UnitTests.Controller_Test
             };
             postList.Add(post);
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Returns(post);
-                    
-                
+                .Returns(ValueTask.FromResult(new Post()));
+
+            //Act
+            var actionResult = await postController.PostAsync(post);
+
+
+            //Assert
+            var viewResult = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
+            Assert.Equal(1, post.Id);
+            Assert.Equal(1, post.UserId);
+            Assert.Equal(comment, post.Comments);
+            Assert.Equal("Goodman", post.Content);
+            Assert.Equal("picture", post.Picture);
+            Assert.Equal(date, post.CreatedAt);
+            Assert.Equal(viewResult.StatusCode, StatusCodes.Status201Created);
         }
        
     }

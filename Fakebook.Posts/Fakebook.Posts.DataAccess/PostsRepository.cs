@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain;
-<<<<<<< HEAD
 using Fakebook.Posts.Domain.Models;
-=======
 using Microsoft.EntityFrameworkCore;
->>>>>>> 98f4c27...  Added Repo test for post
 
 namespace FakebookPosts.DataModel
 {
