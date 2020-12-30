@@ -2,7 +2,7 @@
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-#trigger on master pull
+#trigger on main pull
 trigger:
   branches:
     include:
@@ -48,7 +48,7 @@ stages:
         command: 'test'
         arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
-        workingDirectory: 'FakebookNotifications/'
+        workingDirectory: './'
     - script: dotnet publish --configuration $(buildConfiguration) --output publish
       displayName: dotnet publish
       workingDirectory: '.'
