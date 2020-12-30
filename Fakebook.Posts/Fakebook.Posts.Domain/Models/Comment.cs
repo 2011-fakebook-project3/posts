@@ -11,8 +11,5 @@ namespace Fakebook.Posts.Domain {
         public DateTime CreatedAt { get; set; }
         public int UserId { get; set; }
         
-        public Comment() {
-
-        }
     }
 }

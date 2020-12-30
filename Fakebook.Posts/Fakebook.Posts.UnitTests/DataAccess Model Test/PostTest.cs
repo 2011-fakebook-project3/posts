@@ -74,6 +74,18 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(date, testPost.CreatedAt);
         }
+        [Fact]
+        public void PostTest6()
+        {
+            //Arrange
+
+            //Act
+            var comment = new List<Comment>();
+            testPost.Comments = comment;
+
+            //Assert
+            Assert.Equal(comment, testPost.Comments);
+        }
         public void Dispose()
         {
             testPost = null;
