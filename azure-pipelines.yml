@@ -15,9 +15,10 @@ stages:
     pool:
       vmImage: ubuntu-latest
     variables:
-      sdkVersion: 3.1.x
+      sdkVersion: 5.x
       buildConfiguration: 'Release'
-      directory: 'Fakebook.Posts/Fakebook.Posts.WebApi'
+      directory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
+
     steps:
     - task: UseDotNet@2
       displayName: dotnet sdk 2.x
@@ -25,6 +26,7 @@ stages:
         packageType: 'sdk'
         version: '2.x'
         workingDirectory: '$(directory)'
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SonarCloud Token'
@@ -32,8 +34,10 @@ stages:
         scannerMode: 'MSBuild'
         projectKey: '2011-fakebook-project3_posts'
         extraProperties: |
-              sonar.exclusions=**/lib/**
-              sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
+          sonar.exclusions=**/lib/**
+          sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
@@ -41,9 +45,11 @@ stages:
         version: '5.x'
         installationPath: $(Agent.ToolsDirectory)/dotnet
         workingDirectory: 'Fakebook.Posts.RestApi/'
+
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: dotnet build
       workingDirectory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
+
     - task: DotNetCoreCLI@2
       displayName: dotnet test
       inputs:
@@ -51,11 +57,17 @@ stages:
         arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
         workingDirectory: 'Fakebook.Posts/'
-    - script: dotnet publish --configuration $(buildConfiguration) --output publish
-      displayName: dotnet publish
-      workingDirectory: 'Fakebook.Posts/'
+
+    - task: Docker@2
+      displayName: docker build image
+      inputs:
+        repository: 'posts'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
+
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
       inputs:
