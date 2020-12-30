@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain;
-using Fakebook.Posts.Domain.Models;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace FakebookPosts.DataModel
 {
     public class PostsRepository : IPostsRepository
     {
-        private DbContextOptions<FakebookPostsContext> options;
-
-        public PostsRepository(DbContextOptions<FakebookPostsContext> options)
-        {
-            this.options = options;
-        }
 
         public int Count => throw new System.NotImplementedException();
 
