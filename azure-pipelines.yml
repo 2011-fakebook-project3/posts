@@ -1,13 +1,10 @@
 # ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
 # trigger on main pull
 trigger:
   branches:
     include:
     - main
-# initial docker build
+# initial build
 stages:
 - stage: build
   jobs:
@@ -22,7 +19,7 @@ stages:
         repository: $(imageName)
         command: 'build'
         Dockerfile: 'Fakebook.Posts/Dockerfile'
-# sonar cloud build
+# sonar cloud
 - stage: sonarCloud
   jobs:
   - job: build
