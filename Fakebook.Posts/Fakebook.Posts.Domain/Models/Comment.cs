@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace Fakebook.Posts.Domain {
+namespace Fakebook.Posts.Domain.Models {
     public class Comment {
         public int Id { get; set; }
         public string Content { get; set; }
