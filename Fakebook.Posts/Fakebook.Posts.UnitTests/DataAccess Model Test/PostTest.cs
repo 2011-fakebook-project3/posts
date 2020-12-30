@@ -62,6 +62,18 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(1, testPost.UserId);
         }
+        [Fact]
+        public void PostTest5()
+        {
+            //Arrange
+
+            //Act
+            var date = DateTime.Now;
+            testPost.CreatedAt = date;
+
+            //Assert
+            Assert.Equal(date, testPost.CreatedAt);
+        }
         public void Dispose()
         {
             testPost = null;
