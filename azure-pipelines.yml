@@ -54,7 +54,7 @@ stages:
 
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: dotnet build
-      workingDirectory: $(targetSolution)
+      workingDirectory: $(directory)
 
     - task: DotNetCoreCLI@2
       displayName: dotnet test
