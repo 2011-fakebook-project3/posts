@@ -1,3 +1,5 @@
+using Fakebook.Posts.Domain;
+using FakebookPosts.DataModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -24,6 +26,9 @@ namespace Fakebook.Posts.RestApi {
         public void ConfigureServices(IServiceCollection services) {
 
             services.AddControllers();
+
+            services.AddScoped<IPostsRepository, PostsRepository>();
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
             });
