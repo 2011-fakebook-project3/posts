@@ -1,0 +1,62 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+#trigger on main pull
+trigger:
+  branches:
+    include:
+    - main
+
+stages:
+- stage: build
+  jobs:
+  - job: build
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+      sdkVersion: 3.1.x
+      buildConfiguration: 'Release'
+      directory: 'Fakebook.Posts/Fakebook.Posts.WebApi'
+    steps:
+    - task: UseDotNet@2
+      displayName: dotnet sdk 2.x
+      inputs:
+        packageType: 'sdk'
+        version: '2.x'
+        workingDirectory: '$(directory)'
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'SonarCloud Token'
+        organization: '2011-fakebook-project3'
+        scannerMode: 'MSBuild'
+        projectKey: '2011-fakebook-project3_posts'
+        extraProperties: |
+              sonar.exclusions=**/lib/**
+              sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
+    - task: UseDotNet@2
+      displayName: 'Use .NET 5 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '5.x'
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+        workingDirectory: 'Fakebook.Posts.RestApi/'
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: dotnet build
+      workingDirectory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
+    - task: DotNetCoreCLI@2
+      displayName: dotnet test
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+        publishTestResults: true
+        workingDirectory: 'Fakebook.Posts/'
+    - script: dotnet publish --configuration $(buildConfiguration) --output publish
+      displayName: dotnet publish
+      workingDirectory: 'Fakebook.Posts/'
+    - task: SonarCloudAnalyze@1
+      displayName: sonar run analysis
+    - task: SonarCloudPublish@1
+      displayName: sonar analysis publish
+      inputs:
+        pollingTimeoutSec: '300'
