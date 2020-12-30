@@ -2,6 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FakebookPosts.DataModel
 {
+    /// <summary>
+    /// Code first EF core code intended for Postgres 
+    /// uses default picture path of ""
+    /// deleting a post delete all comment on it
+    /// </summary>
     public class FakebookPostsContext : DbContext 
     {
         public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) {}
