@@ -20,12 +20,12 @@ stages:
       directory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
 
     steps:
-    - task: UseDotNet@2
-      displayName: dotnet sdk 2.x
+    - task: Docker@2
+      displayName: Build Docker Image
       inputs:
-        packageType: 'sdk'
-        version: '2.x'
-        workingDirectory: '$(directory)'
+        repository: $(imageName)
+        command: 'build'
+        Dockerfile: 'Fakebook.Posts.RestApi/Dockerfile'
 
     - task: SonarCloudPrepare@1
       inputs:
