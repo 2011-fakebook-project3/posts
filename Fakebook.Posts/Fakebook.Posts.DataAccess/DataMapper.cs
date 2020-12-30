@@ -15,7 +15,7 @@ namespace FakebookPosts.DataModel
             postDomain.UserId = post.UserId;
             postDomain.Picture = post.Picture;
             postDomain.Content = post.Content;
-            postDomain.CreatedAt = postDomain.CreatedAt;
+            postDomain.CreatedAt = post.CreatedAt;
             postDomain.Comments = post.Comments.Select(c => c.ToDataAccess(postDomain)).ToHashSet();
             return postDomain;
         }
