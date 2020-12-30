@@ -8,7 +8,7 @@ namespace FakebookPosts.DataModel
     /// </summary>
     public static class DataMapper
     {
-        public static Fakebook.Posts.Domain.Models.Post PostDomain2Data(this Post post)
+        public static Fakebook.Posts.Domain.Models.Post ToDataAccess(this Post post)
         {
             var postDomain = new Fakebook.Posts.Domain.Models.Post();
             postDomain.Id = post.Id;
@@ -16,10 +16,10 @@ namespace FakebookPosts.DataModel
             postDomain.Picture = post.Picture;
             postDomain.Content = post.Content;
             postDomain.CreatedAt = postDomain.CreatedAt;
-            postDomain.Comments = post.Comments.Select(c => c.CommentDomain2Data(postDomain)).ToHashSet();
+            postDomain.Comments = post.Comments.Select(c => c.ToDataAccess(postDomain)).ToHashSet();
             return postDomain;
         }
-        public static Fakebook.Posts.Domain.Models.Comment CommentDomain2Data(this Comment comment, 
+        public static Fakebook.Posts.Domain.Models.Comment ToDataAccess(this Comment comment, 
             Fakebook.Posts.Domain.Models.Post post)
         {
             var commentDomain = new Fakebook.Posts.Domain.Models.Comment();
@@ -30,7 +30,7 @@ namespace FakebookPosts.DataModel
             commentDomain.Content = comment.Content;
             return commentDomain;
         }
-        public static Post PostData2Domain(Fakebook.Posts.Domain.Models.Post post)
+        public static Post ToDomain(Fakebook.Posts.Domain.Models.Post post)
         {
             var postData = new Post();
             postData.Id = post.Id;
@@ -38,10 +38,10 @@ namespace FakebookPosts.DataModel
             postData.Picture = post.Picture;
             postData.Content = post.Content;
             postData.CreatedAt = post.CreatedAt;
-            postData.Comments = post.Comments.Select(c => c.CommentData2Domain(postData)).ToHashSet();
+            postData.Comments = post.Comments.Select(c => c.ToDomain(postData)).ToHashSet();
             return postData;
         }
-        public static Comment CommentData2Domain(this Fakebook.Posts.Domain.Models.Comment comment, Post post)
+        public static Comment ToDomain(this Fakebook.Posts.Domain.Models.Comment comment, Post post)
         {
             var commentData = new Comment();
             commentData.Id = comment.Id;
