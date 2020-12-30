@@ -58,14 +58,6 @@ stages:
         arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
         workingDirectory: 'Fakebook.Posts/'
-
-    - task: Docker@2
-      displayName: docker build image
-      inputs:
-        repository: 'posts'
-        command: 'build'
-        Dockerfile: '**/Dockerfile'
-
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
 
