@@ -25,7 +25,7 @@ stages:
       inputs:
         repository: $(imageName)
         command: 'build'
-        Dockerfile: 'Fakebook.Posts.RestApi/Dockerfile'
+        Dockerfile: 'Fakebook.Posts/Dockerfile'
 
     - task: SonarCloudPrepare@1
       inputs:
