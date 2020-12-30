@@ -45,11 +45,12 @@ stages:
         version: '5.x'
         installationPath: $(Agent.ToolsDirectory)/dotnet
         workingDirectory: 'Fakebook.Posts.RestApi/'
-
-    - script: dotnet build --configuration $(buildConfiguration)
-      displayName: dotnet build
-      workingDirectory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
-
+    - task: Docker@2
+      displayName: docker build image
+      inputs:
+        repository: 'posts'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
     - task: DotNetCoreCLI@2
       displayName: dotnet test
       inputs:
