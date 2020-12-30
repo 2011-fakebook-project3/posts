@@ -6,7 +6,7 @@ trigger:
 
 # initial build
 stages:
-- stage: build
+- stage: docker
   jobs:
   - job: build
     variables:
@@ -44,11 +44,13 @@ stages:
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
-        workingDirectory: '$(Agent.ToolsDirectory)/dotnet'
+        packageType: 'sdk'
+        version: $(sdkVersion)
+        installationPath: $(Agent.ToolsDirectory)/dotnet
 
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: dotnet build
-      workingDirectory: $(directory)
+      workingDirectory: 'Fakebook.Posts'
 
     - task: DotNetCoreCLI@2
       displayName: dotnet test
