@@ -2,22 +2,18 @@
 # Build and test ASP.NET projects.
 # Add steps that publish symbols, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
-#trigger on main pull
+# trigger on main pull
 trigger:
   branches:
     include:
     - main
-
+# initial docker build
 stages:
 - stage: build
   jobs:
   - job: build
-    pool:
-      vmImage: ubuntu-latest
     variables:
-      sdkVersion: 5.x
-      buildConfiguration: 'Release'
-      directory: 'Fakebook.Posts/Fakebook.Posts.RestApi'
+        imageName: 'fakebookposts'
 
     steps:
     - task: Docker@2
@@ -26,7 +22,22 @@ stages:
         repository: $(imageName)
         command: 'build'
         Dockerfile: 'Fakebook.Posts/Dockerfile'
+# sonar cloud build
+- stage: sonarCloud
+  jobs:
+  - job: build
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+      buildConfiguration: 'Release'
+      directory: 'Fakebook.Posts/Fakebook.Posts.WebApi'
 
+    steps:
+    - task: UseDotNet@2
+      displayName: Use sdk 2.x
+      inputs:
+        packageType: sdk
+        version: 2.x
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'SonarCloud Token'
@@ -34,10 +45,8 @@ stages:
         scannerMode: 'MSBuild'
         projectKey: '2011-fakebook-project3_posts'
         extraProperties: |
-          sonar.exclusions=**/lib/**
-          sonar.cs.opencover.reportsPaths = $(Agent.TempDirectory)/**/coverage.opencover.xml
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
           sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
-
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
@@ -45,22 +54,15 @@ stages:
         version: '5.x'
         installationPath: $(Agent.ToolsDirectory)/dotnet
         workingDirectory: 'Fakebook.Posts.RestApi/'
-    - task: Docker@2
-      displayName: docker build image
-      inputs:
-        repository: 'posts'
-        command: 'build'
-        Dockerfile: '**/Dockerfile'
     - task: DotNetCoreCLI@2
       displayName: dotnet test
       inputs:
         command: 'test'
-        arguments: '--configuration $(BuildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
         workingDirectory: 'Fakebook.Posts/'
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
-
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
       inputs:
