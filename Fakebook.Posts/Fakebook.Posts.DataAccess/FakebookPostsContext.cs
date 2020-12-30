@@ -14,13 +14,13 @@ namespace FakebookPosts.DataModel
         {
             modelBuilder.Entity<Post>(entity =>
             {
-                entity.ToTable("Post");
+                entity.ToTable("Post", "PostsService");
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()").ValueGeneratedOnAdd();
                 entity.Property(e => e.Picture).HasDefaultValue("").ValueGeneratedOnAddOrUpdate();
             });
             modelBuilder.Entity<Comment>(entity =>
             {
-                entity.ToTable("Comment");
+                entity.ToTable("Comment", "PostsService");
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()").ValueGeneratedOnAdd();
                 entity.HasOne(d => d.Post).WithMany(p => p.Comments).OnDelete(DeleteBehavior.Cascade);
             });
