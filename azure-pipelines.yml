@@ -29,7 +29,6 @@ stages:
       vmImage: ubuntu-latest
     variables:
       buildConfiguration: 'Release'
-      directory: 'Fakebook.Posts/Fakebook.Posts.WebApi'
 
     steps:
     - task: UseDotNet@2
@@ -46,7 +45,7 @@ stages:
         projectKey: '2011-fakebook-project3_posts'
         extraProperties: |
           sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
-
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
     - task: UseDotNet@2
       displayName: 'Use .NET 5 SDK'
       inputs:
