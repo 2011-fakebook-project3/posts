@@ -1,4 +1,4 @@
-﻿using Fakebook.Posts.Domain;
+﻿using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,7 +16,7 @@ namespace Fakebook.Posts.RestApi.Controllers {
 
         // [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post(Post postModel) {
+        public async Task<IActionResult> PostAsync(Post postModel) {
             throw new NotImplementedException();
         }
     }
