@@ -60,6 +60,7 @@ stages:
       displayName: dotnet build
       workingDirectory: $(targetSolution)
 
+    # test on main or PRs to main
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures disallowed)
       condition: and(succeeded(), in('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
@@ -69,6 +70,8 @@ stages:
         publishTestResults: true
         workingDirectory: '$(targetSolution)'
 
+    # test outside on main or PRs to main
+    # (fails allowed for TDD workflow)
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures allowed)
       condition: and(succeeded(), notIn('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
