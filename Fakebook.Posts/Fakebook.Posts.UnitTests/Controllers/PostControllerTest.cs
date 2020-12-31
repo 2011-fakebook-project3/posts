@@ -34,7 +34,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo);
+            var controller = new PostsController(mockRepo.Object);
 
             // Act
             var actionResult = await controller.PostAsync(post);
@@ -61,7 +61,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo);
+            var controller = new PostsController(mockRepo.Object);
 
             // Act
             var actionResult = await controller.PostAsync(post);
