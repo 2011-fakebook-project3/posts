@@ -54,10 +54,10 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Arrange
 
             //Act
-            testComment.UserId = 1;
+            testComment.UserEmail = "person@domain.net";
 
             //Assert
-            Assert.Equal(1, testComment.UserId);
+            Assert.Equal("person@domain.net", testComment.UserEmail);
         }
 
         [Fact]
