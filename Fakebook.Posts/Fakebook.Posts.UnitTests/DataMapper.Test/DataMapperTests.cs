@@ -41,7 +41,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
             Assert.True(dbPost.Content == domainPost.Content);
             Assert.True(dbPost.CreatedAt == domainPost.CreatedAt);
-            Assert.True(dbPost.Comments.Count() == 1);
+            Assert.True(dbPost.Comments.Count == 1);
 
         }
 
@@ -75,7 +75,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
             Assert.True(dbPost.Content == domainPost.Content);
             Assert.True(dbPost.CreatedAt == domainPost.CreatedAt);
-            Assert.True(dbPost.Comments.Count() == 1);
+            Assert.True(dbPost.Comments.Count == 1);
         }
 
 
