@@ -13,7 +13,7 @@ namespace Fakebook.Posts.UnitTests.Model_Test
 
         }
         /// <summary>
-        /// Test the Id. Ensures that the model will get and set the id.
+        /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
         public void CommentTest1()
@@ -27,7 +27,7 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             Assert.Equal(1, testComment.Id);
         }
         /// <summary>
-        /// Test the content. Ensures that the model will get and set the content.
+        /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
         public void CommentTest2()
@@ -41,7 +41,7 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             Assert.Equal("Goodman", testComment.Content);
         }
         /// <summary>
-        /// Test the post. Ensures that the model will get and set the post.
+        /// Test the property post. Ensures that the model will get and set the post.
         /// </summary>
         [Fact]
         public void CommentTest3()
@@ -56,7 +56,7 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             Assert.Equal(post, testComment.Post);
         }
         /// <summary>
-        /// Test the email. Ensures that the model will get and set the email.
+        /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
         public void CommentTest4()
@@ -70,7 +70,7 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             Assert.Equal("person@domain.net", testComment.UserEmail);
         }
         /// <summary>
-        /// Test the date. Ensures that the model will get and set the date.
+        /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
         public void CommentTest5()
