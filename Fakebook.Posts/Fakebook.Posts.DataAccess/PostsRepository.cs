@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain;
-
+using Fakebook.Posts.Domain.Models;
 
 namespace FakebookPosts.DataModel
 {
