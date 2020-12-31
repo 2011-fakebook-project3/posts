@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
+namespace Fakebook.Posts.UnitTests.DataAccess
 {
         public class CommentTest : IDisposable
         {

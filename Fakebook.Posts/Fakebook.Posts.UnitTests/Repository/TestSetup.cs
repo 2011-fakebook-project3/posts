@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.UnitTests.Repository_Test
+namespace Fakebook.Posts.UnitTests.Repository
 {
     public partial class TestSetup
     {

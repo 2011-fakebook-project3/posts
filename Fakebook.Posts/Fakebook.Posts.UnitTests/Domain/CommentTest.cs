@@ -3,7 +3,7 @@ using Fakebook.Posts.Domain;
 using Fakebook.Posts.Domain.Models;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Model_Test
+namespace Fakebook.Posts.UnitTests.Domain
 {
     public class CommentTest : IDisposable
     {

@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controller_Test
+namespace Fakebook.Posts.UnitTests.Controllers
 {
     public class PostControllerTest
     {
@@ -43,14 +43,14 @@ namespace Fakebook.Posts.UnitTests.Controller_Test
 
 
             //Assert
-            var viewResult = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
+            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
             Assert.Equal(1, post.Id);
             Assert.Equal(1, post.UserId);
             Assert.Equal(comment, post.Comments);
             Assert.Equal("Goodman", post.Content);
             Assert.Equal("picture", post.Picture);
             Assert.Equal(date, post.CreatedAt);
-            Assert.Equal(viewResult.StatusCode, StatusCodes.Status201Created);
+            Assert.Equal(result.StatusCode, StatusCodes.Status201Created);
         }
        
     }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
+namespace Fakebook.Posts.UnitTests.DataAccess
 {
     public class PostTest : IDisposable
     {

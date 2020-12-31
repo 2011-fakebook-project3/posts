@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Model_Test
+namespace Fakebook.Posts.UnitTests.Domain
 {
     public class PostTest : IDisposable
     {
