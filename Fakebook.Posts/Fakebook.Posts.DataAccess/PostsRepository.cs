@@ -13,6 +13,10 @@ namespace FakebookPosts.DataModel
 
         public bool IsReadOnly => false;
 
+        public PostsRepository(FakebookPostsContext context) {
+
+        }
+
         public void Add(Fakebook.Posts.Domain.Models.Post item)
         {
             throw new System.NotImplementedException();
