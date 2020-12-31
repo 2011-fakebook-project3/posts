@@ -8,7 +8,7 @@ namespace FakebookPosts.DataModel
     {
         public int Id {get; set;}
         [Required]
-        public int UserId {get; set;}
+        public string UserEmail {get; set;}
         [Required]
         public int PostId {get; set;}
         [ForeignKey("PostId")]

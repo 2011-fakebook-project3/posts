@@ -24,7 +24,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             var post = new Post()
             {
                 Id = 1,
-                UserId = 1,
+                UserEmail = "test@email.com",
                 Comments = comment,
                 Content = "Goodman",
                 Picture = "picture",
@@ -44,7 +44,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
             var model = Assert.IsAssignableFrom<Post>(result.Value);
             Assert.Equal(1, model.Id);
-            Assert.Equal(1, model.UserId);
+            Assert.Equal("test@email.com", model.UserEmail);
             Assert.Equal(comment, model.Comments);
             Assert.Equal("Goodman", model.Content);
             Assert.Equal("picture", model.Picture);
