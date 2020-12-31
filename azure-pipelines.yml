@@ -70,7 +70,7 @@ stages:
         publishTestResults: true
         workingDirectory: '$(targetSolution)'
 
-    # test outside on main or PRs to main
+    # test outside of main or PRs to main
     # (fails allowed for TDD workflow)
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures allowed)
