@@ -1,4 +1,4 @@
-﻿using Fakebook.Posts.Domain;
+﻿using Fakebook.Posts.Domain.Models;
 using System;
 using System.Collections.Generic;
 using Xunit;
