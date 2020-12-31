@@ -15,6 +15,9 @@ using Xunit;
 namespace Fakebook.Posts.UnitTests.Controllers {
     public class PostControllerTest {
 
+        /// <summary>
+        /// Tests the PostsController class' PostAsync method. Ensures that a proper Post object results in Status201Created.
+        /// </summary>
         [Fact]
         public async Task PostAsync_ValidPost_Creates() {
             // Arrange
@@ -52,6 +55,9 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
         }
 
+        /// <summary>
+        /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
+        /// </summary>
         [Fact]
         public async Task PostAsync_InvalidPost_BadRequest() {
             // Arrange
