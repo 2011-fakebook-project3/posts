@@ -28,7 +28,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
             {
                 Content = "New Content",
                 CreatedAt = DateTime.Now,
-                UserId = 1
+                UserEmail = "person@domain.net"
             };
 
             Domain.Models.Post result;
@@ -43,7 +43,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
 
             //Assert
             Assert.True(result.Content == post.Content);
-            Assert.True(result.UserId == post.UserId);
+            Assert.True(result.UserEmail == post.UserEmail);
             Assert.True(result.CreatedAt == post.CreatedAt);
             return true;
         }
@@ -73,12 +73,13 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
                 context.Database.EnsureCreated();
                 context.Add(post);
                 var repo = new PostsRepository(context);
-                result = await repo.AsQueryable().FirstOrDefaultAsync(p => p.UserEmail == "person@domain.net");
+                result = await repo.AsQueryable().FirstOrDefaultAsync(
+                    p => p.UserEmail == "person@domain.net");
             }
         
             //Then
             Assert.True(result.Content == post.Content);
-            Assert.True(result.UserId == post.UserId);
+            Assert.True(result.UserEmail == post.UserEmail);
             Assert.True(result.CreatedAt == post.CreatedAt);
             return true;
         }
