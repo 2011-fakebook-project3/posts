@@ -66,15 +66,17 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
             };
 
             Fakebook.Posts.Domain.Models.Post result;
-        
+            var postData = post.ToDataAccess();
+
             //When
             using (var context = new FakebookPostsContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Add(post);
+                context.Posts.Add(postData);
+                context.SaveChanges();
                 var repo = new PostsRepository(context);
                 result = await repo.AsQueryable().FirstOrDefaultAsync(
-                    p => p.UserEmail == "person@domain.net");
+                    p => p.Id == postData.Id);
             }
         
             //Then
