@@ -72,6 +72,7 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures allowed)
       condition: and(succeeded(), notIn('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
+      continueOnError: true
       inputs:
         command: 'test'
         arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
