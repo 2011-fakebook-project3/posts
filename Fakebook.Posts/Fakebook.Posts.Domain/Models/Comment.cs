@@ -4,6 +4,6 @@ using System.Text;
 
 namespace Fakebook.Posts.Domain {
     public class Comment {
-        }
+        
     }
 }
