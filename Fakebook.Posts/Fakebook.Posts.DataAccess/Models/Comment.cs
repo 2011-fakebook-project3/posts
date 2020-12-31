@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FakebookPosts.DataModel
 {
-    public class Comment
+    public class Comment 
     {
-        public int Id { get; set; }
+        public int Id {get; set;}
         [Required]
-        public int UserId { get; set; }
+        public int UserId {get; set;}
         [Required]
-        public int PostId { get; set; }
+        public int PostId {get; set;}
         [ForeignKey("PostId")]
-        public Post Post { get; set; }
+        public Post Post {get; set;}
         [Required]
-        public string Content { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public string Content {get; set;}
+        
+        public DateTime CreatedAt {get; set;}  
     }
 }
