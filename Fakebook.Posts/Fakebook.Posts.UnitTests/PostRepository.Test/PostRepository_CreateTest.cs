@@ -24,14 +24,14 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post
+            var post = new Fakebook.Posts.Domain.Models.Post
             {
                 Content = "New Content",
                 CreatedAt = DateTime.Now,
                 UserEmail = "person@domain.net"
             };
 
-            Domain.Models.Post result;
+            Fakebook.Posts.Domain.Models.Post result;
 
             //Act
             using (var context = new FakebookPostsContext(options))
@@ -58,14 +58,14 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post
+            var post = new Fakebook.Posts.Domain.Models.Post
             {
                 Content = "New Content",
                 CreatedAt = DateTime.Now,
                 UserEmail = "person@domain.net"
             };
 
-            Domain.Models.Post result;
+            Fakebook.Posts.Domain.Models.Post result;
         
             //When
             using (var context = new FakebookPostsContext(options))
