@@ -9,20 +9,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http.Results;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers
-{
-    public class PostControllerTest
-    {
-        readonly PostsController postController = new PostsController();
+namespace Fakebook.Posts.UnitTests.Controllers {
+    public class PostControllerTest {
 
         [Fact]
-        public async Task PostController_PostAsync()
-        {
-            //Arrange
+        public async Task PostAsync_ValidPost_Creates() {
+            // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var postList = new List<Post>();
             var comment = new List<Comment>();
             var date = DateTime.Now;
             var post = new Post()
@@ -34,23 +30,44 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            postList.Add(post);
+
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Returns(ValueTask.FromResult(new Post()));
+                .Returns(ValueTask.FromResult(post));
 
-            //Act
-            var actionResult = await postController.PostAsync(post);
+            var controller = new PostsController(mockRepo);
+
+            // Act
+            var actionResult = await controller.PostAsync(post);
 
 
-            //Assert
+            // Assert
             var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
-            Assert.Equal(1, post.Id);
-            Assert.Equal(1, post.UserId);
-            Assert.Equal(comment, post.Comments);
-            Assert.Equal("Goodman", post.Content);
-            Assert.Equal("picture", post.Picture);
-            Assert.Equal(date, post.CreatedAt);
-            Assert.Equal(result.StatusCode, StatusCodes.Status201Created);
+            var model = Assert.IsAssignableFrom<Post>(result.Value);
+            Assert.Equal(1, model.Id);
+            Assert.Equal(1, model.UserId);
+            Assert.Equal(comment, model.Comments);
+            Assert.Equal("Goodman", model.Content);
+            Assert.Equal("picture", model.Picture);
+            Assert.Equal(date, model.CreatedAt);
+            Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
+        }
+
+        [Fact]
+        public async Task PostAsync_InvalidPost_BadRequest() {
+            // Arrange
+            var mockRepo = new Mock<IPostsRepository>();
+            var post = new Post();
+
+            mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
+                .Returns(ValueTask.FromResult(post));
+
+            var controller = new PostsController(mockRepo);
+
+            // Act
+            var actionResult = await controller.PostAsync(post);
+
+            // Assert
+            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
         }
        
     }
