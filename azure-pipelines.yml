@@ -60,6 +60,7 @@ stages:
       displayName: dotnet build
       workingDirectory: $(targetSolution)
 
+    # if previous steps successful, exactly one of these two steps should run:
     # test on main or PRs to main
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures disallowed)
@@ -71,7 +72,7 @@ stages:
         workingDirectory: '$(targetSolution)'
 
     # test outside of main or PRs to main
-    # (fails allowed for TDD workflow)
+    # (identical except: fails allowed for TDD workflow)
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures allowed)
       condition: and(succeeded(), notIn('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
