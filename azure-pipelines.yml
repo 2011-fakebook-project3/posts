@@ -1,68 +1,87 @@
-# trigger on main pull
+# trigger on main push
 trigger:
   branches:
     include:
     - main
+  paths:
+    include:
+    - azure-pipelines.yml
+    - Fakebook.Posts
 
-# initial build
+pr:
+  branches:
+    include:
+    - '*'
+  paths:
+    include:
+    - azure-pipelines.yml
+    - Fakebook.Posts
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  targetSolution: Fakebook.Posts
+
 stages:
-- stage: docker
+- stage: analyze
+  variables:
+    buildConfiguration: Release
   jobs:
   - job: build
-    variables:
-        imageName: 'fakebookposts'
-
     steps:
-    - task: Docker@2
-      displayName: Build Docker Image
-      inputs:
-        repository: $(imageName)
-        command: 'build'
-        Dockerfile: 'Fakebook.Posts/Dockerfile'
-
-# sonar cloud
-- stage: sonarCloud
-  dependsOn: []
-  jobs:
-  - job: build
-    pool:
-      vmImage: ubuntu-latest
-    variables:
-      buildConfiguration: 'Release'
-
-    steps:
+    # use .net core 2 for sonar compatibility
     - task: UseDotNet@2
-      displayName: Use sdk 2.x
+      displayName: dotnet sdk 2
       inputs:
-        packageType: sdk
-        version: 2.x
+        packageType: 'sdk'
+        version: '2.x'
 
     - task: SonarCloudPrepare@1
+      displayName: sonar prepare analysis
       inputs:
         SonarCloud: 'SonarCloud Token'
         organization: '2011-fakebook-project3'
         scannerMode: 'MSBuild'
         projectKey: '2011-fakebook-project3_posts'
+        projectName: 'posts'
         extraProperties: |
           sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
           sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
+
+    # switch to .net 5
     - task: UseDotNet@2
-      displayName: 'Use .NET 5 SDK'
+      displayName: dotnet sdk 5
       inputs:
         packageType: 'sdk'
         version: '5.x'
 
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: dotnet build
-      workingDirectory: 'Fakebook.Posts'
+      workingDirectory: $(targetSolution)
 
+    # if previous steps successful, exactly one of these two steps should run:
+    # test on main or PRs to main
     - task: DotNetCoreCLI@2
-      displayName: dotnet test
+      displayName: dotnet test (failures disallowed)
+      condition: and(succeeded(), in('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
       inputs:
         command: 'test'
         arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
         publishTestResults: true
-        workingDirectory: 'Fakebook.Posts'
+        workingDirectory: '$(targetSolution)'
+
+    # test outside of main or PRs to main
+    # (identical except: fails allowed for TDD workflow)
+    - task: DotNetCoreCLI@2
+      displayName: dotnet test (failures allowed)
+      condition: and(succeeded(), notIn('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
+      continueOnError: true
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
+        publishTestResults: true
+        workingDirectory: '$(targetSolution)'
 
     - task: SonarCloudAnalyze@1
       displayName: sonar run analysis
@@ -70,6 +89,20 @@ stages:
 
     - task: SonarCloudPublish@1
       displayName: sonar analysis publish
+      condition: always()
       inputs:
         pollingTimeoutSec: '300'
-      condition: always()
+
+- stage: docker
+  dependsOn: []
+  variables:
+    imageName: fakebookposts
+  jobs:
+  - job: build
+    steps:
+    - task: Docker@2
+      displayName: docker build image
+      inputs:
+        repository: '$(imageName)'
+        command: 'build'
+        Dockerfile: '$(targetSolution)/Dockerfile'
