@@ -9,12 +9,6 @@ namespace FakebookPosts.DataModel
 {
     public class PostsRepository : IPostsRepository
     {
-        private readonly FakebookPostsContext _context;
-        public PostsRepository(FakebookPostsContext context)
-        {
-            _context = context;
-        }
-
         public int Count => throw new System.NotImplementedException();
 
         public bool IsReadOnly => false;

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FakebookPosts.DataModel
 {
-    public class FakebookPostsContext : DbContext 
+    public partial class FakebookPostsContext : DbContext 
     {
         public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) {}
         public virtual DbSet<Post> Posts {get; set;}
@@ -23,6 +23,9 @@ namespace FakebookPosts.DataModel
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()").ValueGeneratedOnAdd();
                 entity.HasOne(d => d.Post).WithMany(p => p.Comments).OnDelete(DeleteBehavior.Cascade);
             });
+
+            OnModelCreatingPartial(modelBuilder);
         }
+        partial void OnModelCreatingPartial(ModelBuilder builder);
     }
 }

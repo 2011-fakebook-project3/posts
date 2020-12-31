@@ -1,4 +1,5 @@
-﻿using Fakebook.Posts.Domain.Models;
+﻿using Fakebook.Posts.Domain;
+using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,7 +11,7 @@ namespace Fakebook.Posts.RestApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase {
-        public PostsController() {
+        public PostsController(IPostsRepository postsRepository) {
 
         }
 
