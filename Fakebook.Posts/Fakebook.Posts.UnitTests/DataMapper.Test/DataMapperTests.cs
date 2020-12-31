@@ -15,21 +15,19 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainPostToDbPost()
         {
             //Arrange
-            Domain.Models.Post domainPost = new Domain.Models.Post
+            Fakebook.Posts.Domain.Models.Post domainPost = new Fakebook.Posts.Domain.Models.Post
             {
-                UserId = 1,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now
 
             };
 
-            Domain.Models.Comment domainComent = new Domain.Models.Comment
+            Fakebook.Posts.Domain.Models.Comment domainComent = new Fakebook.Posts.Domain.Models.Comment
             {
                 Content = "Comment Content",
                 Post = domainPost,
                 CreatedAt = DateTime.Now,
-                UserId = 2,
                 UserEmail = "person2@domain.net"
             };
 
@@ -40,7 +38,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
 
-            Assert.True(dbPost.UserId == domainPost.UserId);
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
             Assert.True(dbPost.Content == domainPost.Content);
             Assert.True(dbPost.CreatedAt == domainPost.CreatedAt);
@@ -54,7 +51,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             //Arrange
             FakebookPosts.DataModel.Post dbPost = new FakebookPosts.DataModel.Post
             {
-                UserId = 1,
+                
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now
@@ -66,17 +63,15 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Content = "Comment Content",
                 Post = dbPost,
                 CreatedAt = DateTime.Now,
-                UserId = 2,
                 UserEmail = "person2@domain.net"
             };
 
             dbPost.Comments.Add(dbComent);
 
             //Act
-            Domain.Models.Post domainPost = dbPost.ToDomain();
+            Fakebook.Posts.Domain.Models.Post domainPost = dbPost.ToDomain();
 
             //Assert
-            Assert.True(dbPost.UserId == domainPost.UserId);
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
             Assert.True(dbPost.Content == domainPost.Content);
             Assert.True(dbPost.CreatedAt == domainPost.CreatedAt);
@@ -88,22 +83,20 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainCommentToDbComment()
         {
             //Arrange
-            Domain.Models.Post domainPost = new Domain.Models.Post
+            Fakebook.Posts.Domain.Models.Post domainPost = new Fakebook.Posts.Domain.Models.Post
             {
                 Id = 0,
-                UserId = 1,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now
 
             };
 
-            Domain.Models.Comment domainComment = new Domain.Models.Comment
+            Fakebook.Posts.Domain.Models.Comment domainComment = new Fakebook.Posts.Domain.Models.Comment
             {
                 Content = "Comment Content",
                 Post = domainPost,
                 CreatedAt = DateTime.Now,
-                UserId = 2,
                 UserEmail = "person2@domain.net"
             };
 
@@ -116,7 +109,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbComment.Content == domainComment.Content);
             Assert.Equal(dbPost, dbComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
-            Assert.True(dbComment.UserId == domainComment.UserId);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
         }
 
@@ -127,7 +119,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             FakebookPosts.DataModel.Post dbPost = new FakebookPosts.DataModel.Post
             {
                 Id = 0,
-                UserId = 1,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now
@@ -139,23 +130,21 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Content = "Comment Content",
                 Post = dbPost,
                 CreatedAt = DateTime.Now,
-                UserId = 2,
                 UserEmail = "person2@domain.net",
                 PostId = dbPost.Id
                 
             };
 
-            Domain.Models.Post domainPost = dbPost.ToDomain();
+            Fakebook.Posts.Domain.Models.Post domainPost = dbPost.ToDomain();
 
             //Act
 
-            Domain.Model.Comment domainComment = dbComment.ToDomain(domainPost);
+            Fakebook.Posts.Domain.Models.Comment domainComment = dbComment.ToDomain(domainPost);
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
             Assert.Equal(domainPost, domainComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
-            Assert.True(dbComment.UserId == domainComment.UserId);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
 
         }
