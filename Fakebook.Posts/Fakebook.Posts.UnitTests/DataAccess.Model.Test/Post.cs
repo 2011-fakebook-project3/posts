@@ -1,4 +1,4 @@
-﻿using FakebookPosts.DataModel;
+﻿using Fakebook.Posts.DataAccess.Models;
 using System;
 using System.Collections.Generic;
 using Xunit;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fakebook.Posts.DataAccess.Models;
+using System;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
