@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fakebook.Posts.Domain;
+using System;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Model_Test

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Fakebook.Posts.Domain;
+using System;
 using System.Collections.Generic;
 using Xunit;
 
