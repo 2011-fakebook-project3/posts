@@ -21,11 +21,8 @@ namespace Fakebook.Posts.UnitTests.Model_Test
         {
 
             //Act
-            try
-            {
-                testPost.Id = 1;
-            }
-            catch (NotImplementedException) { }
+
+            testPost.Id = 1;
 
 
             //Assert
@@ -40,11 +37,8 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Arrange
 
             //Act
-            try
-            {
-                testPost.Content = "Goodman";
-            }
-            catch (NotImplementedException) { }
+
+            testPost.Content = "Goodman";
 
             //Assert
             Assert.Equal("Goodman", testPost.Content);
@@ -58,11 +52,8 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Arrange
 
             //Act
-            try
-            {
-                testPost.Picture = "picture";
-            }
-            catch (NotImplementedException) { }
+
+            testPost.Picture = "picture";
 
 
             //Assert
@@ -77,11 +68,8 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Arrange
 
             //Act
-            try
-            {
-                testPost.UserEmail = "person@domain.net";
-            }
-            catch (NotImplementedException) { }
+
+            testPost.UserEmail = "person@domain.net";
             //Assert
             Assert.Equal("person@domain.net", testPost.UserEmail);
         }
@@ -95,11 +83,9 @@ namespace Fakebook.Posts.UnitTests.Model_Test
 
             //Act
             var date = DateTime.Now;
-            try
-            {
-                testPost.CreatedAt = date;
-            }
-            catch (NotImplementedException) { }
+
+            testPost.CreatedAt = date;
+
             //Assert
             Assert.Equal(date, testPost.CreatedAt);
         }
@@ -113,11 +99,8 @@ namespace Fakebook.Posts.UnitTests.Model_Test
 
             //Act
             var comments = new List<Comment>();
-            try
-            {
-                testPost.Comments = comments;
-            }
-            catch (Exception) { }
+
+            testPost.Comments = comments;
 
             //Assert
             Assert.Equal(comments, testPost.Comments);
