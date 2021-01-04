@@ -21,9 +21,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
         {
 
             //Act
-            try {
-                testPost.Id = 1;
-            } catch (NotImplementedException) { }
+            testPost.Id = 1;
 
 
             //Assert
@@ -38,9 +36,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testPost.Content = "Goodman";
-            } catch (NotImplementedException) { }
+            testPost.Content = "Goodman";
 
             //Assert
             Assert.Equal("Goodman", testPost.Content);
@@ -54,9 +50,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testPost.Picture = "picture";
-            } catch (NotImplementedException) { }
+            testPost.Picture = "picture";
 
             //Assert
             Assert.Equal("picture", testPost.Picture);
@@ -70,9 +64,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testPost.UserEmail = "person@domain.net";
-            } catch (NotImplementedException) { }
+            testPost.UserEmail = "person@domain.net";
 
             //Assert
             Assert.Equal("person@domain.net", testPost.UserEmail);
@@ -87,9 +79,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Act
             var date = DateTime.Now;
-            try {
-                testPost.CreatedAt = date;
-            } catch (NotImplementedException) { }
+            testPost.CreatedAt = date;
 
             //Assert
             Assert.Equal(date, testPost.CreatedAt);
@@ -104,9 +94,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Act
             var comment = new List<Comment>();
-            try {
-                testPost.Comments = comment;
-            } catch (Exception) { }
+            testPost.Comments = comment;
 
             //Assert
             Assert.Equal(comment, testPost.Comments);

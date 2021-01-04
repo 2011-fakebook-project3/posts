@@ -20,9 +20,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
         {
 
             //Act
-            try {
-                testComment.Id = 1;
-            } catch (NotImplementedException) { }
+            testComment.Id = 1;
 
 
             //Assert
@@ -37,9 +35,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testComment.Content = "Goodman";
-            } catch (NotImplementedException) { }
+            testComment.Content = "Goodman";
 
             //Assert
             Assert.Equal("Goodman", testComment.Content);
@@ -54,9 +50,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Act
             var post = new Post();
-            try {
-                testComment.Post = post;
-            } catch (NotImplementedException) { }
+            testComment.Post = post;
 
             //Assert
             Assert.Equal(post, testComment.Post);
@@ -70,9 +64,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testComment.UserEmail = "person@domain.net";
-            } catch (NotImplementedException) { }
+            testComment.UserEmail = "person@domain.net";
 
             //Assert
             Assert.Equal("person@domain.net", testComment.UserEmail);
@@ -84,9 +76,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            try {
-                testComment.PostId = 1;
-            } catch (NotImplementedException) { }
+            testComment.PostId = 1;
 
             //Assert
             Assert.Equal(1, testComment.PostId);
@@ -101,9 +91,7 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Act
             var date = DateTime.Now;
-            try {
-                testComment.CreatedAt = date;
-            } catch (NotImplementedException) { }
+            testComment.CreatedAt = date;
 
             //Assert
             Assert.Equal(date, testComment.CreatedAt);
