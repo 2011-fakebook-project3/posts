@@ -1,4 +1,4 @@
-﻿using Fakebook.Posts.Domain;
+﻿using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
