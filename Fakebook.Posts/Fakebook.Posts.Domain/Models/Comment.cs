@@ -1,8 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Fakebook.Posts.Domain {
-    public class Comment {
+namespace Fakebook.Posts.Domain.Models
+{
+    public class Comment
+    {
+        public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Content { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Post Post { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string UserEmail { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DateTime CreatedAt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
