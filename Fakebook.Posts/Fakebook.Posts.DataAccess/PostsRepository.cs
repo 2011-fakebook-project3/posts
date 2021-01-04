@@ -24,7 +24,10 @@ namespace Fakebook.Posts.DataModel
         {
             throw new System.NotImplementedException();
         }
-
+        public bool Remove(Fakebook.Posts.Domain.Models.Post item)
+        {
+            throw new System.NotImplementedException();
+        }
         public ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
         {
             throw new System.NotImplementedException();
@@ -45,29 +48,19 @@ namespace Fakebook.Posts.DataModel
             throw new System.NotImplementedException();
         }
 
-        IAsyncEnumerator<Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IAsyncEnumerator<Fakebook.Posts.Domain.Models.Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }
 
-        public bool Remove(Fakebook.Posts.Domain.Models.Post item)
+        public IEnumerator<Fakebook.Posts.Domain.Models.Post> GetEnumerator()
         {
             throw new System.NotImplementedException();
-        }
-
-        IAsyncEnumerator<Post> IAsyncEnumerable<Post>.GetAsyncEnumerator(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             throw new System.NotImplementedException();
-        }
-
-        IEnumerator<Post> IEnumerable<Post>.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
     }
 }
