@@ -1,6 +1,6 @@
 using System;
 
-namespace FakebookPosts.DataModel
+namespace Fakebook.Posts.DataModel
 {
     public class PostsRepository 
     {
