@@ -47,7 +47,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             return true;
         }
         [Fact]
-        public async Task<bool> GetPost()
+        public async Task<bool> GetPost_GetId_EqualsSetValue()
         {
             //Given
             using var connection = new SqliteConnection("Data Source=:memory:");
