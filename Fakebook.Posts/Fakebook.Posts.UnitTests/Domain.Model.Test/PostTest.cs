@@ -3,21 +3,30 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Model_Test
+namespace Fakebook.Posts.UnitTests.Model.Test
 {
-    public class PostTest : IDisposable
+    public class PostTest
     {
         Post testPost;
+        
         public PostTest()
         {
-            testPost = new Post();
+            testPost = new Post {
+                Id = 0,
+                Content = "Lorem Ipsum",
+                Comments = new List<Comment>(),
+                UserEmail = "hello@world.edu",
+                Picture = "pic",
+                CreatedAt = DateTime.Today
+            };
 
         }
+        
         /// <summary>
         /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
-        public void PostTest1()
+        public void IdSetterTest()
         {
 
             //Act
@@ -28,11 +37,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal(1, testPost.Id);
         }
+        
         /// <summary>
         /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
-        public void PostTest2()
+        public void ContentSetterTest()
         {
             //Arrange
 
@@ -43,11 +53,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal("Goodman", testPost.Content);
         }
+        
         /// <summary>
         /// Test the property picture. Ensures that the model will get and set the picture.
         /// </summary>
         [Fact]
-        public void PostTest3()
+        public void PictureSetterTest()
         {
             //Arrange
 
@@ -59,11 +70,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal("picture", testPost.Picture);
         }
+        
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
-        public void PostTest4()
+        public void EmailSetterTest()
         {
             //Arrange
 
@@ -73,11 +85,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal("person@domain.net", testPost.UserEmail);
         }
+        
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
-        public void PostTest5()
+        public void CreatedDTSetterTest()
         {
             //Arrange
 
@@ -89,11 +102,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal(date, testPost.CreatedAt);
         }
+        
         /// <summary>
         /// Test the property comments. Ensures that the model will get and set the comment and adds it in the list.
         /// </summary>
         [Fact]
-        public void PostTest6()
+        public void CommentsSetterTest()
         {
             //Arrange
 
@@ -104,13 +118,6 @@ namespace Fakebook.Posts.UnitTests.Model_Test
 
             //Assert
             Assert.Equal(comments, testPost.Comments);
-        }
-        /// <summary>
-        /// To provide a mechanism to clean up both managed and unmanaged resources.
-        /// </summary>  
-        public void Dispose()
-        {
-            testPost = null;
         }
     }
 }

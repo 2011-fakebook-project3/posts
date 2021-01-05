@@ -2,54 +2,56 @@
 using System;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Model_Test
+namespace Fakebook.Posts.UnitTests.Model.Test
 {
-    public class CommentTest : IDisposable
+    public class CommentTest
     {
         Comment testComment;
         public CommentTest()
         {
-            testComment = new Comment();
+            testComment = new Comment
+            {
+                Id = 0,
+                Content = "Hi",
+                UserEmail = "a@b.d",
+                CreatedAt = DateTime.Today
+            };
 
         }
+        
         /// <summary>
         /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
-        public void CommentTest1()
+        public void IdSetterTest()
         {
-
             //Act
-
             testComment.Id = 1;
-
-
 
             //Assert
             Assert.Equal(1, testComment.Id);
         }
+        
         /// <summary>
         /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
-        public void CommentTest2()
+        public void ContentSetterTest()
         {
             //Arrange
 
             //Act
-
             testComment.Content = "Goodman";
-
-
 
             //Assert
             Assert.Equal("Goodman", testComment.Content);
         }
+        
         /// <summary>
         /// Test the property post. Ensures that the model will get and set the post.
         /// </summary>
         [Fact]
-        public void CommentTest3()
+        public void PostSetterTest()
         {
             //Arrange
 
@@ -62,11 +64,12 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal(post, testComment.Post);
         }
+        
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
-        public void CommentTest4()
+        public void EmailSetterTest()
         {
             //Arrange
 
@@ -77,28 +80,21 @@ namespace Fakebook.Posts.UnitTests.Model_Test
             //Assert
             Assert.Equal("person@domain.net", testComment.UserEmail);
         }
+        
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
-        public void CommentTest5()
+        public void CreatedAtSetterTest()
         {
             //Arrange
 
             //Act
             var date = DateTime.Now;
-
             testComment.CreatedAt = date;
 
             //Assert
             Assert.Equal(date, testComment.CreatedAt);
-        }
-        /// <summary>
-        /// To provide a mechanism to clean up both managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            testComment = null;
         }
     }
 }
