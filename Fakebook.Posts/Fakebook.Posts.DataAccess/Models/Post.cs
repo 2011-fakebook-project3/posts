@@ -5,37 +5,13 @@ namespace Fakebook.Posts.DataAccess.Models
 {
     public class Post
     {
-        public int Id
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
-        public string UserEmail
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
-        public string Content
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
-        public string Picture
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
-        
-        public DateTime CreatedAt
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
-        
-        public virtual ICollection<Comment> Comments
-        {
-            get => throw new NotImplementedException(); 
-            set => throw new NotImplementedException();
-        }
+        public int Id { get; set; }
+        public string UserEmail { get; set; }
+        public string Content { get; set; }
+        public string Picture { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }
