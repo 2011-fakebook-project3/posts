@@ -9,11 +9,10 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         Comment testComment;
         public CommentTest()
         {
-            testComment = new Comment
+            testComment = new Comment("a@b.d")
             {
                 Id = 0,
                 Content = "Hi",
-                UserEmail = "a@b.d",
                 CreatedAt = DateTime.Today
             };
 
@@ -25,6 +24,8 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         [Fact]
         public void Comment_GetId_EqualsSetValue()
         {
+            // Arrange
+
             //Act
             testComment.Id = 1;
 
@@ -54,9 +55,9 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         public void Comment_GetPost_EqualsSetValue()
         {
             //Arrange
+            var post = new Post("a@b.d");
 
             //Act
-            var post = new Post();
             testComment.Post = post;
 
             //Assert
@@ -66,18 +67,17 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
-        [Fact]
+        /*[Fact]
         public void Comment_GetEmail_EqualsSetValue()
         {
             //Arrange
 
             //Act
-
             testComment.UserEmail = "person@domain.net";
 
             //Assert
             Assert.Equal("person@domain.net", testComment.UserEmail);
-        }
+        }*/
         
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
@@ -86,9 +86,9 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         public void Comment_GetCreatedAt_EqualsSetValue()
         {
             //Arrange
+            var date = DateTime.Now;
 
             //Act
-            var date = DateTime.Now;
             testComment.CreatedAt = date;
 
             //Assert

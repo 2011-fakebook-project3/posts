@@ -11,11 +11,10 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         
         public PostTest()
         {
-            testPost = new Post {
+            testPost = new Post("hello@world.edu") {
                 Id = 0,
                 Content = "Lorem Ipsum",
                 Comments = new List<Comment>(),
-                UserEmail = "hello@world.edu",
                 Picture = "pic",
                 CreatedAt = DateTime.Today
             };
@@ -30,9 +29,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         {
 
             //Act
-
             testPost.Id = 1;
-
 
             //Assert
             Assert.Equal(1, testPost.Id);
@@ -47,7 +44,6 @@ namespace Fakebook.Posts.UnitTests.Model.Test
             //Arrange
 
             //Act
-
             testPost.Content = "Goodman";
 
             //Assert
@@ -63,7 +59,6 @@ namespace Fakebook.Posts.UnitTests.Model.Test
             //Arrange
 
             //Act
-
             testPost.Picture = "picture";
 
 
@@ -74,17 +69,17 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
-        [Fact]
+        /*[Fact]
         public void Post_GetUserEmail_EqualsSetValue()
         {
             //Arrange
 
             //Act
-
             testPost.UserEmail = "person@domain.net";
+
             //Assert
             Assert.Equal("person@domain.net", testPost.UserEmail);
-        }
+        }*/
         
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
@@ -93,10 +88,9 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         public void Post_GetCreatedAt_EqualsSetValue()
         {
             //Arrange
-
-            //Act
             var date = DateTime.Now;
 
+            //Act
             testPost.CreatedAt = date;
 
             //Assert
@@ -110,10 +104,9 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         public void Post_GetComments_EqualsSetValue()
         {
             //Arrange
-
-            //Act
             var comments = new List<Comment>();
 
+            //Act
             testPost.Comments = comments;
 
             //Assert
