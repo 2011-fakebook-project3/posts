@@ -1,15 +1,13 @@
-﻿using Xunit;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using FakebookPosts.DataModel;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 
-using FakebookPosts.DataModel;
-using Fakebook.Posts.Domain;
 
-
-namespace Fakebook.Posts.UnitTests.PostRepository_Test
+namespace Fakebook.Posts.UnitTests.PostRepository.Test
 {
     public class PostRepository_CreateTest
     {
@@ -66,7 +64,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
             };
 
             Domain.Models.Post result;
-        
+
             //When
             using (var context = new FakebookPostsContext(options))
             {
@@ -76,7 +74,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository_Test
                 result = await repo.AsQueryable().FirstOrDefaultAsync(
                     p => p.UserEmail == "person@domain.net");
             }
-        
+
             //Then
             Assert.True(result.Content == post.Content);
             Assert.True(result.UserEmail == post.UserEmail);
