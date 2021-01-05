@@ -26,7 +26,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
-        public void IdSetterTest()
+        public void Post_GetId_EqualsSetValue()
         {
 
             //Act
@@ -42,7 +42,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
-        public void ContentSetterTest()
+        public void Post_GetContent_EqualsSetValue()
         {
             //Arrange
 
@@ -58,7 +58,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property picture. Ensures that the model will get and set the picture.
         /// </summary>
         [Fact]
-        public void PictureSetterTest()
+        public void Post_GetPicture_EqualsSetValue()
         {
             //Arrange
 
@@ -75,7 +75,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
-        public void EmailSetterTest()
+        public void Post_GetUserEmail_EqualsSetValue()
         {
             //Arrange
 
@@ -90,7 +90,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
-        public void CreatedDTSetterTest()
+        public void Post_GetCreatedAt_EqualsSetValue()
         {
             //Arrange
 
@@ -107,7 +107,7 @@ namespace Fakebook.Posts.UnitTests.Model.Test
         /// Test the property comments. Ensures that the model will get and set the comment and adds it in the list.
         /// </summary>
         [Fact]
-        public void CommentsSetterTest()
+        public void Post_GetComments_EqualsSetValue()
         {
             //Arrange
 
