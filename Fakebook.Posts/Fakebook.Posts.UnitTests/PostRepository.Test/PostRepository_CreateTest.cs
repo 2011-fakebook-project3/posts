@@ -1,4 +1,5 @@
-﻿using FakebookPosts.DataModel;
+﻿using Fakebook.Posts.DataModel;
+using FakebookPosts.DataModel;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;

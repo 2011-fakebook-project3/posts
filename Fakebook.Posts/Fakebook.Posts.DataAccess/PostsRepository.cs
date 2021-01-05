@@ -1,10 +1,9 @@
-using System;
+using Fakebook.Posts.Domain;
+using FakebookPosts.DataModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Fakebook.Posts.Domain;
-using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.DataModel
 {
