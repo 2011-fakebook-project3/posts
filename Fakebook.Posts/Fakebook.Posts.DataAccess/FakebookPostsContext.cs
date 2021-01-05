@@ -2,7 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FakebookPosts.DataModel
+namespace Fakebook.Posts.DataAccess
 {
     public partial class FakebookPostsContext : DbContext 
     {

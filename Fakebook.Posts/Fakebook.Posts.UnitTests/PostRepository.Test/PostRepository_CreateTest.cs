@@ -1,5 +1,4 @@
-﻿using Fakebook.Posts.DataModel;
-using FakebookPosts.DataModel;
+﻿using Fakebook.Posts.DataAccess;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,11 +22,9 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post
-            {
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net") {
                 Content = "New Content",
-                CreatedAt = DateTime.Now,
-                UserEmail = "person@domain.net"
+                CreatedAt = DateTime.Now
             };
 
             Domain.Models.Post result;
@@ -57,11 +54,9 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post
-            {
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net") {
                 Content = "New Content",
-                CreatedAt = DateTime.Now,
-                UserEmail = "person@domain.net"
+                CreatedAt = DateTime.Now
             };
 
             Domain.Models.Post result;

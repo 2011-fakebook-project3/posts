@@ -1,11 +1,10 @@
 using Fakebook.Posts.Domain;
-using FakebookPosts.DataModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.DataModel
+namespace Fakebook.Posts.DataAccess
 {
     public class PostsRepository : IPostsRepository
     {
@@ -19,15 +18,15 @@ namespace Fakebook.Posts.DataModel
 
         public bool IsReadOnly => false;
 
-        public void Add(Fakebook.Posts.Domain.Models.Post item)
+        public void Add(Domain.Models.Post item)
         {
             throw new System.NotImplementedException();
         }
-        public bool Remove(Fakebook.Posts.Domain.Models.Post item)
+        public bool Remove(Domain.Models.Post item)
         {
             throw new System.NotImplementedException();
         }
-        public ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
+        public ValueTask<Domain.Models.Post> AddAsync(Domain.Models.Post post)
         {
             throw new System.NotImplementedException();
         }
@@ -37,22 +36,22 @@ namespace Fakebook.Posts.DataModel
             throw new System.NotImplementedException();
         }
 
-        public bool Contains(Fakebook.Posts.Domain.Models.Post item)
+        public bool Contains(Domain.Models.Post item)
         {
             throw new System.NotImplementedException();
         }
 
-        public void CopyTo(Fakebook.Posts.Domain.Models.Post[] array, int arrayIndex)
+        public void CopyTo(Domain.Models.Post[] array, int arrayIndex)
         {
             throw new System.NotImplementedException();
         }
 
-        public IAsyncEnumerator<Fakebook.Posts.Domain.Models.Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        public IAsyncEnumerator<Domain.Models.Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }
 
-        public IEnumerator<Fakebook.Posts.Domain.Models.Post> GetEnumerator()
+        public IEnumerator<Domain.Models.Post> GetEnumerator()
         {
             throw new System.NotImplementedException();
         }
