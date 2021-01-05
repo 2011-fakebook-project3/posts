@@ -59,8 +59,6 @@ namespace Fakebook.Posts.UnitTests.Model.Test
             var post = new Post();
             testComment.Post = post;
 
-            testComment.Post = post;
-
             //Assert
             Assert.Equal(post, testComment.Post);
         }
