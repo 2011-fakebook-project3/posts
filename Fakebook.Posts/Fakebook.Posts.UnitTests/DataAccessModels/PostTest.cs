@@ -3,21 +3,22 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
+namespace Fakebook.Posts.UnitTests.DataAccessModels
 {
-    public class PostTest : IDisposable
+    public class PostTest
     {
-        Post testPost;
+        private readonly Post testPost;
+
         public PostTest()
         {
             testPost = new Post();
-
         }
+
         /// <summary>
         /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
-        public void PostTest1()
+        public void Post_GetId_EqualsSetValue()
         {
 
             //Act
@@ -27,11 +28,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(1, testPost.Id);
         }
+
         /// <summary>
         /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
-        public void PostTest2()
+        public void Post_GetContent_EqualsSetValue()
         {
             //Arrange
 
@@ -41,11 +43,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal("Goodman", testPost.Content);
         }
+
         /// <summary>
         /// Test the property picture. Ensures that the model will get and set the picture.
         /// </summary>
         [Fact]
-        public void PostTest3()
+        public void Post_GetPicture_EqualsSetValue()
         {
             //Arrange
 
@@ -55,11 +58,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal("picture", testPost.Picture);
         }
+
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
-        public void PostTest4()
+        public void Post_GetUserEmail_EqualsSetValue()
         {
             //Arrange
 
@@ -69,11 +73,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal("person@domain.net", testPost.UserEmail);
         }
+
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
-        public void PostTest5()
+        public void Post_GetDate_EqualsSetValue()
         {
             //Arrange
 
@@ -84,11 +89,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(date, testPost.CreatedAt);
         }
+
         /// <summary>
         /// Test the property comments. Ensures that the model will get and set the comment and adds it in the list.
         /// </summary>
         [Fact]
-        public void PostTest6()
+        public void Post_GetComments_EqualsSetValue()
         {
             //Arrange
 
@@ -98,13 +104,6 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Assert
             Assert.Equal(comment, testPost.Comments);
-        }
-        /// <summary>
-        /// To provide a mechanism to clean up both managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            testPost = null;
         }
     }
 }

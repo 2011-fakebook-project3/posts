@@ -2,35 +2,35 @@
 using System;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
+namespace Fakebook.Posts.UnitTests.DataAccessModels
 {
-    public class CommentTest : IDisposable
+    public class CommentTest
     {
-        Comment testComment;
+        private readonly Comment testComment;
+
         public CommentTest()
         {
             testComment = new Comment();
-
         }
+
         /// <summary>
         /// Test the property Id. Ensures that the model will get and set the id.
         /// </summary>
         [Fact]
-        public void CommentTest1()
+        public void Comment_GetId_EqualsSetValue()
         {
-
             //Act
             testComment.Id = 1;
-
 
             //Assert
             Assert.Equal(1, testComment.Id);
         }
+
         /// <summary>
         /// Test the property content. Ensures that the model will get and set the content.
         /// </summary>
         [Fact]
-        public void CommentTest2()
+        public void Comment_GetContent_EqualsSetValue()
         {
             //Arrange
 
@@ -40,11 +40,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal("Goodman", testComment.Content);
         }
+
         /// <summary>
         /// Test the property post. Ensures that the model will get and set the post.
         /// </summary>
         [Fact]
-        public void CommentTest3()
+        public void Comment_GetPost_EqualsSetValue()
         {
             //Arrange
 
@@ -55,11 +56,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(post, testComment.Post);
         }
+
         /// <summary>
         /// Test the property email. Ensures that the model will get and set the email.
         /// </summary>
         [Fact]
-        public void CommentTest4()
+        public void Comment_GetUserEmail_EqualsSetValue()
         {
             //Arrange
 
@@ -70,8 +72,11 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             Assert.Equal("person@domain.net", testComment.UserEmail);
         }
 
+        /// <summary>
+        /// Test the property post Id. Ensures that the model will get and set the email.
+        /// </summary>
         [Fact]
-        public void CommentTest5()
+        public void Comment_GetPostId_EqualsSetValue()
         {
             //Arrange
 
@@ -81,11 +86,12 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Assert
             Assert.Equal(1, testComment.PostId);
         }
+
         /// <summary>
         /// Test the property date. Ensures that the model will get and set the date.
         /// </summary>
         [Fact]
-        public void CommentTest6()
+        public void Comment_GetDate_EqualsSetValue()
         {
             //Arrange
 
@@ -95,13 +101,6 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
 
             //Assert
             Assert.Equal(date, testComment.CreatedAt);
-        }
-        /// <summary>
-        /// To provide a mechanism to clean up both managed and unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            testComment = null;
         }
     }
 }
