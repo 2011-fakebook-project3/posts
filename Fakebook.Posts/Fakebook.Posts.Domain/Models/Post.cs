@@ -5,15 +5,17 @@ namespace Fakebook.Posts.Domain.Models
 {
     public class Post
     {
-        public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Content { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Picture { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string UserEmail { get => throw new NotImplementedException(); private set => throw new NotImplementedException(); }
-        public DateTime CreatedAt { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public List<Comment> Comments { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Id { get; set; }
+        public string Content { get; set; }
+        public string Picture { get; set; }
+        public string UserEmail { get; private set; }
+        public DateTime CreatedAt { get; set; }
+        public List<Comment> Comments { get; set; }
 
-        public Post(string userEmail) {
-            if (string.IsNullOrWhiteSpace(userEmail)) {
+        public Post(string userEmail)
+        {
+            if (string.IsNullOrWhiteSpace(userEmail))
+            {
                 throw new ArgumentException("Email cannot be null or whitespace.", nameof(userEmail));
             }
             UserEmail = userEmail;
