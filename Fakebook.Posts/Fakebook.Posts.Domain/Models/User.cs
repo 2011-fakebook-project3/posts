@@ -1,4 +1,4 @@
-﻿namespace Fakebook.Posts.DataAccess.Models
+﻿namespace Fakebook.Posts.Domain.Models
 {
     public class User
     {
