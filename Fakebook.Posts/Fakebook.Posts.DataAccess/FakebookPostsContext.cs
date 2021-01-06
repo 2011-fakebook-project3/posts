@@ -46,6 +46,7 @@ namespace Fakebook.Posts.DataAccess {
 
                 entity.HasOne(e => e.Post)
                       .WithMany(e => e.Comments)
+                      .IsRequired()
                       .HasForeignKey(e => e.PostId)
                       .HasConstraintName("FK_Comment_Post")
                       .OnDelete(DeleteBehavior.Cascade);
