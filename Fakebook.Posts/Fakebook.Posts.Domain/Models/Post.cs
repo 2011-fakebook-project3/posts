@@ -12,13 +12,9 @@ namespace Fakebook.Posts.Domain.Models
         public DateTime CreatedAt { get; set; }
         public List<Comment> Comments { get; set; }
 
-        public Post(string userEmail)
+        public Post(string userEmail, string content)
         {
-            if (string.IsNullOrWhiteSpace(userEmail))
-            {
-                throw new ArgumentException("Email cannot be null or whitespace.", nameof(userEmail));
-            }
-            UserEmail = userEmail;
+            throw new NotImplementedException();
         }
     }
 }
