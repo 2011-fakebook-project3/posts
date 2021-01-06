@@ -4,10 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Fakebook.Posts.DataAccess.Models;
 
 namespace Fakebook.Posts.DataAccess {
-    public partial class FakebookPostsContext : DbContext {
+    public class FakebookPostsContext : DbContext {
+
         public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) { }
+
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
             modelBuilder.Entity<Post>(entity => {
@@ -52,6 +55,13 @@ namespace Fakebook.Posts.DataAccess {
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<User>(entity => {
+
+                entity.ToTable("UserFollows", "Fakebook");
+
+                entity.HasKey(e => new { e.Email, e.FolloweeEmail })
+                      .HasName("PK_UserFollows");
+            });
         }
     }
 }
