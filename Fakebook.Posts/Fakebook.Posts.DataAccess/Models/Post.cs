@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FakebookPosts.DataModel
+namespace Fakebook.Posts.DataModel
 {
     public class Post
     {

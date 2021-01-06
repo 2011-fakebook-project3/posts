@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FakebookPosts.DataModel
+namespace Fakebook.Posts.DataModel
 {
     public class Comment
     {
