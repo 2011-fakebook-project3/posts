@@ -22,7 +22,7 @@ namespace Fakebook.Posts.DataAccess {
 
                 entity.Property(e => e.CreatedAt)
                       .HasColumnType("datetimeoffset")
-                      .HasDefaultValueSql("(getdate())")
+                      .HasDefaultValueSql("NOW()")
                       .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Picture)
@@ -41,7 +41,7 @@ namespace Fakebook.Posts.DataAccess {
 
                 entity.Property(e => e.CreatedAt)
                       .HasColumnType("datetimeoffset")
-                      .HasDefaultValueSql("(getdate())")
+                      .HasDefaultValueSql("NOW()")
                       .ValueGeneratedOnAdd();
 
                 entity.HasOne(e => e.Post)
