@@ -22,7 +22,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post("person@domain.net") {
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
+            {
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
@@ -54,7 +55,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post("person@domain.net") {
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
+            {
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
