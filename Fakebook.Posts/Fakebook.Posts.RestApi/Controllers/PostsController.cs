@@ -11,11 +11,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
     [ApiController]
     public class PostsController : ControllerBase {
 
-        public PostsController(/* IPostsRepository postsRepository */) {
-
+        public PostsController(IPostsRepository postsRepository) {
+            throw new NotImplementedException();
         }
 
-        // [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
             throw new NotImplementedException();
