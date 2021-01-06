@@ -120,5 +120,41 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
         }
+
+        [Fact] 
+        public void DomainUsertoDbUser()
+        {
+            //Arrange
+            var domainUser = new Fakebook.Posts.Domain.Models.User
+            {
+                Email = "user@email.net",
+                FolloweeEmail = "followee@email.net"
+            };
+
+            //Act
+            var dbUser = domainUser.ToDataAccess();
+
+            //Assert
+            Assert.True(domainUser.Email == dbUser.Email);
+            Assert.True(domainUser.FolloweeEmail == domainUser.FolloweeEmail);
+        }
+
+        [Fact]
+        public void DbUsertoDomainUser()
+        {
+            //Arrange
+            var dbUser = new Fakebook.Posts.DataAccess.Models.User
+            {
+                Email = "user@email.net",
+                FolloweeEmail = "followee@email.net"
+            };
+
+            //Act
+            var domainUser = dbUser.ToDomain();
+
+            //Assert
+            Assert.True(dbUser.Email == domainUser.Email);
+            Assert.True(dbUser.FolloweeEmail == domainUser.FolloweeEmail);
+        }
     }
 }
