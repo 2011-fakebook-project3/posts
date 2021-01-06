@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
+using Fakebook.Posts.DataAccess.Models;
 
-namespace Fakebook.Posts.DataModel
+namespace Fakebook.Posts.DataAccess.Mappers
 {
     /// <summary>
     /// Mapper convert from data access layer models to domain models and back

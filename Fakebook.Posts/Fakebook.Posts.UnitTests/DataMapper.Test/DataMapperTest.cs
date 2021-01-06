@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataModel;
 using Fakebook.Posts.Domain;
 using Xunit;
 
@@ -49,17 +48,17 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbPostToDomainPost()
         {
             //Arrange
-            var dbPost = new Fakebook.Posts.DataModel.Post
+            var dbPost = new Fakebook.Posts.DataAccess.Models.Post
             {
 
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataModel.Comment>()
+                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
 
             };
 
-            var dbComent = new Fakebook.Posts.DataModel.Comment
+            var dbComent = new Fakebook.Posts.DataAccess.Models.Comment
             {
                 Content = "Comment Content",
                 Post = dbPost,
@@ -84,13 +83,13 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainCommentToDbComment()
         {
             //Arrange
-            var dbPost = new Fakebook.Posts.DataModel.Post
+            var dbPost = new Fakebook.Posts.DataAccess.Models.Post
             {
                 Id = 0,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataModel.Comment>()
+                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
             };
 
             var domainComment = new Fakebook.Posts.Domain.Models.Comment
@@ -121,7 +120,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Content = "Content",
                 CreatedAt = DateTime.Now
             };
-            var dbComment = new Fakebook.Posts.DataModel.Comment
+            var dbComment = new Fakebook.Posts.DataAccess.Models.Comment
             {
                 Content = "Comment Content",
                 CreatedAt = DateTime.Now,
