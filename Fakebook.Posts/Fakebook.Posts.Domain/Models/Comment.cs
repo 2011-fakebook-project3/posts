@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 
 namespace Fakebook.Posts.Domain.Models {
@@ -7,6 +7,6 @@ namespace Fakebook.Posts.Domain.Models {
         public string Content { get; set; }
         public Post Post { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int UserId { get; set; }
+        public string UserEmail { get; set; }
     }
 }

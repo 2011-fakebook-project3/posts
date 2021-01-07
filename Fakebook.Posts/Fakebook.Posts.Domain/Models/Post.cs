@@ -8,7 +8,7 @@ namespace Fakebook.Posts.Domain.Models {
         public string Content { get; set; }
         public string Picture { get; set; }
         public DateTime CreatedAt { get; set; }
-        public int UserId { get; set; }
+        public string UserEmail { get; set; }
         
         public ICollection<Comment> Comments { get; set; }
 

@@ -1,9 +1,9 @@
-﻿using FakebookPosts.DataModel;
+﻿using Fakebook.Posts.Domain.Models;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
+namespace Fakebook.Posts.UnitTests.Model_Test
 {
     public class PostTest : IDisposable
     {
@@ -54,10 +54,10 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            testPost.UserId = 1;
+            testPost.UserEmail = "person@domain.net";
 
             //Assert
-            Assert.Equal(1, testPost.UserId);
+            Assert.Equal("person@domain.net", testPost.UserEmail);
         }
         [Fact]
         public void PostTest5()
@@ -77,11 +77,11 @@ namespace Fakebook.Posts.UnitTests.DataAccess_Model_Test
             //Arrange
 
             //Act
-            var comment = new List<Comment>();
-            testPost.Comments = comment;
+            var comments = new List<Comment>();
+            testPost.Comments = comments;
 
             //Assert
-            Assert.Equal(comment, testPost.Comments);
+            Assert.Equal(comments, testPost.Comments);
         }
         public void Dispose()
         {

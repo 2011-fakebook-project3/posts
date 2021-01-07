@@ -1,4 +1,4 @@
-﻿using Fakebook.Posts.Domain.Models;
+﻿﻿using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,6 @@ namespace Fakebook.Posts.RestApi.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class PostsController : ControllerBase {
-
         private readonly IPostsRepository _postsRepository;
 
         public PostsController(IPostsRepository postsRepository) {
@@ -23,8 +22,6 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            // var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-            // verify user creating the post here...
             Post created;
             try {
                 created = await _postsRepository.AddAsync(postModel);
@@ -40,6 +37,8 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
+            // var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            // verify user creating the post here...
             throw new NotImplementedException();
         }
     }
