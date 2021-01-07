@@ -10,32 +10,76 @@ namespace Fakebook.Posts.DataAccess.Mappers
     /// </summary>
     public static class DataMapper
     {
-        public static Fakebook.Posts.Domain.Models.Post ToDomain(this Post post)
+        public static Domain.Models.Post ToDomain(this Post post, bool withComments = true)
         {
-            throw new NotImplementedException();
+            Domain.Models.Post domainPost = new (post.UserEmail, post.Content);
+            domainPost.Id = post.Id;
+            domainPost.Picture = post.Picture;
+            domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
+            if (withComments)
+                domainPost.Comments = post.Comments
+                    .Select(c => c.ToDomain(domainPost)).ToHashSet();
+
+            return domainPost;
         }
-        public static Fakebook.Posts.Domain.Models.Comment ToDomain(this Comment comment,
-            Fakebook.Posts.Domain.Models.Post post)
+        public static Domain.Models.Comment ToDomain(this Comment comment,
+            Domain.Models.Post post)
         {
-            throw new NotImplementedException();
+            Domain.Models.Comment domainComment = new (comment.UserEmail, comment.Content);
+            domainComment.Id = comment.Id;
+            domainComment.Post = post;
+            domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
+
+            return domainComment;
         }
 
-        public static Fakebook.Posts.Domain.Models.User ToDomain(this User user)
+        public static Domain.Models.User ToDomain(this User user)
         {
-            throw new NotImplementedException();
+            return new Domain.Models.User
+            {
+                Email = user.Email,
+                FolloweeEmail = user.FolloweeEmail
+            };
         }
 
-        public static Post ToDataAccess(this Fakebook.Posts.Domain.Models.Post post)
+        public static Post ToDataAccess(this Domain.Models.Post post, bool withComments = true)
         {
-            throw new NotImplementedException();
+            Post dbPost = new ();
+
+            dbPost.Id = post.Id;
+            dbPost.UserEmail = post.UserEmail;
+            dbPost.Content = post.Content;
+            dbPost.Picture = post.Picture;
+            dbPost.CreatedAt = post.CreatedAt;
+            if (withComments)
+                dbPost.Comments = post.Comments
+                    .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
+
+            return dbPost;
+            
         }
-        public static Comment ToDataAccess(this Fakebook.Posts.Domain.Models.Comment comment, Post post)
+        public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
         {
-            throw new NotImplementedException();
+            var dbComment = new Comment
+            {
+                Id = comment.Id,
+                UserEmail = comment.UserEmail,
+                PostId = post.Id,
+                Post = post,
+                Content = comment.Content,
+                CreatedAt = comment.CreatedAt
+            };
+
+            return dbComment;
         }
-        public static User ToDataAccess(this Fakebook.Posts.Domain.Models.User user)
+
+        public static User ToDataAccess(this Domain.Models.User user)
         {
-            throw new NotImplementedException();
+            return new User
+            {
+                Email = user.Email,
+                FolloweeEmail = user.FolloweeEmail
+            };
         }
     }
 }
