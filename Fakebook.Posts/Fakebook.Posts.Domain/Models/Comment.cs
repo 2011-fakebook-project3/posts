@@ -12,7 +12,10 @@ namespace Fakebook.Posts.Domain.Models
 
         public Comment(string userEmail, string content)
         {
-            throw new NotImplementedException();
+            if (userEmail == null) throw new ArgumentNullException(nameof(userEmail), "email is required");
+            if (content == null) throw new ArgumentNullException(nameof(content), "content is required");
+            UserEmail = userEmail;
+            Content = content;
         }
     }
 }
