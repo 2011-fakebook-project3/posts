@@ -40,7 +40,7 @@ namespace Fakebook.Posts.RestApi.Controllers {
                 if (email != currentPost.UserEmail) {
                     return Forbid();
                 }
-            } catch (InvalidOperationException e) {
+            } catch (ArgumentException e) {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
             }
@@ -48,7 +48,7 @@ namespace Fakebook.Posts.RestApi.Controllers {
             try {
                 post.Id = id;
                 await _postsRepository.UpdateAsync(post);
-            } catch (InvalidOperationException e) {
+            } catch (ArgumentException e) {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
             } catch (DbUpdateException e) {

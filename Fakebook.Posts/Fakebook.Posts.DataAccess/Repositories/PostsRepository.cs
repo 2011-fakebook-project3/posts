@@ -15,15 +15,19 @@ namespace Fakebook.Posts.DataAccess.Repositories {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Updates the content property of the given post in the database. Db column remains unchanged if property value is null.
+        /// </summary>
+        /// <param name="post">The domain post model containing the updated property values.</param>
+        /// <exception cref="ArgumentException">ArgumentException</exception>
         public async ValueTask UpdateAsync(Domain.Models.Post post) {
             if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current)
             {
                 current.Content = post.Content ?? current.Content;
-                current.Picture = post.Picture ?? current.Picture;
                 // Will throw DbUpdateException if a database constraint is violated.
                 await _context.SaveChangesAsync(); 
             }
-            throw new ArgumentException("Post with given Id not found", $"{post.Id}");
+            throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
         }
     }
 }
