@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using System;
 
@@ -16,12 +16,14 @@ namespace Fakebook.Posts.DataAccess.Repositories {
         }
 
         public async ValueTask UpdateAsync(Domain.Models.Post post) {
-            var current = await _context.Posts.FindAsync(post.Id); // Will throw InvalidOperationException if no matching Id is found in the database.
-
-            current.Content = post.Content ?? current.Content;
-            current.Picture = post.Picture ?? current.Picture;
-
-            _context.SaveChanges(); // Will throw DbUpdateException if a database constraint is violated.
+            if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current)
+            {
+                current.Content = post.Content ?? current.Content;
+                current.Picture = post.Picture ?? current.Picture;
+                // Will throw DbUpdateException if a database constraint is violated.
+                await _context.SaveChangesAsync(); 
+            }
+            throw new ArgumentException("Post with given Id not found", $"{post.Id}");
         }
     }
 }
