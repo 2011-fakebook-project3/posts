@@ -1,7 +1,11 @@
+using Fakebook.Posts.DataAccess;
+using Fakebook.Posts.DataAccess.Repositories;
+using Fakebook.Posts.Domain.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +26,16 @@ namespace Fakebook.Posts.RestApi {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+
+            var connectionString = Configuration.GetConnectionString("default");
+            if (connectionString is null) {
+                throw new InvalidOperationException("No connection string 'defaualt' found.");
+            }
+
+            services.AddDbContext<FakebookPostsContext>(options =>
+            options.UseNpgsql(connectionString));
+
+            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c => {

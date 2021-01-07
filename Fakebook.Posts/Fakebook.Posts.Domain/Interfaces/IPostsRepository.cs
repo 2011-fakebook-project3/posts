@@ -4,6 +4,7 @@ using Fakebook.Posts.Domain.Models;
 namespace Fakebook.Posts.Domain.Interfaces {
 
     public interface IPostsRepository {
-        
+        ValueTask<Post> GetAsync(int id);
+        ValueTask UpdateAsync(Post post);
     }
 }
