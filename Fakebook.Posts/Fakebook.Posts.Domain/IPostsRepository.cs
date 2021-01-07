@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Fakebook.Posts.Domain
 {
-    public interface IPostsRepository
+    public interface IPostsRepository : IAsyncEnumerable<Post>, ICollection<Post>
     {
         ValueTask<Post> AddAsync(Post post);
 

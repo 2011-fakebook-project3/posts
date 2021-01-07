@@ -1,4 +1,5 @@
-﻿using Fakebook.Posts.Domain.Models;
+﻿using Fakebook.Posts.Domain;
+using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,19 +10,23 @@ using System.Threading.Tasks;
 using System.Web.Http.Results;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers {
-    public class PostControllerTest {
+namespace Fakebook.Posts.UnitTests.Controllers
+{
+    public class PostControllerTest
+    {
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Post object results in Status201Created.
         /// </summary>
         [Fact]
-        public async Task PostAsync_ValidPost_Creates() {
+        public async Task PostAsync_ValidPost_Creates()
+        {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
             var comment = new List<Comment>();
             var date = DateTime.Now;
-            var post = new Post("test@email.com", "Goodman") {
+            var post = new Post("test@email.com", "Goodman")
+            {
                 Id = 1,
                 Comments = comment,
                 Picture = "picture",
@@ -53,7 +58,8 @@ namespace Fakebook.Posts.UnitTests.Controllers {
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
         /// </summary>
         [Fact]
-        public async Task PostAsync_InvalidPost_BadRequest() {
+        public async Task PostAsync_InvalidPost_BadRequest()
+        {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
             var post = new Post("", "");
