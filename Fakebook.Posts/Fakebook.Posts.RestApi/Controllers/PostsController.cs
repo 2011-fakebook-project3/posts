@@ -22,18 +22,19 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            // var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            // Get user email from session.
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
             // verify user creating the post here...
-            Post created;
+            if (email != postModel.UserEmail) return Forbid();
             try {
-                created = await _postsRepository.AddAsync(postModel);
-            } catch (ArgumentException e) { // Attempted to create a post with invalid arguments.
+                var created = await _postsRepository.AddAsync(postModel);
+                return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
+            } catch (ArgumentException e) { 
+                // Attempted to create a post with invalid arguments.
                 return BadRequest(e.Message);
             } catch (DbUpdateException e) { // Attempted to create a post which violated database constraints.
                 return BadRequest(e.Message);
             }
-
-            return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
         [HttpGet("{id}")]
