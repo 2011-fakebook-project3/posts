@@ -18,7 +18,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
             if (withComments)
                 domainPost.Comments = post.Comments
-                    .Select(c => c.ToDomain(domainPost)).ToList();
+                    .Select(c => c.ToDomain(domainPost)).ToHashSet();
 
             return domainPost;
         }
@@ -42,7 +42,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             };
         }
 
-        public static Post ToDataAccess(this Domain.Models.Post post)
+        public static Post ToDataAccess(this Domain.Models.Post post, bool withComments = true)
         {
             Post dbPost = new ();
 
@@ -51,7 +51,9 @@ namespace Fakebook.Posts.DataAccess.Mappers
             dbPost.Content = post.Content;
             dbPost.Picture = post.Picture;
             dbPost.CreatedAt = post.CreatedAt;
-            dbPost.Comments = post.Comments.Select(c => c.ToDataAccess(dbPost)).ToList();
+            if (withComments)
+                dbPost.Comments = post.Comments
+                    .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
 
             return dbPost;
             
