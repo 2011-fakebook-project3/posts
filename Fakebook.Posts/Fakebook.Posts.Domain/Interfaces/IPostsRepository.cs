@@ -5,7 +5,7 @@ using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.Domain.Interfaces
 {
-    public interface IPostsRepository 
+    public interface IPostsRepository : IEnumerable<Post>, IAsyncEnumerable<Post>
     {
         ValueTask<Post> AddAsync(Post post);
     }
