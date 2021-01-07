@@ -1,5 +1,5 @@
 ﻿using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain;
+using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using System;
 using System.Collections;

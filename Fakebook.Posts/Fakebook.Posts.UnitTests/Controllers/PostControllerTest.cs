@@ -1,8 +1,9 @@
-﻿using Fakebook.Posts.Domain;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo.Object);
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PostAsync(post);
@@ -67,7 +68,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo.Object);
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PostAsync(post);
