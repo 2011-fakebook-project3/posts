@@ -1,21 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace FakebookPosts.DataModel
+namespace Fakebook.Posts.DataAccess.Models
 {
-    public class Post 
+    public class Post
     {
-        public int Id {get; set;}
-        [Required]
-        public string UserEmail {get; set;}
-        [Required]
-        public string Content {get; set;}
-        [Required]
-        public string Picture {get; set;}
-        
-        public DateTime CreatedAt {get; set;}
-        
-        public virtual ICollection<Comment> Comments {get; set;}
+        public int Id { get; set; }
+        public string UserEmail { get; set; }
+        public string Content { get; set; }
+        public string Picture { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }
