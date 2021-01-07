@@ -1,8 +1,4 @@
 using Fakebook.Posts.Domain;
-using Fakebook.Posts.Domain.Models;
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Fakebook.Posts.DataAccess
@@ -32,44 +28,5 @@ namespace Fakebook.Posts.DataAccess
             throw new System.NotImplementedException();
         }
 
-        public void Clear()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool Contains(Domain.Models.Post item)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void CopyTo(Domain.Models.Post[] array, int arrayIndex)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IAsyncEnumerator<Domain.Models.Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerator<Domain.Models.Post> GetEnumerator()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<Post> GetPostByEmail(string email)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<User> GetUserByEmail(string email)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
