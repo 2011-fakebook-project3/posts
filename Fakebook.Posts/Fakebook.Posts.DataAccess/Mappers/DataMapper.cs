@@ -30,6 +30,16 @@ namespace Fakebook.Posts.DataAccess.Mappers
 
             return domainComment;
         }
+
+        public static Fakebook.Posts.Domain.Models.User ToDomain(this User user)
+        {
+            return new Fakebook.Posts.Domain.Models.User
+            {
+                Email = user.Email,
+                FolloweeEmail = user.FolloweeEmail
+            };
+        }
+
         public static Post ToDataAccess(this Fakebook.Posts.Domain.Models.Post post)
         {
             Post dbPost = new Post();
@@ -57,6 +67,15 @@ namespace Fakebook.Posts.DataAccess.Mappers
             };
 
             return dbComment;
+        }
+
+        public static User ToDataAccess(this Fakebook.Posts.Domain.Models.User user)
+        {
+            return new User
+            {
+                Email = user.Email,
+                FolloweeEmail = user.FolloweeEmail
+            };
         }
     }
 }
