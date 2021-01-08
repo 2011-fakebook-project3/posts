@@ -69,7 +69,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<bool> LikePost(int postId, string userEmail)
+        public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
             try {
                 await _context.PostLikes.AddAsync(new Models.PostLike { PostId = postId, LikerEmail = userEmail });
@@ -80,7 +80,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
         }
 
-        public async Task<bool> UnlikePost(int postId, string userEmail)
+        public async Task<bool> UnlikePostAsync(int postId, string userEmail)
         {
             if (await _context.PostLikes.FindAsync(userEmail, postId) is Models.PostLike like)
             {
@@ -91,7 +91,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return false;
         }
 
-        public async Task<bool> LikeComment(int commentId, string userEmail)
+        public async Task<bool> LikeCommentAsync(int commentId, string userEmail)
         {
             try {
                 await _context.CommentLikes.AddAsync(new Models.CommentLike { CommentId = commentId, LikerEmail = userEmail });
@@ -102,7 +102,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
         }
 
-        public async Task<bool> UnlikeComment(int commentId, string userEmail)
+        public async Task<bool> UnlikeCommentAsync(int commentId, string userEmail)
         {
             if (await _context.CommentLikes.FindAsync(userEmail, commentId) is Models.CommentLike like)
             {
