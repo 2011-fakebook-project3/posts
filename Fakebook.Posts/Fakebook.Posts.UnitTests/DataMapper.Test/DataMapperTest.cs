@@ -125,36 +125,36 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainUsertoDbUser()
         {
             //Arrange
-            var domainUser = new Fakebook.Posts.Domain.Models.User
+            var domainUser = new Fakebook.Posts.Domain.Models.Follow
             {
-                Email = "user@email.net",
-                FolloweeEmail = "followee@email.net"
+                FollowerEmail = "user@email.net",
+                FollowedEmail = "followee@email.net"
             };
 
             //Act
             var dbUser = domainUser.ToDataAccess();
 
             //Assert
-            Assert.True(domainUser.Email == dbUser.Email);
-            Assert.True(domainUser.FolloweeEmail == domainUser.FolloweeEmail);
+            Assert.True(domainUser.FollowerEmail == dbUser.FollowerEmail);
+            Assert.True(domainUser.FollowedEmail == domainUser.FollowedEmail);
         }
 
         [Fact]
         public void DbUsertoDomainUser()
         {
             //Arrange
-            var dbUser = new Fakebook.Posts.DataAccess.Models.User
+            var dbUser = new Fakebook.Posts.DataAccess.Models.Follow
             {
-                Email = "user@email.net",
-                FolloweeEmail = "followee@email.net"
+                FollowerEmail = "user@email.net",
+                FollowedEmail = "followee@email.net"
             };
 
             //Act
             var domainUser = dbUser.ToDomain();
 
             //Assert
-            Assert.True(dbUser.Email == domainUser.Email);
-            Assert.True(dbUser.FolloweeEmail == domainUser.FolloweeEmail);
+            Assert.True(dbUser.FollowerEmail == domainUser.FollowerEmail);
+            Assert.True(dbUser.FollowedEmail == domainUser.FollowedEmail);
         }
     }
 }
