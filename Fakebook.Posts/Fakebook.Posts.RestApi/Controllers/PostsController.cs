@@ -1,11 +1,15 @@
-﻿using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
