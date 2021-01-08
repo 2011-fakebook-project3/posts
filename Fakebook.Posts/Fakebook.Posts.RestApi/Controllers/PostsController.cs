@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
@@ -36,12 +37,12 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> PutAsync(int id, Post post) {
             try {
                 var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var currentPost = await _postsRepository.GetAsync(id);
+                var currentPost = _postsRepository.First(p => p.Id == id);
 
                 if (email != currentPost.UserEmail) {
                     return Forbid();
                 }
-            } catch (ArgumentException e) {
+            } catch (InvalidOperationException e) {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
             }

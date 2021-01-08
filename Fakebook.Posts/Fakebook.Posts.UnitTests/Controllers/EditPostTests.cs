@@ -2,6 +2,7 @@
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
@@ -53,13 +54,10 @@ namespace Fakebook.Posts.UnitTests.Controllers {
 
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("", "");
+            var post = new Post("a", "b");
 
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
-                .Returns(new ValueTask());
-
-            mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Returns(ValueTask.FromResult(post));
+                .Throws(new DbUpdateException());
 
             var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
