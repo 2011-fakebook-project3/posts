@@ -14,10 +14,7 @@ namespace Fakebook.Posts.Domain.Models
 
         public Post(string userEmail, string content)
         {
-            if (userEmail == null) throw new ArgumentNullException(nameof(userEmail), "email is required");
-            if (content == null) throw new ArgumentNullException(nameof(content), "content is required");
-            UserEmail = userEmail;
-            Content = content;
+            throw new NotImplementedException();
         }
     }
 }

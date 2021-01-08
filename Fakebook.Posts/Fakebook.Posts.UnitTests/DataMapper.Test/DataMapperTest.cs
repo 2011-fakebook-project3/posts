@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,10 +15,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainPostToDbPost()
         {
             //Arrange
-            Domain.Models.Post domainPost = new ("person1@domain.net", "Content");
+            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
             domainPost.CreatedAt = DateTime.Now;
 
-            Domain.Models.Comment domainComment = new ("person1@domain.net", "Comment Content");
+            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
             domainComment.Post = domainPost;
             domainComment.CreatedAt = DateTime.Now;
                
@@ -40,17 +40,17 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbPostToDomainPost()
         {
             //Arrange
-            var dbPost = new DataAccess.Models.Post
+            var dbPost = new Fakebook.Posts.DataAccess.Models.Post
             {
 
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<DataAccess.Models.Comment>()
+                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
 
             };
 
-            var dbComent = new DataAccess.Models.Comment
+            var dbComent = new Fakebook.Posts.DataAccess.Models.Comment
             {
                 Content = "Comment Content",
                 Post = dbPost,
@@ -81,10 +81,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<DataAccess.Models.Comment>()
+                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
             };
 
-            Domain.Models.Comment domainComment = new ("person1@domain.net", "Comment Content");
+            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
             domainComment.CreatedAt = DateTime.Now;
 
             //Act
@@ -101,10 +101,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbCommentToDomainComment()
         {
             //Arrange
-            Domain.Models.Post domainPost = new ("person1@domain.net", "Content");
+            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
             domainPost.CreatedAt = DateTime.Now;
 
-            var dbComment = new DataAccess.Models.Comment
+            var dbComment = new Fakebook.Posts.DataAccess.Models.Comment
             {
                 Content = "Comment Content",
                 CreatedAt = DateTime.Now,
@@ -125,36 +125,36 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainUsertoDbUser()
         {
             //Arrange
-            var domainUser = new Domain.Models.User
+            var domainUser = new Fakebook.Posts.Domain.Models.Follow
             {
-                Email = "user@email.net",
-                FolloweeEmail = "followee@email.net"
+                FollowerEmail = "user@email.net",
+                FollowedEmail = "followee@email.net"
             };
 
             //Act
             var dbUser = domainUser.ToDataAccess();
 
             //Assert
-            Assert.True(domainUser.Email == dbUser.Email);
-            Assert.True(domainUser.FolloweeEmail == domainUser.FolloweeEmail);
+            Assert.True(domainUser.FollowerEmail == dbUser.FollowerEmail);
+            Assert.True(domainUser.FollowedEmail == domainUser.FollowedEmail);
         }
 
         [Fact]
         public void DbUsertoDomainUser()
         {
             //Arrange
-            var dbUser = new DataAccess.Models.User
+            var dbUser = new Fakebook.Posts.DataAccess.Models.Follow
             {
-                Email = "user@email.net",
-                FolloweeEmail = "followee@email.net"
+                FollowerEmail = "user@email.net",
+                FollowedEmail = "followee@email.net"
             };
 
             //Act
             var domainUser = dbUser.ToDomain();
 
             //Assert
-            Assert.True(dbUser.Email == domainUser.Email);
-            Assert.True(dbUser.FolloweeEmail == domainUser.FolloweeEmail);
+            Assert.True(dbUser.FollowerEmail == domainUser.FollowerEmail);
+            Assert.True(dbUser.FollowedEmail == domainUser.FollowedEmail);
         }
     }
 }
