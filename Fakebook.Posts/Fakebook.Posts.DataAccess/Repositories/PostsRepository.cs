@@ -118,26 +118,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public void Add(Domain.Models.Post item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Contains(Domain.Models.Post item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CopyTo(Domain.Models.Post[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Remove(Domain.Models.Post item)
-        {
-            throw new NotImplementedException();
-        }
-
         IEnumerator<Domain.Models.Post> IEnumerable<Domain.Models.Post>.GetEnumerator()
         {
             throw new NotImplementedException();
