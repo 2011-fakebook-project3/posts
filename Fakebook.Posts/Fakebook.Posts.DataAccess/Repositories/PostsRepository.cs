@@ -29,10 +29,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public int Count => throw new NotImplementedException();
 
-        public async ValueTask<Domain.Models.Post> GetAsync(int id) {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Updates the content property of the given post in the database. Db column remains unchanged if property value is null.
         /// </summary>
