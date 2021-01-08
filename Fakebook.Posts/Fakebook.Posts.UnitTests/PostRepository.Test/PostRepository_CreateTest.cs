@@ -1,12 +1,12 @@
-﻿using Xunit;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
+
 
 namespace Fakebook.Posts.UnitTests.PostRepository.Test
 {
@@ -23,12 +23,13 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            var post = new Fakebook.Posts.Domain.Models.Post("person@domain.net", "Post Content");
-            post.CreatedAt = DateTime.Now;
-                
-            
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
+            {
+                Content = "New Content",
+                CreatedAt = DateTime.Now
+            };
 
-            Fakebook.Posts.Domain.Models.Post result;
+            Domain.Models.Post result;
 
             //Act
             using (var context = new FakebookPostsContext(options))
@@ -39,6 +40,41 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             }
 
             //Assert
+            Assert.True(result.Content == post.Content);
+            Assert.True(result.UserEmail == post.UserEmail);
+            Assert.True(result.CreatedAt == post.CreatedAt);
+            return true;
+        }
+        [Fact]
+        public async Task<bool> GetPost_GetId_EqualsSetValue()
+        {
+            //Given
+            using var connection = new SqliteConnection("Data Source=:memory:");
+            connection.Open();
+
+            var options = new DbContextOptionsBuilder<FakebookPostsContext>()
+                .UseSqlite(connection)
+                .Options;
+
+            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
+            {
+                Content = "New Content",
+                CreatedAt = DateTime.Now
+            };
+
+            Domain.Models.Post result;
+
+            //When
+            using (var context = new FakebookPostsContext(options))
+            {
+                context.Database.EnsureCreated();
+                context.Add(post);
+                var repo = new PostsRepository(context);
+                result = await repo.AsQueryable().FirstOrDefaultAsync(
+                    p => p.UserEmail == "person@domain.net");
+            }
+
+            //Then
             Assert.True(result.Content == post.Content);
             Assert.True(result.UserEmail == post.UserEmail);
             Assert.True(result.CreatedAt == post.CreatedAt);

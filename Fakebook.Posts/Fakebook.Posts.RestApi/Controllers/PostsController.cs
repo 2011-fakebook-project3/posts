@@ -1,40 +1,57 @@
-﻿﻿using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 
-namespace Fakebook.Posts.RestApi.Controllers {
+
+namespace Fakebook.Posts.RestApi.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase {
+    public class PostsController : ControllerBase
+    {
 
         private readonly IPostsRepository _postsRepository;
+        private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IPostsRepository postsRepository) {
+        public PostsController(IPostsRepository postsRepository, ILogger<PostsController> logger) {
             _postsRepository = postsRepository;
+            _logger = logger;
         }
 
+        /// <summary>
+        /// Adds a new post to the database.
+        /// </summary>
+        /// <param name="postModel">The post object to be added.</param>
+        /// <returns>201Created on successful add, 400BadRequest on failure, 403Forbidden if post UserEmail does not match the email of the session token.</returns>
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            // Get user email from session.
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
-            // verify user creating the post here...
-            if (email != postModel.UserEmail) return Forbid();
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+
+            if (email != postModel.UserEmail) {
+                _logger.LogInformation("Authenticated user email did not match user email of the post.");
+                return Forbid();
+            }
+
+            Post created;
             try {
-                var created = await _postsRepository.AddAsync(postModel);
-                return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
-            } catch (ArgumentException e) { 
-                // Attempted to create a post with invalid arguments.
+                created = await _postsRepository.AddAsync(postModel);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, "Attempted to create a post with invalid arguments.");
                 return BadRequest(e.Message);
-            } catch (DbUpdateException e) { // Attempted to create a post which violated database constraints.
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Attempted to create a post which violated database constraints.");
                 return BadRequest(e.Message);
             }
+            return BadRequest();
         }
 
         [HttpGet("{id}")]

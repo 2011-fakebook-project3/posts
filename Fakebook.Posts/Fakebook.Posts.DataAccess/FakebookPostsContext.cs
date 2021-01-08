@@ -25,7 +25,7 @@ namespace Fakebook.Posts.DataAccess {
                       .IsRequired();
 
                 entity.Property(e => e.CreatedAt)
-                      .HasColumnType("datetimeoffset")
+                      .HasColumnType("timestamp with time zone")
                       .HasDefaultValueSql("NOW()")
                       .ValueGeneratedOnAdd();
 
@@ -44,7 +44,7 @@ namespace Fakebook.Posts.DataAccess {
                       .IsRequired();
 
                 entity.Property(e => e.CreatedAt)
-                      .HasColumnType("datetimeoffset")
+                      .HasColumnType("timestamp with time zone")
                       .HasDefaultValueSql("NOW()")
                       .ValueGeneratedOnAdd();
 
