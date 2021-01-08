@@ -9,11 +9,8 @@ namespace Fakebook.Posts.Domain.Interfaces
     {
         ValueTask<Post> AddAsync(Post post);
 
-<<<<<<< HEAD
     public interface IPostsRepository {
         ValueTask<Post> GetAsync(int id);
         ValueTask UpdateAsync(Post post);
-=======
->>>>>>> b541cf7e9687b37f806a54ec07337faea333667b
     }
 }

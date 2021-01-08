@@ -41,11 +41,12 @@ namespace Fakebook.Posts.DataAccess.Repositories
         public async ValueTask UpdateAsync(Domain.Models.Post post) {
             if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current) {
                 current.Content = post.Content ?? current.Content;
-                
+
                 await _context.SaveChangesAsync(); // Will throw DbUpdateException if a database constraint is violated.
             }
 
             throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
+        }
 
         public bool IsReadOnly => throw new NotImplementedException();
 
