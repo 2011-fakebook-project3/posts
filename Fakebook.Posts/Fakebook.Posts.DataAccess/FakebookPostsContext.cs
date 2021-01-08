@@ -11,6 +11,8 @@ namespace Fakebook.Posts.DataAccess {
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Follow> Follows { get; set; }
+        public virtual DbSet<PostLike> PostLikes { get; set; }
+        public virtual DbSet<CommentLike> CommentLikes { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
@@ -62,6 +64,34 @@ namespace Fakebook.Posts.DataAccess {
 
                 entity.HasKey(e => new { e.FollowerEmail, e.FollowedEmail })
                       .HasName("PK_UserFollows");
+            });
+
+            modelBuilder.Entity<PostLike>(entity => {
+
+                  entity.ToTable("PostLikes", "Fakebook");
+
+                  entity.HasKey(e => new { e.LikerEmail, e.PostId })
+                        .HasName("PK_PostLikes");
+                  
+                  entity.HasOne(e => e.Post)
+                        .WithMany(e  => e.PostLikes)
+                        .HasForeignKey(e => e.PostId)
+                        .HasConstraintName("FK_Like_Post")
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CommentLike>(entity => {
+
+                  entity.ToTable("PostLikes", "Fakebook");
+
+                  entity.HasKey(e => new { e.LikerEmail, e.CommentId })
+                        .HasName("PK_PostLikes");
+                  
+                  entity.HasOne(e => e.Comment)
+                        .WithMany(e  => e.CommentLikes)
+                        .HasForeignKey(e => e.CommentId)
+                        .HasConstraintName("FK_Like_Comment")
+                        .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

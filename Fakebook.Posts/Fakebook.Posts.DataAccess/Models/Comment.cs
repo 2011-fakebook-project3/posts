@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fakebook.Posts.DataAccess.Models
 {
@@ -10,5 +11,6 @@ namespace Fakebook.Posts.DataAccess.Models
         public Post Post { get; set; }
         public string Content { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
+        public virtual ICollection<CommentLike> CommentLikes { get; set; }
     }
 }
