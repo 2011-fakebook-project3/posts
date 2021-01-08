@@ -58,6 +58,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             }
 
             return NoContent();
+        }
 
         /// <summary>
         /// Adds a new post to the database.
