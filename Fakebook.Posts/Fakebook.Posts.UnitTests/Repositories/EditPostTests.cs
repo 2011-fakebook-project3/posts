@@ -25,36 +25,35 @@ namespace Fakebook.Posts.UnitTests.Repositories
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
-            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
-            {
-                Id = 1,
-                Content = "New Content",
-                CreatedAt = DateTime.Now
-            };
-            DataAccess.Models.Post _post = new DataAccess.Models.Post()
-            {
+
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
                 Id = 1,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
-            //Act
+
+            string updatedContent = "updated content";
+
+            Domain.Models.Post updatedPost = new Domain.Models.Post("person@domain.net", updatedContent)
+            {
+                Id = 1
+            };
 
             using var context = new FakebookPostsContext(options);
-
             context.Database.EnsureCreated();
-            context.Posts.Add(_post);
+            context.Posts.Add(insertedPost);
             context.SaveChanges();
-            post.Content = "updateContent";
+
             var repo = new PostsRepository(context);
-            await repo.UpdateAsync(post);
+
+            //Act
+            await repo.UpdateAsync(updatedPost);
+
+            // Assert
             var result = await context.Posts.FirstAsync(p => p.UserEmail == "person@domain.net");
 
-
-            Assert.True(result.Content == post.Content);
-            Assert.True(result.UserEmail == post.UserEmail);
-            Assert.True(result.CreatedAt == post.CreatedAt);
-
+            Assert.Equal(updatedContent, result.Content);
         }
     }
 }

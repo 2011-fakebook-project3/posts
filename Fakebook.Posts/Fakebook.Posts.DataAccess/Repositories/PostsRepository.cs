@@ -43,9 +43,9 @@ namespace Fakebook.Posts.DataAccess.Repositories
                 current.Content = post.Content ?? current.Content;
 
                 await _context.SaveChangesAsync(); // Will throw DbUpdateException if a database constraint is violated.
+            } else {
+                throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
             }
-
-            throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
         }
 
         public bool IsReadOnly => throw new NotImplementedException();
