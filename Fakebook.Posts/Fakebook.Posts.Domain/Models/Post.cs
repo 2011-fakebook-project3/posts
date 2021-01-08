@@ -10,7 +10,7 @@ namespace Fakebook.Posts.Domain.Models
         public string Picture { get; set; }
         public string UserEmail { get; private set; }
         public DateTime CreatedAt { get; set; }
-        public List<Comment> Comments { get; set; }
+        public ICollection<Comment> Comments { get; set; }
 
         public Post(string userEmail, string content)
         {

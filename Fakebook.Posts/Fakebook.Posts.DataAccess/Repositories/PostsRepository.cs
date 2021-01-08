@@ -21,12 +21,12 @@ namespace Fakebook.Posts.DataAccess.Repositories {
         /// <param name="post">The domain post model containing the updated property values.</param>
         /// <exception cref="ArgumentException">ArgumentException</exception>
         public async ValueTask UpdateAsync(Domain.Models.Post post) {
-            if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current)
-            {
+            if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current) {
                 current.Content = post.Content ?? current.Content;
-                // Will throw DbUpdateException if a database constraint is violated.
-                await _context.SaveChangesAsync(); 
+                
+                await _context.SaveChangesAsync(); // Will throw DbUpdateException if a database constraint is violated.
             }
+
             throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
         }
     }
