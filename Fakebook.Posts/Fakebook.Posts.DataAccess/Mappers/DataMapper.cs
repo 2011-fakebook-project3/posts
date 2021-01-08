@@ -10,51 +10,55 @@ namespace Fakebook.Posts.DataAccess.Mappers
     /// </summary>
     public static class DataMapper
     {
-        public static Fakebook.Posts.Domain.Models.Post ToDomain(this Post post)
+        public static Domain.Models.Post ToDomain(this Post post, bool withComments = true)
         {
-            var domainPost = new Fakebook.Posts.Domain.Models.Post(post.UserEmail, post.Content);
+            Domain.Models.Post domainPost = new (post.UserEmail, post.Content);
             domainPost.Id = post.Id;
             domainPost.Picture = post.Picture;
-            domainPost.CreatedAt = post.CreatedAt;
-            domainPost.Comments = post.Comments.Select(c => c.ToDomain(domainPost)).ToList();
+            domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
+            if (withComments)
+                domainPost.Comments = post.Comments
+                    .Select(c => c.ToDomain(domainPost)).ToHashSet();
 
             return domainPost;
         }
-        public static Fakebook.Posts.Domain.Models.Comment ToDomain(this Comment comment,
-            Fakebook.Posts.Domain.Models.Post post)
+        public static Domain.Models.Comment ToDomain(this Comment comment,
+            Domain.Models.Post post)
         {
-            var domainComment = new Fakebook.Posts.Domain.Models.Comment(comment.UserEmail, comment.Content);
+            Domain.Models.Comment domainComment = new (comment.UserEmail, comment.Content);
             domainComment.Id = comment.Id;
             domainComment.Post = post;
-            domainComment.CreatedAt = comment.CreatedAt;
+            domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
 
             return domainComment;
         }
 
-        public static Fakebook.Posts.Domain.Models.User ToDomain(this User user)
+        public static Domain.Models.Follow ToDomain(this Follow user)
         {
-            return new Fakebook.Posts.Domain.Models.User
+            return new Domain.Models.Follow
             {
-                Email = user.Email,
-                FolloweeEmail = user.FolloweeEmail
+                FollowerEmail = user.FollowerEmail,
+                FollowedEmail = user.FollowedEmail
             };
         }
 
-        public static Post ToDataAccess(this Fakebook.Posts.Domain.Models.Post post)
+        public static Post ToDataAccess(this Domain.Models.Post post, bool withComments = true)
         {
-            Post dbPost = new Post();
+            Post dbPost = new ();
 
             dbPost.Id = post.Id;
             dbPost.UserEmail = post.UserEmail;
             dbPost.Content = post.Content;
             dbPost.Picture = post.Picture;
             dbPost.CreatedAt = post.CreatedAt;
-            dbPost.Comments = post.Comments.Select(c => c.ToDataAccess(dbPost)).ToList();
+            if (withComments)
+                dbPost.Comments = post.Comments
+                    .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
 
             return dbPost;
             
         }
-        public static Comment ToDataAccess(this Fakebook.Posts.Domain.Models.Comment comment, Post post)
+        public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
         {
             var dbComment = new Comment
             {
@@ -69,12 +73,12 @@ namespace Fakebook.Posts.DataAccess.Mappers
             return dbComment;
         }
 
-        public static User ToDataAccess(this Fakebook.Posts.Domain.Models.User user)
+        public static Follow ToDataAccess(this Domain.Models.Follow user)
         {
-            return new User
+            return new Follow
             {
-                Email = user.Email,
-                FolloweeEmail = user.FolloweeEmail
+                FollowerEmail = user.FollowerEmail,
+                FollowedEmail = user.FollowedEmail
             };
         }
     }
