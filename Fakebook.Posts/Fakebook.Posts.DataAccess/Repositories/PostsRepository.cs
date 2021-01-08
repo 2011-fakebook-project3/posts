@@ -24,6 +24,21 @@ namespace Fakebook.Posts.DataAccess.Repositories
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
         }
+        public async ValueTask<Fakebook.Posts.Domain.Models.Comment> AddCommentAsync(Fakebook.Posts.Domain.Models.Comment comment)
+        {
+            if (await _context.Posts.FindAsync(comment.Post.Id) is DataAccess.Models.Post post)
+            {
+                var commentDb = comment.ToDataAccess(post);
+                await _context.Comments.AddAsync(commentDb);
+                await _context.SaveChangesAsync();
+                return commentDb.ToDomain(null);
+            }
+            else
+            {
+                throw new ArgumentException("Post Id not found.", nameof(comment.Post.Id));
+            }
+
+        }
         public int Count => throw new NotImplementedException();
 
         public bool IsReadOnly => throw new NotImplementedException();
