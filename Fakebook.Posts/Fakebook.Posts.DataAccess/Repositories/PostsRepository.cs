@@ -91,14 +91,26 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return false;
         }
 
-        public Task<bool> LikeComment(Domain.Models.Comment comment, string userEmail)
+        public async Task<bool> LikeComment(int commentId, string userEmail)
         {
-            throw new NotImplementedException();
+            try {
+                await _context.CommentLikes.AddAsync(new Models.CommentLike { CommentId = commentId, LikerEmail = userEmail });
+                await _context.SaveChangesAsync();
+                return true;
+            } catch {
+                return false;
+            }
         }
 
-        public Task<bool> UnlikeComment(Domain.Models.Comment comment, string userEmail)
+        public async Task<bool> UnlikeComment(int commentId, string userEmail)
         {
-            throw new NotImplementedException();
+            if (await _context.CommentLikes.FindAsync(userEmail, commentId) is Models.CommentLike like)
+            {
+                _context.CommentLikes.Remove(like);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
 
         IAsyncEnumerator<Domain.Models.Post> IAsyncEnumerable<Domain.Models.Post>.GetAsyncEnumerator(CancellationToken cancellationToken)
