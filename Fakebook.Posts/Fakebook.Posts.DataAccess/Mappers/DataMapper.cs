@@ -33,12 +33,12 @@ namespace Fakebook.Posts.DataAccess.Mappers
             return domainComment;
         }
 
-        public static Domain.Models.User ToDomain(this User user)
+        public static Domain.Models.Follow ToDomain(this Follow user)
         {
-            return new Domain.Models.User
+            return new Domain.Models.Follow
             {
-                Email = user.Email,
-                FolloweeEmail = user.FolloweeEmail
+                FollowerEmail = user.FollowerEmail,
+                FollowedEmail = user.FollowedEmail
             };
         }
 
@@ -73,12 +73,12 @@ namespace Fakebook.Posts.DataAccess.Mappers
             return dbComment;
         }
 
-        public static User ToDataAccess(this Domain.Models.User user)
+        public static Follow ToDataAccess(this Domain.Models.Follow user)
         {
-            return new User
+            return new Follow
             {
-                Email = user.Email,
-                FolloweeEmail = user.FolloweeEmail
+                FollowerEmail = user.FollowerEmail,
+                FollowedEmail = user.FollowedEmail
             };
         }
     }
