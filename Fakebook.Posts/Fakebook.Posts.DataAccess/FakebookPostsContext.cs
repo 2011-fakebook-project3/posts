@@ -10,6 +10,7 @@ namespace Fakebook.Posts.DataAccess {
 
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
+        public virtual DbSet<Follow> Follows { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
@@ -55,11 +56,11 @@ namespace Fakebook.Posts.DataAccess {
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<User>(entity => {
+            modelBuilder.Entity<Follow>(entity => {
 
                 entity.ToTable("UserFollows", "Fakebook");
 
-                entity.HasKey(e => new { e.Email, e.FolloweeEmail })
+                entity.HasKey(e => new { e.FollowerEmail, e.FollowedEmail })
                       .HasName("PK_UserFollows");
             });
         }
