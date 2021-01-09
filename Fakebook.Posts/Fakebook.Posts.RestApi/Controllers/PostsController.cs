@@ -30,12 +30,12 @@ namespace Fakebook.Posts.RestApi.Controllers
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
             if (email != postModel.UserEmail) {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
                 return Forbid();
-            }
+            }*/
 
             Post created;
             try {
@@ -54,6 +54,23 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id) {
             throw new NotImplementedException();
+        }
+
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id) {
+            try {
+                await _postsRepository.DeletePostAsync(id);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, $"Found no post entry with id: {id}.");
+                return NotFound(e.Message);
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Tried to remove post which resulted in a violation of a database constraint");
+                return BadRequest(e.Message);
+            }
+
+            return NoContent();
         }
     }
 }
