@@ -1,22 +1,48 @@
-﻿using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.Domain.Interfaces;
+using System.Threading;
+using System.Collections;
+using Fakebook.Posts.DataAccess.Mappers;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
     public class PostsRepository : IPostsRepository
     {
-
         private readonly FakebookPostsContext _context;
         public PostsRepository(FakebookPostsContext context)
         {
             _context = context;
         }
+        public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
+        {
+            var posts = await _context.Posts.FromSqlInterpolated($"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY UserEmail ORDER BY CreatedAt DESC ) AS RowNum FROM Post WHERE UserEmail = {email} OR UserEmail IN ( SELECT FollowedEmail FROM Follow WHERE FollowerEmail = {email} ) ) AS RecentPosts WHERE RowNum <= {count}").ToListAsync();
+            return posts.Select(p => p.ToDomain());
+        }
+/*
+SELECT *
+FROM (
+    SELECT *, 
+    ROW_NUMBER() OVER (
+        PARTITION BY UserEmail 
+        ORDER BY CreatedAt DESC
+    ) AS RowNum
+    FROM Post
+    WHERE UserEmail = @email
+    OR UserEmail IN (
+        SELECT FollowedEmail 
+        FROM Follow 
+        WHERE FollowerEmail = @email
+    )
+) AS RecentPosts
+WHERE RowNum <= 3
+*/
+
         public async ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
         {
             var postDb = post.ToDataAccess();
@@ -24,47 +50,29 @@ namespace Fakebook.Posts.DataAccess.Repositories
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
         }
-        public int Count => throw new NotImplementedException();
 
-        public bool IsReadOnly => throw new NotImplementedException();
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Contains(Post item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CopyTo(Post[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        ///  Returns an enumerator that iterates asynchronously through the collection.
+        /// </summary>
+        /// <param name="cancellationToken">Propagates notification that operations should be canceled.</param>
+        /// <returns>
+        /// An enumerator that can be used to iterate asynchronously through the collection, 
+        /// where Posts do NOT contain their comments 
+        /// </returns>
         public IAsyncEnumerator<Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
+            => _context.Posts.Select(x => x.ToDomain(false)).AsAsyncEnumerable().GetAsyncEnumerator(cancellationToken);
 
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// An enumerator that can be used to iterate through the collection,
+        /// where Posts do NOT contain their comments.
+        /// </returns>
         public IEnumerator<Post> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+            => _context.Posts.Select(x => x.ToDomain(false)).GetEnumerator();
 
-        public bool Remove(Post item)
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Add(Post item)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
