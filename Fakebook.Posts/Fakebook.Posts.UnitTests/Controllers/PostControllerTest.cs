@@ -63,7 +63,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("", "");
+            var post = new Post("test@email.com", "content");
 
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
@@ -76,6 +76,62 @@ namespace Fakebook.Posts.UnitTests.Controllers
             // Assert
             var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
         }
+        /// <summary>
+        /// Tests the PostsController class' PostAsync method. Ensures that a proper Comment object results in Status201Created.
+        /// </summary>
+        [Fact]
+        public async Task PostAsync_ValidComment_Creates()
+        {
+            // Arrange
+            var mockRepo = new Mock<IPostsRepository>();
+            var post = new Post("test@email.com", "content");
+            var date = DateTime.Now;
+            var comment = new Comment("test@email.com", "Goodman")
+            {
+                Id = 1,
+                Post = post,
+                Content = "picture",
+                CreatedAt = date,
+            };
 
+            mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
+                .Returns(ValueTask.FromResult(comment));
+
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
+
+            // Act
+            var actionResult = await controller.PostAsync(1, comment);
+
+
+            // Assert
+            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
+            var model = Assert.IsAssignableFrom<Comment>(result.Value);
+            Assert.Equal(1, model.Id);
+            Assert.Equal("test@email.com", model.UserEmail);
+            Assert.Equal(date, model.CreatedAt);
+            Assert.Equal("picture", model.Content);
+            Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
+        }
+        /// <summary>
+        /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
+        /// </summary>
+        [Fact]
+        public async Task PostAsyncComment_InvalidPost_BadRequest()
+        {
+            // Arrange
+            var mockRepo = new Mock<IPostsRepository>();
+            var comment = new Comment("test@email.com", "content");
+
+            mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
+                .Returns(ValueTask.FromResult(comment));
+
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
+
+            // Act
+            var actionResult = await controller.PostAsync(1, comment);
+
+            // Assert
+            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
+        }
     }
 }
