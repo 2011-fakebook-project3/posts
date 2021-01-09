@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Moq;
 
 
 namespace Fakebook.Posts.UnitTests.PostRepository.Test
@@ -13,9 +14,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
     public class PostRepository_CreateTest
     {
         [Fact]
-        public async Task<bool> CreatePost()
-        {
-            //Arrange
+        public async Task CreatePost() {
+            // Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
 
@@ -31,7 +31,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
 
             Domain.Models.Post result;
 
-            //Act
+            // Act
             using (var context = new FakebookPostsContext(options))
             {
                 context.Database.EnsureCreated();
@@ -39,16 +39,15 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 result = await repo.AddAsync(post);
             }
 
-            //Assert
+            // Assert
             Assert.True(result.Content == post.Content);
             Assert.True(result.UserEmail == post.UserEmail);
             Assert.True(result.CreatedAt == post.CreatedAt);
-            return true;
         }
+
         [Fact]
-        public async Task<bool> GetPost_GetId_EqualsSetValue()
-        {
-            //Given
+        public void GetPost_GetId_EqualsSetValue() {
+            // Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
 
@@ -56,29 +55,27 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
-            {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
+                Id = 1,
+                UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
-            Domain.Models.Post result;
+            using var context = new FakebookPostsContext(options);
+            context.Database.EnsureCreated();
+            context.Posts.Add(insertedPost);
 
-            //When
-            using (var context = new FakebookPostsContext(options))
-            {
-                context.Database.EnsureCreated();
-                context.Add(post);
-                var repo = new PostsRepository(context);
-                result = await repo.AsQueryable().FirstOrDefaultAsync(
-                    p => p.UserEmail == "person@domain.net");
-            }
+            var repo = new PostsRepository(context);
 
-            //Then
-            Assert.True(result.Content == post.Content);
-            Assert.True(result.UserEmail == post.UserEmail);
-            Assert.True(result.CreatedAt == post.CreatedAt);
-            return true;
+            // Act
+            var result = repo.AsQueryable().FirstOrDefault(
+                p => p.Id == 1);
+
+            // Assert
+            Assert.IsAssignableFrom<Domain.Models.Post>(result);
+            Assert.Equal("New Content", result.Content);
+            Assert.Equal("person@domain.net", result.UserEmail);
         }
     }
 }

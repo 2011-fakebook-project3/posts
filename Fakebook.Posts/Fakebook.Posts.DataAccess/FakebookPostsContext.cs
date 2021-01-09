@@ -82,10 +82,10 @@ namespace Fakebook.Posts.DataAccess {
 
             modelBuilder.Entity<CommentLike>(entity => {
 
-                  entity.ToTable("PostLikes", "Fakebook");
+                  entity.ToTable("CommentLikes", "Fakebook");
 
                   entity.HasKey(e => new { e.LikerEmail, e.CommentId })
-                        .HasName("PK_PostLikes");
+                        .HasName("PK_CommentLikes");
                   
                   entity.HasOne(e => e.Comment)
                         .WithMany(e  => e.CommentLikes)
