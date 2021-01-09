@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fakebook.Posts.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.RestApi {
     public class Startup {
@@ -27,6 +29,7 @@ namespace Fakebook.Posts.RestApi {
 
             services.AddScoped(x => new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]));
             services.AddScoped<IBlobService, BlobService>();
+            // services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql());
 
             services.AddControllers();
             services.AddSwaggerGen(c => {

@@ -1,49 +1,59 @@
-﻿using Fakebook.Posts.RestApi.Services;
-using Microsoft.AspNetCore.Http;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.RestApi.Controllers {
+namespace Fakebook.Posts.RestApi.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase {
+    public class PostsController : ControllerBase
+    {
 
-        private readonly IBlobService _blobService;
+        private readonly IPostsRepository _postsRepository;
+        private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IBlobService blobService) {
-            _blobService = blobService;
+        public PostsController(IPostsRepository postsRepository, ILogger<PostsController> logger) {
+            _postsRepository = postsRepository;
+            _logger = logger;
         }
 
-        [HttpPost("UploadPicture"), DisableRequestSizeLimit]
-        public async Task<ActionResult> UploadPicture() {
-            IFormFile file = Request.Form.Files[0];
-            if (file == null) {
-                return BadRequest();
+        /// <summary>
+        /// Adds a new post to the database.
+        /// </summary>
+        /// <param name="postModel">The post object to be added.</param>
+        /// <returns>201Created on successful add, 400BadRequest on failure, 403Forbidden if post UserEmail does not match the email of the session token.</returns>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> PostAsync(Post postModel) {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+
+            if (email != postModel.UserEmail) {
+                _logger.LogInformation("Authenticated user email did not match user email of the post.");
+                return Forbid();
             }
+
+            Post created;
             try {
-                // generate a random guid from the file name
-                string extension = file
-                    .FileName
-                        .Split('.')
-                        .Last();
-
-                string newFileName = $"{Request.Form["userId"]}-{Guid.NewGuid()}.{extension}";
-
-                var result = await _blobService.UploadFileBlobAsync(
-                        "fakebook",
-                        file.OpenReadStream(),
-                        file.ContentType,
-                        newFileName);
-
-                var toReturn = result.AbsoluteUri;
-
-                return Ok(new { path = toReturn });
-            } catch (Exception ex) {
-                Console.WriteLine(ex.Message);
-                throw;
+                created = await _postsRepository.AddAsync(postModel);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, "Attempted to create a post with invalid arguments.");
+                return BadRequest(e.Message);
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Attempted to create a post which violated database constraints.");
+                return BadRequest(e.Message);
             }
+
+            return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAsync(int id) {
+            throw new NotImplementedException();
         }
     }
 }
