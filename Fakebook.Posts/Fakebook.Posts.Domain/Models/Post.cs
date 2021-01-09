@@ -18,6 +18,7 @@ namespace Fakebook.Posts.Domain.Models
             if (string.IsNullOrWhiteSpace(content)) throw new ArgumentException("Post content is required.", nameof(content));
             UserEmail = userEmail;
             Content = content;
+            Comments = new HashSet<Comment>();
         }
     }
 }
