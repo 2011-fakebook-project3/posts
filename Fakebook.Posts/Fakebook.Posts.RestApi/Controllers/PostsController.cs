@@ -19,10 +19,16 @@ namespace Fakebook.Posts.RestApi.Controllers
     {
 
         private readonly IPostsRepository _postsRepository;
+        private readonly IFollowsRepository _followsRepository;
         private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IPostsRepository postsRepository, ILogger<PostsController> logger) {
+        public PostsController(
+            IPostsRepository postsRepository,
+            IFollowsRepository followsRepository, 
+            ILogger<PostsController> logger
+            ) {
             _postsRepository = postsRepository;
+            _followsRepository = followsRepository;
             _logger = logger;
         }
 
@@ -30,7 +36,11 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Adds a new post to the database.
         /// </summary>
         /// <param name="postModel">The post object to be added.</param>
-        /// <returns>201Created on successful add, 400BadRequest on failure, 403Forbidden if post UserEmail does not match the email of the session token.</returns>
+        /// <returns>
+        /// 201Created on successful add, 
+        /// 400BadRequest on failure, 
+        /// 403Forbidden if post UserEmail does not match the email of the session token.
+        /// </returns>
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) 
@@ -62,12 +72,62 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return Ok(post);
             return NotFound();
         }
+        
+        /// <summary>
+        /// Get all the posts by the user making the request.
+        /// Uses the email in the authorization token.
+        /// </summary>
+        /// <returns>
+        /// The 200 Ok responce with the body of a list of posts
+        /// the list can be empty.
+        /// </returns>
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
-            var userPosts = await _postsRepository.Where(x => x.UserEmail == email).AsQueryable().ToListAsync();
+            var userPosts = await _postsRepository
+                .Where(x => x.UserEmail == email)
+                .AsQueryable().ToListAsync();
             return Ok(userPosts);
+        }
+
+        /// <summary>
+        /// Get all the posts by a user by their email.
+        /// </summary>
+        /// <param name="email">The email of the user whos posts are being returned.</param>
+        /// <returns>
+        /// The 200 Ok responce with the body of a list of posts
+        /// the list can be empty.
+        /// </returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(string email)
+            => Ok( await _postsRepository
+                .Where(x => x.UserEmail == email)
+                .AsQueryable().ToListAsync() );
+        
+        /// <summary>
+        /// Fetch the posts for a user's newsfeed baised off the session token.
+        /// A user's newsfeed contains the three most recent posts 
+        /// of the user and the users they follow.
+        /// </summary>
+        /// <returns>
+        /// Ok responce with the top 3 
+        /// </returns>
+        // Route: api/newsfeed
+        [HttpGet("newsfeed")]
+        public async Task<IActionResult> GetNewsfeedAsync()
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var followedUserEmails = _followsRepository.GetFollowedEmails(email);
+            followedUserEmails.Add(email);
+            // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
+            // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
+            var newsfeedPosts = await _postsRepository 
+            .Where(p => followedUserEmails.Contains(p.UserEmail) )
+            .GroupBy(p => p.UserEmail)
+            .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3) )
+            .AsQueryable().ToListAsync();
+            return Ok(newsfeedPosts);
         }
     }
 }
