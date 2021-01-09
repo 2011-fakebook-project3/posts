@@ -3,12 +3,12 @@ using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers
@@ -63,10 +63,10 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("", "");
+            var post = new Post("a", "b");
 
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Returns(ValueTask.FromResult(post));
+                .Throws(new DbUpdateException());
 
             var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
@@ -74,7 +74,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var actionResult = await controller.PostAsync(post);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
+            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
         }
 
     }
