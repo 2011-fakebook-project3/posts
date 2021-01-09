@@ -8,12 +8,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.RestApi.Controllers
-{
-    [Route("api/[controller]")]
+namespace Fakebook.Posts.RestApi.Controllers {
+
+    [Route("api/posts")]
     [ApiController]
-    public class PostsController : ControllerBase
-    {
+    public class PostsController : ControllerBase {
 
         private readonly IPostsRepository _postsRepository;
         private readonly ILogger<PostsController> _logger;
@@ -31,12 +30,12 @@ namespace Fakebook.Posts.RestApi.Controllers
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
             if (email != postModel.UserEmail) {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
                 return Forbid();
-            }
+            }*/
 
             Post created;
             try {
@@ -53,39 +52,10 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Add a new comment to the database. 
-        /// </summary>
-        /// <param name="comment">
-        /// A domain comment. 
-        /// </param>
-        /// <returns>
-        /// The newly created comment
-        /// </returns>
-        [Authorize]
-        [HttpPost("{id}/comments")]
-        public async Task<IActionResult> PostAsync(int id, Comment comment) 
-        {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            if (email != comment.UserEmail) {
-                _logger.LogInformation("Authenticated user email did not match user email of the post.");
-                return Forbid();
-            } try {
-                if (await _postsRepository.AsQueryable().FirstOrDefaultAsync(p => p.Id == id) is Post post)
-                {
-                    comment.Post = post;
-                    var created = await _postsRepository.AddCommentAsync(comment);
-                    return CreatedAtRoute("Get", new { id, commentId = created.Id }, created);
-                }
-                return NotFound();
-            } catch (Exception e) {
-                _logger.LogError(e, "Exception thrown while adding comment");
-                return BadRequest(e.Message);
-            }
-        }
     }
 }

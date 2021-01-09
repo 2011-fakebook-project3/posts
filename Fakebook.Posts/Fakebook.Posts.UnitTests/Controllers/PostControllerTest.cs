@@ -3,12 +3,12 @@ using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers
@@ -74,7 +74,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var actionResult = await controller.PostAsync(post);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
+            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
         }
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Comment object results in Status201Created.
@@ -97,11 +97,10 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Returns(ValueTask.FromResult(comment));
 
-            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
+            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
 
             // Act
-            var actionResult = await controller.PostAsync(1, comment);
-
+            var actionResult = await controller.PostAsync(comment);
 
             // Assert
             var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
@@ -123,15 +122,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var comment = new Comment("test@email.com", "content");
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
-                .Returns(ValueTask.FromResult(comment));
+                .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
+            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
 
             // Act
-            var actionResult = await controller.PostAsync(1, comment);
+            var actionResult = await controller.PostAsync(comment);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
+            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
         }
     }
 }
