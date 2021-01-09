@@ -33,6 +33,15 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
         }
 
+        public async ValueTask DeleteCommentAsync(int id) {
+            if (await _context.Comments.FindAsync(id) is DataAccess.Models.Comment comment) {
+                _context.Remove(comment);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Comment with given id not found.", nameof(id));
+            }
+        }
+
         public int Count => throw new NotImplementedException();
 
         public bool IsReadOnly => throw new NotImplementedException();

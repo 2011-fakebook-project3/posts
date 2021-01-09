@@ -9,5 +9,6 @@ namespace Fakebook.Posts.Domain.Interfaces
     {
         ValueTask<Post> AddAsync(Post post);
         ValueTask DeletePostAsync(int id);
+        ValueTask DeleteCommentAsync(int id);
     }
 }
