@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers {
@@ -62,7 +61,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             var actionResult = await controller.PutAsync(1, post);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestErrorMessageResult>(actionResult);
+            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
         }
     }
 }
