@@ -13,6 +13,39 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
     public class PostRepository_CreateTest
     {
         [Fact]
+        public async Task<bool> CreateComment()
+        {
+            //Arrange
+            using var connection = new SqliteConnection("Data Source=:memory:");
+            connection.Open();
+
+            var options = new DbContextOptionsBuilder<FakebookPostsContext>()
+                .UseSqlite(connection)
+                .Options;
+
+            Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
+            {
+                Content = "New Content",
+                CreatedAt = DateTime.Now
+            };
+
+            Domain.Models.Comment result;
+
+            //Act
+            using (var context = new FakebookPostsContext(options))
+            {
+                context.Database.EnsureCreated();
+                var repo = new PostsRepository(context);
+                result = await repo.AddCommentAsync(comment);
+            }
+
+            //Assert
+            Assert.True(result.Content == comment.Content);
+            Assert.True(result.UserEmail == comment.UserEmail);
+            Assert.True(result.CreatedAt == comment.CreatedAt);
+            return true;
+        }
+        [Fact]
         public async Task<bool> CreatePost()
         {
             //Arrange
@@ -45,6 +78,9 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             Assert.True(result.CreatedAt == post.CreatedAt);
             return true;
         }
+
+
+
         [Fact]
         public async Task<bool> GetPost_GetId_EqualsSetValue()
         {
