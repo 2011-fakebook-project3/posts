@@ -1,11 +1,13 @@
-// using System;
+using System;
 using System.Collections.Generic;
 // using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
@@ -29,14 +31,22 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <param name="email">
         /// The email of the user to follow.
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// NoContent result on success or BadRequest on failure.
+        /// </returns>
+        [Authorize]
         [HttpPut("{email}")]
-        public async Task<IActionResult> PutTModel(string email)
+        public async Task<IActionResult> PutAsync(string email)
         {
-            // TODO: Your code here
-            await Task.Yield();
-
-            return NoContent();
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            try {
+                if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
+                    return NoContent();
+                return BadRequest("The user is already being followed."); 
+            } catch (Exception e) {
+                _logger.LogError(e, "Exception thrown while following a user.");
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -46,8 +56,9 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// The email of the user to unfollow.
         /// </param>
         /// <returns></returns>
+        [Authorize]
         [HttpDelete("{email}")]
-        public async Task<IActionResult> DeleteTModelById(string email)
+        public async Task<IActionResult> DeleteAsync(string email)
         {
             // TODO: Your code here
             await Task.Yield();
