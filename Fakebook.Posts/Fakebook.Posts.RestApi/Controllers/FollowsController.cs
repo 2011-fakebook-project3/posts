@@ -55,15 +55,22 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <param name="email">
         /// The email of the user to unfollow.
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// NoContent on success, BadRequest on Failure.
+        /// </returns>
         [Authorize]
         [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteAsync(string email)
         {
-            // TODO: Your code here
-            await Task.Yield();
-
-            return null;
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            try {
+                if (await _followsRepository.RemoveFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
+                    return NoContent();
+                return BadRequest("The user is not being followed."); 
+            } catch (Exception e) {
+                _logger.LogError(e, "Exception thrown while following a user.");
+                return BadRequest(e.Message);
+            }
         }
     }
 }
