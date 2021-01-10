@@ -42,23 +42,33 @@ namespace Fakebook.Posts.UnitTests.Controllers
         }
 
         [Fact]
-        public void DeleteAsync_OldEmail_NoContent()
+        public async void DeleteAsync_OldEmail_NoContent()
         {
-        //Given
-        
-        //When
-        
-        //Then
+            //Given
+            var mockRepo = new Mock<IFollowsRepository>();
+            var logger = new NullLogger<FollowsController>();
+            mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
+                    .ReturnsAsync(true);
+            var controller = new FollowsController(mockRepo.Object, logger);
+            //When
+            var result = await controller.DeleteAsync(It.IsAny<string>());
+            //Then
+            Assert.IsType<NoContentResult>(result);
         }
 
         [Fact]
-        public void DeleteAsync_NewEmail_BadRequest()
+        public async void DeleteAsync_NewEmail_BadRequest()
         {
-        //Given
-        
-        //When
-        
-        //Then
+            //Given
+            var mockRepo = new Mock<IFollowsRepository>();
+            var logger = new NullLogger<FollowsController>();
+            mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
+                    .ReturnsAsync(false);
+            var controller = new FollowsController(mockRepo.Object, logger);
+            //When
+            var result = await controller.DeleteAsync(It.IsAny<string>());
+            //Then
+            Assert.IsType<BadRequestObjectResult>(result);
         }
     }   
 }
