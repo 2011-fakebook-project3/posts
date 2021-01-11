@@ -90,6 +90,38 @@ namespace Fakebook.Posts.RestApi.Controllers
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
+        [HttpPost("{id}/like")]
+        public async Task<IActionResult> LikePostAsync(int id)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.LikePostAsync(id, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/unlike")]
+        public async Task<IActionResult> UnlikePostAsync(int id)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.UnlikePostAsync(id, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/comments/{commentId}/like")]
+        public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/comments/{commentId}/unlike")]
+        public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();
+            return NotFound();
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id) {
             throw new NotImplementedException();
