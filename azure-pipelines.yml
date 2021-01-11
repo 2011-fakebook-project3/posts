@@ -94,15 +94,79 @@ stages:
         pollingTimeoutSec: '300'
 
 - stage: docker
-  dependsOn: []
   variables:
     imageName: fakebookposts
   jobs:
   - job: build
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
     - task: Docker@2
-      displayName: docker build image
+      displayName: docker build app image
       inputs:
         repository: '$(imageName)'
         command: 'build'
-        Dockerfile: '$(targetSolution)/Dockerfile'
+        Dockerfile: '$(targetSolution)/app.dockerfile'
+    - task: Docker@2
+      displayName: docker build db image
+      continueOnError: true # until it has an actual DB
+      inputs:
+        repository: '$(imageName)-db'
+        command: 'build'
+        Dockerfile: '$(targetSolution)/db.dockerfile'
+  - job: build_push
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    steps:
+    - publish: .kubernetes
+      displayName: publish artifact k8s
+      artifact: k8s
+    - task: Docker@2
+      displayName: docker build-push app image
+      inputs:
+        containerRegistry: 'fakebook-acr'
+        repository: '$(imageName)'
+        command: 'buildAndPush'
+        Dockerfile: '$(targetSolution)/app.dockerfile'
+        tags: |
+          latest
+          $(Build.BuildNumber)
+    - task: Docker@2
+      displayName: docker build-push db image
+      continueOnError: true # until it has an actual DB
+      inputs:
+        containerRegistry: 'fakebook-acr'
+        repository: '$(imageName)-db'
+        command: 'buildAndPush'
+        Dockerfile: '$(targetSolution)/db.dockerfile'
+        tags: |
+          latest
+          $(Build.BuildNumber)
+
+- stage: deploy
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  jobs:
+  - deployment: production
+    environment: production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: kubectl apply
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: 'production-fakebook-default-1610381990554'
+              namespace: 'default'
+              manifests: '$(Pipeline.Workspace)/k8s/**/*'
+
+          - task: Kubernetes@1
+            displayName: kubectl rollout restart
+            inputs:
+              connectionType: 'Kubernetes Service Connection'
+              kubernetesServiceEndpoint: 'production-fakebook-default-1610381990554'
+              namespace: 'default'
+              command: 'rollout'
+              useConfigurationFile: true
+              configuration: '$(Pipeline.Workspace)/k8s/kubernetes_deployments.yaml'
+              arguments: 'restart'
+              secretType: 'dockerRegistry'
+              containerRegistryType: 'Azure Container Registry'
