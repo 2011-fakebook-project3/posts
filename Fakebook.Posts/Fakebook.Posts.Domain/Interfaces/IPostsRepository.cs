@@ -9,5 +9,10 @@ namespace Fakebook.Posts.Domain.Interfaces
     {
         ValueTask<Post> AddAsync(Post post);
         ValueTask<Comment> AddCommentAsync(Comment comment);
+        Task<bool> LikePostAsync(int postId, string userEmail);
+        Task<bool> UnlikePostAsync(int postId, string userEmail);
+        Task<bool> LikeCommentAsync(int commentId, string userEmail);
+        Task<bool> UnlikeCommentAsync(int commentId, string userEmail);
+
     }
 }
