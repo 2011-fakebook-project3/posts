@@ -15,6 +15,7 @@ using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.DataAccess.Repositories;
 using Fakebook.Posts.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Fakebook.Posts.RestApi {
     public class Startup {
@@ -36,6 +37,22 @@ namespace Fakebook.Posts.RestApi {
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
             });
+
+            /*services.AddCors(options => {
+                options.AddDefaultPolicy(
+                    builder => {
+                        builder.WithOrigins("http://localhost:4200")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                    });
+            });*/
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.Authority = "https://dev-2875280.okta.com/oauth2/default";
+                    options.Audience = "api://default";
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +66,10 @@ namespace Fakebook.Posts.RestApi {
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            // app.UseCors();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

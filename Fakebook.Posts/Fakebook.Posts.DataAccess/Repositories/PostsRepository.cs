@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.Domain.Interfaces;
-using System.Threading;
-using System.Collections;
 using Fakebook.Posts.DataAccess.Mappers;
+using Fakebook.Posts.Domain.Interfaces;
+//using Fakebook.Posts.DataAccess.Models;
+using Fakebook.Posts.Domain.Models;
+using System.Threading;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -60,7 +61,7 @@ WHERE RowNum <= 3
         /// where Posts do NOT contain their comments 
         /// </returns>
         public IAsyncEnumerator<Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            => _context.Posts.Select(x => x.ToDomain(false)).AsAsyncEnumerable().GetAsyncEnumerator(cancellationToken);
+            => _context.Posts.Select(x => x.ToDomain()).AsAsyncEnumerable().GetAsyncEnumerator(cancellationToken);
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
@@ -70,9 +71,67 @@ WHERE RowNum <= 3
         /// where Posts do NOT contain their comments.
         /// </returns>
         public IEnumerator<Post> GetEnumerator()
-            => _context.Posts.Select(x => x.ToDomain(false)).GetEnumerator();
+            => _context.Posts.Select(x => x.ToDomain()).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
 
+        public void Add(Post item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> LikePostAsync(int postId, string userEmail)
+        {
+            try {
+                await _context.PostLikes.AddAsync(new Models.PostLike { PostId = postId, LikerEmail = userEmail });
+                await _context.SaveChangesAsync();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        public async Task<bool> UnlikePostAsync(int postId, string userEmail)
+        {
+            if (await _context.PostLikes.FindAsync(userEmail, postId) is Models.PostLike like)
+            {
+                _context.PostLikes.Remove(like);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> LikeCommentAsync(int commentId, string userEmail)
+        {
+            try {
+                await _context.CommentLikes.AddAsync(new Models.CommentLike { CommentId = commentId, LikerEmail = userEmail });
+                await _context.SaveChangesAsync();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        public async Task<bool> UnlikeCommentAsync(int commentId, string userEmail)
+        {
+            if (await _context.CommentLikes.FindAsync(userEmail, commentId) is Models.CommentLike like)
+            {
+                _context.CommentLikes.Remove(like);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        IAsyncEnumerator<Domain.Models.Post> IAsyncEnumerable<Domain.Models.Post>.GetAsyncEnumerator(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator<Domain.Models.Post> IEnumerable<Domain.Models.Post>.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

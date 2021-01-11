@@ -13,5 +13,6 @@ namespace Fakebook.Posts.DataAccess.Models
         public DateTimeOffset CreatedAt { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<PostLike> PostLikes { get; set; }
     }
 }
