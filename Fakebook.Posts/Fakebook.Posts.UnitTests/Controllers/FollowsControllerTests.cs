@@ -15,6 +15,47 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PostAsync_NewEmail_NoContent()
         {
             //Given
+            var myFollow = new Follow
+            {
+                FollowedEmail = It.IsAny<string>(),
+                FollowerEmail = It.IsAny<string>()
+            };
+            
+            var mockRepo = new Mock<IFollowsRepository>();
+            var logger = new NullLogger<FollowsController>();
+            mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
+                    .ReturnsAsync(true);
+            var controller = new FollowsController(mockRepo.Object, logger);
+            //When
+            var result = await controller.PostAsync(myFollow);
+            //Then
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async void PostAsync_OldEmail_BadRequest()
+        {
+            //Given
+            var myFollow = new Follow
+            {
+                FollowedEmail = It.IsAny<string>(),
+                FollowerEmail = It.IsAny<string>()
+            };
+            var mockRepo = new Mock<IFollowsRepository>();
+            var logger = new NullLogger<FollowsController>();
+            mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
+                    .ReturnsAsync(false);
+            var controller = new FollowsController(mockRepo.Object, logger);
+            //When
+            var result = await controller.PostAsync(myFollow);
+            //Then
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async void PutAsync_NewEmail_NoContent()
+        {
+            //Given
             var mockRepo = new Mock<IFollowsRepository>();
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
@@ -27,7 +68,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
         }
 
         [Fact]
-        public async void PostAsync_OldEmail_BadRequest()
+        public async void PutAsync_OldEmail_BadRequest()
         {
             //Given
             var mockRepo = new Mock<IFollowsRepository>();

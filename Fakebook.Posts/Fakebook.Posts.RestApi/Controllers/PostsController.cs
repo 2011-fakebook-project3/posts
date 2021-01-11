@@ -99,7 +99,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// The 200 Ok responce with the body of a list of posts
         /// the list can be empty.
         /// </returns>
-        [HttpGet]
+        [HttpGet("Email")]
         public async Task<IActionResult> GetAsync(string email)
             => Ok( await _postsRepository
                 .Where(x => x.UserEmail == email)
