@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
-
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 
@@ -45,12 +43,12 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) 
         {
-            // Get user email from session.
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
             if (email != postModel.UserEmail) {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
                 return Forbid();
-            }
+            }*/
+
             try {
                 var created = await _postsRepository.AddAsync(postModel);
                 return CreatedAtRoute("Get", new { id = created.Id }, created);
