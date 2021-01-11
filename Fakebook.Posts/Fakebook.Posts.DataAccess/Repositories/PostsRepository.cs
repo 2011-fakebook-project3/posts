@@ -16,8 +16,8 @@ namespace Fakebook.Posts.DataAccess.Repositories
     public class PostsRepository : IPostsRepository
     {
         private readonly FakebookPostsContext _context;
-        public PostsRepository(FakebookPostsContext context)
-        {
+
+        public PostsRepository(FakebookPostsContext context) {
             _context = context;
         }
         public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
@@ -52,6 +52,24 @@ WHERE RowNum <= 3
             return postDb.ToDomain();
         }
 
+        public async ValueTask DeletePostAsync(int id) {
+            if (await _context.Posts.FindAsync(id) is DataAccess.Models.Post post) {
+                _context.Remove(post);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Post with given id not found.", nameof(id));
+            }
+        }
+
+        public async ValueTask DeleteCommentAsync(int id) {
+            if (await _context.Comments.FindAsync(id) is DataAccess.Models.Comment comment) {
+                _context.Remove(comment);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Comment with given id not found.", nameof(id));
+            }
+        }
+
         /// <summary>
         ///  Returns an enumerator that iterates asynchronously through the collection.
         /// </summary>
@@ -74,11 +92,6 @@ WHERE RowNum <= 3
             => _context.Posts.Select(x => x.ToDomain()).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
-
-        public void Add(Post item)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
