@@ -1,5 +1,3 @@
-using Fakebook.Posts.Domain;
-using FakebookPosts.DataModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -13,9 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.DataAccess.Repositories;
 
 namespace Fakebook.Posts.RestApi {
     public class Startup {
