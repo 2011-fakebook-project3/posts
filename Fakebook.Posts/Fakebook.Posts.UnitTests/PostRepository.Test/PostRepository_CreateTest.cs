@@ -14,7 +14,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
     public class PostRepository_CreateTest
     {
         [Fact]
-        public void CreateComment()
+        public async void CreateComment()
         {
             //Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
@@ -46,7 +46,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             Assert.True(result.CreatedAt == comment.CreatedAt);
         }
         [Fact]
-        public void CreatePost()
+        public async void CreatePost()
         {
             //Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
