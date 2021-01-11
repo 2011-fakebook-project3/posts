@@ -8,9 +8,9 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Fakebook.Posts.RestApi.Controllers
-{
-    [Route("api/[controller]")]
+namespace Fakebook.Posts.RestApi.Controllers {
+
+    [Route("api/posts")]
     [ApiController]
     public class PostsController : ControllerBase {
 
@@ -125,6 +125,42 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id) {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deletes the post resource with the given id.
+        /// </summary>
+        /// <param name="id">Id of the post to be deleted</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204NoContent on success,
+        /// 400BadRequest on delete failure,
+        /// 404NotFound if the Id did not match an existing post,
+        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id) {
+            /*try {
+                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+                var postEmail = _postsRepository.First(p => p.Id == id).UserEmail;
+                if (sessionEmail != postEmail) {
+                    return Forbid();
+                }
+            } catch (InvalidOperationException e) {
+                _logger.LogInformation(e, $"Found no post entry with Id: {id}.");
+                return NotFound(e.Message);
+            }*/
+
+            try {
+                await _postsRepository.DeletePostAsync(id);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, $"Found no post entry with id: {id}.");
+                return NotFound(e.Message);
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Tried to remove post which resulted in a violation of a database constraint");
+                return BadRequest(e.Message);
+            }
+
+            return NoContent();
         }
     }
 }
