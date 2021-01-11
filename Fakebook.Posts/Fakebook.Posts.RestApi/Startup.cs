@@ -11,10 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.DataAccess.Repositories;
+using Fakebook.Posts.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Fakebook.Posts.RestApi {
     public class Startup {

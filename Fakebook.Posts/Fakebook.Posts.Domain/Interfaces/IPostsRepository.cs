@@ -1,11 +1,11 @@
-﻿using Fakebook.Posts.Domain.Models;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.Domain.Interfaces
 {
-
-    public interface IPostsRepository : IAsyncEnumerable<Post>, ICollection<Post>
+    public interface IPostsRepository : IEnumerable<Post>, IAsyncEnumerable<Post>
     {
         ValueTask<Post> AddAsync(Post post);
         Task<bool> LikePostAsync(int postId, string userEmail);
