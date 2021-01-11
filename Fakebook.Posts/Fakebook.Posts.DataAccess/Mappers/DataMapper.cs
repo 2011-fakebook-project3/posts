@@ -10,18 +10,19 @@ namespace Fakebook.Posts.DataAccess.Mappers
     /// </summary>
     public static class DataMapper
     {
-        public static Domain.Models.Post ToDomain(this Post post, bool withComments = true)
+        public static Domain.Models.Post ToDomain(this Post post)
         {
             Domain.Models.Post domainPost = new (post.UserEmail, post.Content);
             domainPost.Id = post.Id;
             domainPost.Picture = post.Picture;
             domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
-            if (withComments)
+            if (post.Comments is not null)
                 domainPost.Comments = post.Comments
                     .Select(c => c.ToDomain(domainPost)).ToHashSet();
 
             return domainPost;
         }
+
         public static Domain.Models.Comment ToDomain(this Comment comment,
             Domain.Models.Post post)
         {
@@ -42,7 +43,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             };
         }
 
-        public static Post ToDataAccess(this Domain.Models.Post post, bool withComments = true)
+        public static Post ToDataAccess(this Domain.Models.Post post)
         {
             Post dbPost = new ();
 
@@ -51,7 +52,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             dbPost.Content = post.Content;
             dbPost.Picture = post.Picture;
             dbPost.CreatedAt = post.CreatedAt;
-            if (withComments)
+            if (post.Comments is not null)
                 dbPost.Comments = post.Comments
                     .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
 
