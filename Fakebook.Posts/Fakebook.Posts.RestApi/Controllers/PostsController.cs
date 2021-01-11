@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
-
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 
@@ -61,6 +59,38 @@ namespace Fakebook.Posts.RestApi.Controllers
                 _logger.LogInformation(e, "Attempted to create a post which violated database constraints.");
                 return BadRequest(e.Message);
             }
+        }
+
+        [HttpPost("{id}/like")]
+        public async Task<IActionResult> LikePostAsync(int id)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.LikePostAsync(id, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/unlike")]
+        public async Task<IActionResult> UnlikePostAsync(int id)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.UnlikePostAsync(id, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/comments/{commentId}/like")]
+        public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
+            return NotFound();
+        }
+
+        [HttpPost("{id}/comments/{commentId}/unlike")]
+        public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();
+            return NotFound();
         }
 
         [HttpGet("{id}")]
