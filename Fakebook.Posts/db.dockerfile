@@ -19,7 +19,7 @@ COPY . ./
 # generate SQL script from migrations
 RUN dotnet ef migrations script -p Fakebook.Posts.DataAccess -s Fakebook.Posts.RestApi -o ../init-db.sql -i
 
-FROM postgres:13.0 AS runtime
+FROM postgres:13.1-alpine AS runtime
 
 WORKDIR /docker-entrypoint-initdb.d
 
