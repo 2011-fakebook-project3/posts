@@ -51,6 +51,21 @@ WHERE RowNum <= 3
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
         }
+        public async ValueTask<Fakebook.Posts.Domain.Models.Comment> AddCommentAsync(Fakebook.Posts.Domain.Models.Comment comment)
+        {
+            if (await _context.Posts.FindAsync(comment.Post.Id) is DataAccess.Models.Post post)
+            {
+                var commentDb = comment.ToDataAccess(post);
+                await _context.Comments.AddAsync(commentDb);
+                await _context.SaveChangesAsync();
+                return commentDb.ToDomain(null);
+            }
+            else
+            {
+                throw new ArgumentException("Post Id not found.", nameof(comment.Post.Id));
+            }
+
+        }
 
         public async ValueTask DeletePostAsync(int id) {
             if (await _context.Posts.FindAsync(id) is DataAccess.Models.Post post) {
