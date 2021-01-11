@@ -11,21 +11,39 @@ using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
-    public class PostsRepository : IPostsRepository
-    {
+    public class PostsRepository : IPostsRepository {
 
         private readonly FakebookPostsContext _context;
-        public PostsRepository(FakebookPostsContext context)
-        {
+
+        public PostsRepository(FakebookPostsContext context) {
             _context = context;
         }
-        public async ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
-        {
+
+        public async ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post) {
             var postDb = post.ToDataAccess();
             await _context.Posts.AddAsync(postDb);
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
         }
+
+        public async ValueTask DeletePostAsync(int id) {
+            if (await _context.Posts.FindAsync(id) is DataAccess.Models.Post post) {
+                _context.Remove(post);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Post with given id not found.", nameof(id));
+            }
+        }
+
+        public async ValueTask DeleteCommentAsync(int id) {
+            if (await _context.Comments.FindAsync(id) is DataAccess.Models.Comment comment) {
+                _context.Remove(comment);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Comment with given id not found.", nameof(id));
+            }
+        }
+
         public int Count => throw new NotImplementedException();
 
         public bool IsReadOnly => throw new NotImplementedException();
