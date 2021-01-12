@@ -104,22 +104,19 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
+            var domainModelPost = new Domain.Models.Post("person@domain.net", "New Content")
+            {
                 Id = 1,
-                UserEmail = "person@domain.net",
-                Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
             using var context = new FakebookPostsContext(options);
             context.Database.EnsureCreated();
-            context.Posts.Add(insertedPost);
-
             var repo = new PostsRepository(context);
+            var extraVar = repo.AddAsync(domainModelPost);
 
             // Act
-            var result = repo.AsQueryable().FirstOrDefault(
-                p => p.Id == 1);
+            var result = repo.Where(p => p.Id == 1).FirstOrDefault();
 
             // Assert
             Assert.IsAssignableFrom<Domain.Models.Post>(result);
