@@ -58,6 +58,9 @@ spec:
       containers:
       - name: db
         image: fakebook.azurecr.io/fakebookposts-db:latest
+        env:
+        - name: POSTGRES_PASSWORD
+          value: Pass@word
         ports:
         - containerPort: 5432
         volumeMounts:
