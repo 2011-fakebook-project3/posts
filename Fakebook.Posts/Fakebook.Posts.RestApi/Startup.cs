@@ -29,20 +29,17 @@ namespace Fakebook.Posts.RestApi {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-
-            var connectionString = Configuration.GetConnectionString("default");
-            if (connectionString is null) {
-                throw new InvalidOperationException("No connection string 'defaualt' found.");
-            }
-
-            services.AddDbContext<FakebookPostsContext>(options =>
-            options.UseNpgsql(connectionString));
+            // setup Postgres database
+            if (Configuration["ConnectionString:default"] is string connectionString) 
+                services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
+            else throw new NullReferenceException("No connection string 'defaualt' found.");
+            // setup Azure Blobs Service 
+            services.AddTransient<IBlobService, BlobService>(sp => 
+                new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
+            );
 
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<IFollowsRepository, FollowsRepository>();
-            services.AddScoped<BlobServiceClient>(x =>
-                new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]));
-            services.AddScoped<IBlobService, BlobService>();
             
             services.AddControllers();
 

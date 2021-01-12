@@ -29,7 +29,7 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionStrings__default
+        - name: ConnectionString__default
           value: 'Host=fakebook-posts-db;Database=postgres;Username=postgres;Password=Pass@word'
         envFrom:
         - secretRef:
