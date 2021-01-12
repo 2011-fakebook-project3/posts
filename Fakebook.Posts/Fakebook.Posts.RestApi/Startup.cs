@@ -1,9 +1,13 @@
+using Fakebook.Posts.DataAccess;
+using Fakebook.Posts.DataAccess.Repositories;
+using Fakebook.Posts.Domain.Interfaces;
 using Azure.Storage.Blobs;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,8 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataAccess;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Fakebook.Posts.RestApi {
@@ -27,12 +29,20 @@ namespace Fakebook.Posts.RestApi {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+            // setup Postgres database
+            if (Configuration["ConnectionString:default"] is string connectionString) 
+                services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
+            else throw new NullReferenceException("No connection string 'default' found.");
+            // setup Azure Blobs Service 
+            services.AddTransient<IBlobService, BlobService>(sp => 
+                new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
+            );
 
-            services.AddScoped(x => new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]));
-            services.AddScoped<IBlobService, BlobService>();
-            // services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql());
-
+            services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<IFollowsRepository, FollowsRepository>();
+            
             services.AddControllers();
+
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
             });
