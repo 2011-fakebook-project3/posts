@@ -17,7 +17,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-
 namespace Fakebook.Posts.RestApi {
     public class Startup {
         public Startup(IConfiguration configuration) {
