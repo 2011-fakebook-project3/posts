@@ -53,8 +53,7 @@ WHERE RowNum <= 3
         }
         public async ValueTask<Fakebook.Posts.Domain.Models.Comment> AddCommentAsync(Fakebook.Posts.Domain.Models.Comment comment)
         {
-            var post = await _context.Posts.FindAsync(comment.Post.Id);
-            if (post != null)
+            if (await _context.Posts.FindAsync(comment.Post.Id) is DataAccess.Models.Post post)
             {
                 var commentDb = comment.ToDataAccess(post);
                 await _context.Comments.AddAsync(commentDb);
