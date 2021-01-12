@@ -55,6 +55,8 @@ spec:
     matchLabels:
       app: fakebook-posts
       role: db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
