@@ -66,7 +66,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var post = new Post("test@email.com", "content");
 
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Returns(ValueTask.FromResult(post));
+                .Throws(new DbUpdateException());
 
             var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
