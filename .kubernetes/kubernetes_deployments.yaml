@@ -31,6 +31,9 @@ spec:
         env:
         - name: ConnectionStrings__Default
           value: 'Host=fakebook-posts-db;Database=postgres;Username=postgres;Password=Pass@word'
+        envFrom:
+        - secretRef:
+          name: fakebook-posts-config
         resources:
           limits:
             cpu: 500m
