@@ -28,7 +28,7 @@ namespace Fakebook.Posts.RestApi {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
-            var connectionString = Configuration["ConnectionStrings:default"];
+            var connectionString = Configuration["FakebookPosts:ConnectionString"];
             if (connectionString is null) {
                 throw new InvalidOperationException("No connection string 'default' found.");
             }
