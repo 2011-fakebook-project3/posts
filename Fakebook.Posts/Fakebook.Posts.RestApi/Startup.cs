@@ -1,6 +1,8 @@
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Fakebook.Posts.Domain.Interfaces;
+using Azure.Storage.Blobs;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,10 +39,11 @@ namespace Fakebook.Posts.RestApi {
             options.UseNpgsql(connectionString));
 
             services.AddScoped<IPostsRepository, PostsRepository>();
-
+            services.AddScoped<IFollowsRepository, FollowsRepository>();
+            services.AddScoped<IBlobService, BlobService>(x => 
+                new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]));
+            
             services.AddControllers();
-
-            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
