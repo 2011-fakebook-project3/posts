@@ -40,8 +40,9 @@ namespace Fakebook.Posts.RestApi {
 
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<IFollowsRepository, FollowsRepository>();
-            services.AddScoped<IBlobService, BlobService>(x => 
+            services.AddScoped<BlobServiceClient>(x =>
                 new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]));
+            services.AddScoped<IBlobService, BlobService>();
             
             services.AddControllers();
 
