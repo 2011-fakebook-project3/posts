@@ -28,10 +28,9 @@ namespace Fakebook.Posts.RestApi {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
-            var connectionString = Configuration["ConnectionStrings:default"];
-            if (connectionString is null) {
-                throw new InvalidOperationException("No connection string 'default' found.");
-            }
+            if (Configuration["ConnectionString:default"] is string connectionString) 
+                services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
+            else throw new NullReferenceException("No connection string 'default' found.");
 
             services.AddDbContext<FakebookPostsContext>(options =>
             options.UseNpgsql(connectionString));
