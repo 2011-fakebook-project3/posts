@@ -24,23 +24,9 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            var dataAccessPost = new DataAccess.Models.Post()
-            {
-                Id = 1,
-                UserEmail = "person@domain.net",
-                Content = "post content",
-                CreatedAt = DateTime.Now
-            };
-
-            var domainModelPost = new Domain.Models.Post("person@domain.net", "post content")
-            {
-                Id = 1,
-                CreatedAt = DateTime.Now
-            };
-
             Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
             {
-                Post = domainModelPost,
+                Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
@@ -50,7 +36,6 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             using (var context = new FakebookPostsContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Posts.Add(dataAccessPost);
                 var repo = new PostsRepository(context);
                 result = await repo.AddCommentAsync(comment);
             }
@@ -103,19 +88,22 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            var domainModelPost = new Domain.Models.Post("person@domain.net", "New Content")
-            {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
                 Id = 1,
+                UserEmail = "person@domain.net",
+                Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
             using var context = new FakebookPostsContext(options);
             context.Database.EnsureCreated();
+            context.Posts.Add(insertedPost);
+
             var repo = new PostsRepository(context);
-            var extraVar = repo.AddAsync(domainModelPost);
 
             // Act
-            var result = repo.Where(p => p.Id == 1).FirstOrDefault();
+            var result = repo.AsQueryable().FirstOrDefault(
+                p => p.Id == 1);
 
             // Assert
             Assert.IsAssignableFrom<Domain.Models.Post>(result);

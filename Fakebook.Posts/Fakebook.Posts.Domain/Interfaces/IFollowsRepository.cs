@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.Domain.Interfaces
 {
@@ -8,7 +6,5 @@ namespace Fakebook.Posts.Domain.Interfaces
     {
         ISet<string> GetFollowedEmails(string followerEmail);
         ISet<string> GetFollowerEmails(string followedEmail);
-        Task<bool> AddFollowAsync(Follow userFollow);
-        Task<bool> RemoveFollowAsync(Follow userFollow);
     }
 }

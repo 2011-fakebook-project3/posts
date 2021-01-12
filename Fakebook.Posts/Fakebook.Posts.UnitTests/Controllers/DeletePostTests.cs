@@ -27,7 +27,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.DeleteAsync(1);
@@ -48,7 +48,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.DeleteAsync(1);
