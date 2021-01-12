@@ -32,7 +32,7 @@ namespace Fakebook.Posts.RestApi {
             // setup Postgres database
             if (Configuration["ConnectionString:default"] is string connectionString) 
                 services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
-            else throw new NullReferenceException("No connection string 'defaualt' found.");
+            else throw new NullReferenceException("No connection string 'default' found.");
             // setup Azure Blobs Service 
             services.AddTransient<IBlobService, BlobService>(sp => 
                 new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
