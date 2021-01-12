@@ -44,7 +44,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
 
             // Assert
-            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
+            var result = Assert.IsAssignableFrom<CreatedAtRouteResult>(actionResult);
             var model = Assert.IsAssignableFrom<Post>(result.Value);
             Assert.Equal(1, model.Id);
             Assert.Equal("test@email.com", model.UserEmail);
