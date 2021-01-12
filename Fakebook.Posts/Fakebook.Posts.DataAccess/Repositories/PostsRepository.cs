@@ -1,23 +1,23 @@
-﻿using System;
+using Fakebook.Posts.DataAccess.Mappers;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain.Interfaces;
 //using Fakebook.Posts.DataAccess.Models;
-using Fakebook.Posts.Domain.Models;
-using System.Threading;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
     public class PostsRepository : IPostsRepository
     {
         private readonly FakebookPostsContext _context;
-        public PostsRepository(FakebookPostsContext context)
-        {
+
+        public PostsRepository(FakebookPostsContext context) {
             _context = context;
         }
         public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
@@ -51,6 +51,54 @@ WHERE RowNum <= 3
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
         }
+        public async ValueTask<Fakebook.Posts.Domain.Models.Comment> AddCommentAsync(Fakebook.Posts.Domain.Models.Comment comment)
+        {
+            if (await _context.Posts.FindAsync(comment.Post.Id) is DataAccess.Models.Post post)
+            {
+                var commentDb = comment.ToDataAccess(post);
+                await _context.Comments.AddAsync(commentDb);
+                await _context.SaveChangesAsync();
+                return commentDb.ToDomain(null);
+            }
+            else
+            {
+                throw new ArgumentException("Post Id not found.", nameof(comment.Post.Id));
+            }
+
+        }
+
+        public async ValueTask DeletePostAsync(int id) {
+            if (await _context.Posts.FindAsync(id) is DataAccess.Models.Post post) {
+                _context.Remove(post);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Post with given id not found.", nameof(id));
+            }
+        }
+
+        public async ValueTask DeleteCommentAsync(int id) {
+            if (await _context.Comments.FindAsync(id) is DataAccess.Models.Comment comment) {
+                _context.Remove(comment);
+                await _context.SaveChangesAsync();
+            } else {
+                throw new ArgumentException("Comment with given id not found.", nameof(id));
+            }
+        }
+
+        /// <summary>
+        /// Updates the content property of the given post in the database. Db column remains unchanged if property value is null.
+        /// </summary>
+        /// <param name="post">The domain post model containing the updated property values.</param>
+        /// <exception cref="ArgumentException">ArgumentException</exception>
+        public async ValueTask UpdateAsync(Domain.Models.Post post) {
+            if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current) {
+                current.Content = post.Content ?? current.Content;
+
+                await _context.SaveChangesAsync(); // Will throw DbUpdateException if a database constraint is violated.
+            } else {
+                throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
+            }
+        }
 
         /// <summary>
         ///  Returns an enumerator that iterates asynchronously through the collection.
@@ -74,11 +122,6 @@ WHERE RowNum <= 3
             => _context.Posts.Select(x => x.ToDomain()).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
-
-        public void Add(Post item)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
@@ -122,16 +165,6 @@ WHERE RowNum <= 3
                 return true;
             }
             return false;
-        }
-
-        IAsyncEnumerator<Domain.Models.Post> IAsyncEnumerable<Domain.Models.Post>.GetAsyncEnumerator(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator<Domain.Models.Post> IEnumerable<Domain.Models.Post>.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
     }
 }
