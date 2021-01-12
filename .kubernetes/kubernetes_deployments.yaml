@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fakebook-posts-api
+  labels:
+    app: fakebook-posts
+    role: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fakebook-posts
+      role: api
+  strategy:
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: fakebook-posts
+        role: api
+    spec:
+      containers:
+      - name: api
+        image: fakebook.azurecr.io/fakebookposts:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionStrings__Default
+          value: 'Host=fakebook-posts-db;Database=postgres;Username=postgres;Password=Pass@word'
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fakebook-posts-db
+  labels:
+    app: fakebook-posts
+    role: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fakebook-posts
+      role: db
+  template:
+    metadata:
+      labels:
+        app: fakebook-posts
+        role: db
+    spec:
+      containers:
+      - name: db
+        image: fakebook.azurecr.io/fakebookposts-db:latest
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: db-volume
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      volumes:
+      - name: db-volume
+        persistentVolumeClaim:
+          claimName: fakebook-posts
