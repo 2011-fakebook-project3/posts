@@ -1,35 +1,47 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers
 {
-    public class PostControllerTest
-    {
+    public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>> {
+
+        private readonly WebApplicationFactory<Startup> _factory;
+
+        public PostControllerTest(WebApplicationFactory<Startup> factory) {
+            _factory = factory;
+        }
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Post object results in Status201Created.
         /// </summary>
         [Fact]
-        public async Task PostAsync_ValidPost_Creates()
-        {
+        public async Task PostAsync_ValidPost_Creates() {
+
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var comment = new List<Comment>();
+            var comments = new List<Comment>();
             var date = DateTime.Now;
-            var post = new Post("test@email.com", "Goodman")
+            var post = new Post("test.user@email.com", "test content")
             {
                 Id = 1,
-                Comments = comment,
+                Comments = comments,
                 Picture = "picture",
                 CreatedAt = date
             };
@@ -37,22 +49,24 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo.Object, null, new NullLogger<PostsController>());
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PostAsync(post);
-
+            var response = await client.PostAsync("api/posts", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
-            var model = Assert.IsAssignableFrom<Post>(result.Value);
-            Assert.Equal(1, model.Id);
-            Assert.Equal("test@email.com", model.UserEmail);
-            Assert.Equal(comment, model.Comments);
-            Assert.Equal("Goodman", model.Content);
-            Assert.Equal("picture", model.Picture);
-            Assert.Equal(date, model.CreatedAt);
-            Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
         }
 
         /// <summary>
@@ -63,19 +77,38 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("test@email.com", "content");
 
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, null, new NullLogger<PostsController>());
+            var comments = new List<Comment>();
+            var date = DateTime.Now;
+            var post = new Post("test.user@email.com", "test content") {
+                Id = 1,
+                Comments = comments,
+                Picture = "picture",
+                CreatedAt = date
+            };
+
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PostAsync(post);
+            var response = await client.PostAsync("api/posts", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
+
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Comment object results in Status201Created.
         /// </summary>
@@ -84,9 +117,13 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("test@email.com", "content");
             var date = DateTime.Now;
-            var comment = new Comment("test@email.com", "Goodman")
+            var post = new Post("test.user@email.com", "test content") {
+                Id = 1,
+                Picture = "picture",
+                CreatedAt = date
+            };
+            var comment = new Comment("test.user@email.com", "comment content")
             {
                 Id = 1,
                 Post = post,
@@ -97,19 +134,26 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Returns(ValueTask.FromResult(comment));
 
-            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
+
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PostAsync(comment);
+            var response = await client.PostAsync("api/comments", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
-            var model = Assert.IsAssignableFrom<Comment>(result.Value);
-            Assert.Equal(1, model.Id);
-            Assert.Equal("test@email.com", model.UserEmail);
-            Assert.Equal(date, model.CreatedAt);
-            Assert.Equal("picture", model.Content);
-            Assert.Equal(StatusCodes.Status201Created, result.StatusCode);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+
         }
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
@@ -119,18 +163,39 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var comment = new Comment("test@email.com", "content");
+            var date = DateTime.Now;
+            var post = new Post("test.user@email.com", "test content") {
+                Id = 1,
+                Picture = "picture",
+                CreatedAt = date
+            };
+            var comment = new Comment("test.user@email.com", "comment content") {
+                Id = 1,
+                Post = post,
+                Content = "picture",
+                CreatedAt = date,
+            };
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PostAsync(comment);
+            var response = await client.PostAsync("api/comments", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }

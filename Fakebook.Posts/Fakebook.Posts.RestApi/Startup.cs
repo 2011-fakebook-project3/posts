@@ -30,17 +30,16 @@ namespace Fakebook.Posts.RestApi {
 
             var connectionString = Configuration.GetConnectionString("default");
             if (connectionString is null) {
-                throw new InvalidOperationException("No connection string 'defaualt' found.");
+                throw new InvalidOperationException("No connection string 'default' found.");
             }
 
             services.AddDbContext<FakebookPostsContext>(options =>
             options.UseNpgsql(connectionString));
 
             services.AddScoped<IPostsRepository, PostsRepository>();
+            services.AddScoped<IFollowsRepository, FollowsRepository>();
 
             services.AddControllers();
-
-            services.AddScoped<IPostsRepository, PostsRepository>();
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });

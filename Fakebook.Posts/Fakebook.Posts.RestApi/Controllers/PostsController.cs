@@ -42,9 +42,9 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, Post post) {
-            /*try {
+            try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var postEmail = _postsRepository.First(p => p.Id == id).UserEmail;
+                var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
                 if (sessionEmail != postEmail) {
                     return Forbid();
@@ -52,7 +52,7 @@ namespace Fakebook.Posts.RestApi.Controllers {
             } catch (InvalidOperationException e) {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
-            }*/
+            }
 
             try {
                 post.Id = id;
@@ -80,16 +80,16 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Post postModel) {
-            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
             if (email != postModel.UserEmail) {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
                 return Forbid();
-            }*/
+            }
 
             try {
                 var created = await _postsRepository.AddAsync(postModel);
-                return CreatedAtRoute("Get", new { id = created.Id }, created);
+                return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
             } catch (ArgumentException e) {
                 _logger.LogInformation(e, "Attempted to create a post with invalid arguments.");
                 return BadRequest(e.Message);
@@ -210,16 +210,16 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id) {
-            /*try {
+            try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var postEmail = _postsRepository.First(p => p.Id == id).UserEmail;
+                var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
                 if (sessionEmail != postEmail) {
                     return Forbid();
                 }
             } catch (InvalidOperationException e) {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}.");
                 return NotFound(e.Message);
-            }*/
+            }
 
             try {
                 await _postsRepository.DeletePostAsync(id);

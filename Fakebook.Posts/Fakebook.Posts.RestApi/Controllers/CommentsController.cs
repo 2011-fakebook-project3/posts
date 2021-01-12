@@ -33,18 +33,19 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// 404NotFound if the Id did not match an existing post,
         /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
-        [HttpDelete("{postId}/comments/{commentId}")]
+        [HttpDelete("{commentId}")]
         public async Task<IActionResult> DeleteAsync(int commentId) {
-            /*try {
+            try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var postEmail = _postsRepository.First(p => p.Id == postId).UserEmail;
-                if (sessionEmail != postEmail) {
+                var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
+                var comment = post.Comments.First(c => c.Id == commentId);
+                if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail) {
                     return Forbid();
                 }
             } catch (InvalidOperationException e) {
-                _logger.LogInformation(e, $"Found no post entry with Id: {postId}.");
+                _logger.LogInformation(e, $"Found no comment entry with Id: {commentId}.");
                 return NotFound(e.Message);
-            }*/
+            }
 
             try {
                 await _postsRepository.DeleteCommentAsync(commentId);
@@ -67,14 +68,14 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// The newly created comment
         /// </returns>
         [Authorize]
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> PostAsync(Comment comment) {
-            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
             if (email != comment.UserEmail) {
-                _logger.LogInformation("Authenticated user email did not match user email of the post.");
+                _logger.LogInformation("Authenticated user email did not match user email of the comment.");
                 return Forbid();
-            }*/
+            }
 
             Comment created;
             try {
@@ -93,7 +94,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
-            throw new NotImplementedException();
+            var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == id));
+            var comment = post.Comments.First(c => c.Id == id);
+
+            return Ok(comment);
         }
     }
 }
