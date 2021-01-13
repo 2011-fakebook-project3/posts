@@ -35,7 +35,8 @@ namespace Fakebook.Posts.UnitTests.Controllers {
 
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
@@ -48,6 +49,8 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
                     services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
@@ -71,7 +74,8 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
@@ -84,6 +88,8 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
                     services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });

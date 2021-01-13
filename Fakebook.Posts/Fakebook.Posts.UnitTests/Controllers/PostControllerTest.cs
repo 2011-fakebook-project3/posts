@@ -2,6 +2,7 @@
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +37,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
             var comments = new List<Comment>();
             var date = DateTime.Now;
             var post = new Post("test.user@email.com", "test content")
@@ -52,6 +55,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
                     services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
@@ -77,7 +82,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
@@ -93,6 +99,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
                     services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
@@ -133,7 +141,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Returns(ValueTask.FromResult(comment));
-
 
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
