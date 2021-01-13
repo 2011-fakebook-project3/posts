@@ -1,16 +1,45 @@
 using Xunit;
 using Moq;
 using System;
+using System.Text;
+using System.Text.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Authentication;
+
+using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 
 namespace Fakebook.Posts.UnitTests.Controllers
 {
-    public class FollowsControllerTests
+    public class FollowsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
+        private readonly WebApplicationFactory<Startup> _factory;
+        public FollowsControllerTests(WebApplicationFactory<Startup> factory) => _factory = factory;
+        private HttpClient BuildTestAuthClient(Mock<IFollowsRepository> mockRepo)
+        {
+            var client = _factory.WithWebHostBuilder(builder => 
+            {
+                builder.ConfigureTestServices(services => 
+                {
+                    services.AddScoped(sp => mockRepo.Object);
+
+                    services
+                    .AddAuthentication("Test")
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+            return client;
+        }
+
         [Fact]
         public async void PostAsync_NewEmail_NoContent()
         {
@@ -18,18 +47,36 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var myFollow = new Follow
             {
                 FollowedEmail = It.IsAny<string>(),
-                FollowerEmail = It.IsAny<string>()
+                FollowerEmail = It.IsAny<string>(),
             };
+            var stringContent = new StringContent(
+                JsonSerializer.Serialize(myFollow), 
+                Encoding.UTF8, "application/json");
             
             var mockRepo = new Mock<IFollowsRepository>();
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            
+            var client = _factory.WithWebHostBuilder(builder => 
+            {
+                builder.ConfigureTestServices(services => 
+                {
+                    services.AddScoped(sp => mockRepo.Object);
+
+                    services
+                    .AddAuthentication("Test")
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
+
             //When
-            var result = await controller.PostAsync(myFollow);
+            var response = await client.PostAsync("api/follows", stringContent);
+
             //Then
-            Assert.IsType<NoContentResult>(result);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
@@ -41,15 +88,21 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 FollowedEmail = It.IsAny<string>(),
                 FollowerEmail = It.IsAny<string>()
             };
+            var stringContent = new StringContent(
+                JsonSerializer.Serialize(myFollow), 
+                Encoding.UTF8, "application/json");
+            
             var mockRepo = new Mock<IFollowsRepository>();
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            
+            var client = BuildTestAuthClient(mockRepo);
             //When
-            var result = await controller.PostAsync(myFollow);
+            var response = await client.PostAsync("api/follows", stringContent);
+
             //Then
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -60,11 +113,14 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            var client = BuildTestAuthClient(mockRepo);
+
             //When
-            var result = await controller.PutAsync(It.IsAny<string>());
+            var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
+
             //Then
-            Assert.IsType<NoContentResult>(result);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
@@ -75,11 +131,13 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            var client = BuildTestAuthClient(mockRepo);
+
             //When
-            var result = await controller.PutAsync(It.IsAny<string>());
+            var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
+
             //Then
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -90,11 +148,14 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            var client = BuildTestAuthClient(mockRepo);
+
             //When
-            var result = await controller.DeleteAsync(It.IsAny<string>());
+            var response = await client.DeleteAsync("api/follows/name@domain.net");
+
             //Then
-            Assert.IsType<NoContentResult>(result);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Fact]
@@ -105,11 +166,13 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var logger = new NullLogger<FollowsController>();
             mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
-            var controller = new FollowsController(mockRepo.Object, logger);
+            var client = BuildTestAuthClient(mockRepo);
+
             //When
-            var result = await controller.DeleteAsync(It.IsAny<string>());
+            var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
+
             //Then
-            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }   
 }

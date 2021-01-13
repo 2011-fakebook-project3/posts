@@ -50,8 +50,9 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             using (var context = new FakebookPostsContext(options))
             {
                 context.Database.EnsureCreated();
-                context.Posts.Add(dataAccessPost);
                 var repo = new PostsRepository(context);
+                context.Posts.Add(dataAccessPost);
+                context.SaveChanges();
                 result = await repo.AddCommentAsync(comment);
             }
 
@@ -103,19 +104,23 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            var domainModelPost = new Domain.Models.Post("person@domain.net", "New Content")
-            {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
                 Id = 1,
+                UserEmail = "person@domain.net",
+                Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
             using var context = new FakebookPostsContext(options);
             context.Database.EnsureCreated();
+            context.Posts.Add(insertedPost);
+            context.SaveChanges();
+
             var repo = new PostsRepository(context);
-            var extraVar = repo.AddAsync(domainModelPost);
 
             // Act
-            var result = repo.Where(p => p.Id == 1).FirstOrDefault();
+            var result = repo.AsQueryable().FirstOrDefault(
+                p => p.Id == 1);
 
             // Assert
             Assert.IsAssignableFrom<Domain.Models.Post>(result);

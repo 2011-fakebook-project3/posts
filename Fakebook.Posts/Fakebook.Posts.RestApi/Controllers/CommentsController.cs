@@ -2,7 +2,6 @@
 using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -25,6 +24,45 @@ namespace Fakebook.Posts.RestApi.Controllers {
         }
 
         /// <summary>
+        /// Deletes the post resource with the given id.
+        /// </summary>
+        /// <param name="id">Id of the post to be deleted</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204NoContent on success,
+        /// 400BadRequest on delete failure,
+        /// 404NotFound if the Id did not match an existing post,
+        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        [Authorize]
+        [HttpDelete("{commentId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteAsync(int commentId) {
+            try {
+                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+                var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
+                var comment = post.Comments.First(c => c.Id == commentId);
+                if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail) {
+                    return Forbid();
+                }
+            } catch (InvalidOperationException e) {
+                _logger.LogInformation(e, $"Found no comment entry with Id: {commentId}.");
+                return NotFound(e.Message);
+            }
+
+            try {
+                await _postsRepository.DeleteCommentAsync(commentId);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, $"Found no comment entry with id: {commentId}.");
+                return NotFound(e.Message);
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Tried to remove comment which resulted in a violation of a database constraint");
+                return BadRequest(e.Message);
+            }
+            return NoContent();
+        }
+        
         /// Add a new comment to the database. 
         /// </summary>
         /// <param name="comment">
@@ -34,14 +72,17 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// The newly created comment
         /// </returns>
         [Authorize]
-        [HttpPost()]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(Comment comment) {
-            /*var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
             if (email != comment.UserEmail) {
-                _logger.LogInformation("Authenticated user email did not match user email of the post.");
+                _logger.LogInformation("Authenticated user email did not match user email of the comment.");
                 return Forbid();
-            }*/
+            }
 
             Comment created;
             try {
@@ -60,41 +101,14 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
-            throw new NotImplementedException();
-        }
-        
-        /// Deletes the post resource with the given id.
-        /// </summary>
-        /// <param name="id">Id of the post to be deleted</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204NoContent on success,
-        /// 400BadRequest on delete failure,
-        /// 404NotFound if the Id did not match an existing post,
-        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
-        [Authorize]
-        [HttpDelete("{postId}/comments/{commentId}")]
-        public async Task<IActionResult> DeleteAsync(int commentId) {
-            /*try {
-                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var postEmail = _postsRepository.First(p => p.Id == postId).UserEmail;
-                if (sessionEmail != postEmail) {
-                    return Forbid();
-                }
-            } catch (InvalidOperationException e) {
-                _logger.LogInformation(e, $"Found no post entry with Id: {postId}.");
-                return NotFound(e.Message);
-            }*/
-
-            try {
-                await _postsRepository.DeleteCommentAsync(commentId);
-            } catch (ArgumentException e) {
-                _logger.LogInformation(e, $"Found no comment entry with id: {commentId}.");
-                return NotFound(e.Message);
-            } catch (DbUpdateException e) {
-                _logger.LogInformation(e, "Tried to remove comment which resulted in a violation of a database constraint");
-                return BadRequest(e.Message);
+            if (await _postsRepository.AsQueryable()
+                .Include(x => x.Comments).FirstOrDefaultAsync(p => 
+                    p.Comments.Any(c => c.Id == id)) is Post post)
+            {
+                var comment = post.Comments.First(c => c.Id == id);
+                return Ok(comment);
             }
-            return NoContent();
+            return NotFound();
         }
     }
 }

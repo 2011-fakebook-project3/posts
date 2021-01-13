@@ -14,8 +14,7 @@ namespace Fakebook.Posts.RestApi.Controllers
     public class FollowsController : ControllerBase
     {
         private readonly IFollowsRepository _followsRepository;
-        private readonly ILogger<FollowsController> _logger;
-        //TODO: Remove Later 
+        private readonly ILogger<FollowsController> _logger; 
         public string userEmail = "test@email.com";
         public FollowsController(
             IFollowsRepository followsRepository, 
@@ -29,7 +28,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Follow follow)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
             {
                 if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = follow.FollowedEmail }))
@@ -56,7 +55,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPut("{email}")]
         public async Task<IActionResult> PutAsync(string email)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
             try {
                 if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
                     return NoContent();
@@ -80,7 +79,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteAsync(string email)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
             try {
                 if (await _followsRepository.RemoveFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
                     return NoContent();
