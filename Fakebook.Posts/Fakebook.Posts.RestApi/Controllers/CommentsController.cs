@@ -1,7 +1,7 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

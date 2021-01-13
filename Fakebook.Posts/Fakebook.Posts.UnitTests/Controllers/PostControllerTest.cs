@@ -47,7 +47,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             };
 
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Returns(ValueTask.FromResult(post));
+                .ReturnsAsync(post);
 
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
