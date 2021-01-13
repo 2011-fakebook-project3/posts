@@ -287,11 +287,11 @@ namespace Fakebook.Posts.RestApi.Controllers
             // followedUserEmails.Add(email);
             // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
             // // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
-            // var newsfeedPosts = await _postsRepository
+            // var newsfeedPosts = await _postsRepository.AsQueryable()
             // .Where(p => followedUserEmails.Contains(p.UserEmail))
             // .GroupBy(p => p.UserEmail)
             // .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
-            // .AsQueryable().ToListAsync();
+            // .ToListAsync();
             return Ok(newsfeedPosts);
         }
     }
