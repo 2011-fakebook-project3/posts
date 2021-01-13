@@ -240,26 +240,36 @@ namespace Fakebook.Posts.RestApi.Controllers {
         }
 
         [HttpPost("UploadPicture"), DisableRequestSizeLimit]
-        public async Task<ActionResult> UploadPicture() 
+        public async Task<ActionResult> UploadPicture(IFormFile file, string userId) 
         {
             try {
-                if (Request.Form.Files[0] is IFormFile file)
+                using (var fileStream = file.OpenReadStream())
                 {
                     // generate a random guid from the file name
-                    var newFileName = $"{Request.Form["userId"]}-{Guid.NewGuid()}.{file.FileName.Split('.').Last()}";
+                    // examplePicture.gif => examplePicture gif
+                    var extension = file.FileName.Split('.').Last();
+                    var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
                     // upload image
                     var result = await _blobService.UploadFileBlobAsync(
                         "fakebook",
-                        file.OpenReadStream(),
+                        fileStream,
                         file.ContentType,
                         newFileName);
                     return Ok(new { path = result.AbsoluteUri });
-                } else return BadRequest();
-            } catch (Exception ex) {
+                }
+            } catch (ArgumentNullException ex) {
                 _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
-                //ExceptionDispatchInfo.Capture(ex).Throw();
+            } catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            } catch (Azure.RequestFailedException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
+
         }
     }
 }
