@@ -46,15 +46,15 @@ namespace Fakebook.Posts.RestApi {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
             });
 
-            /*services.AddCors(options => {
+            services.AddCors(options => {
                 options.AddDefaultPolicy(
                     builder => {
-                        builder.WithOrigins("http://localhost:4200")
+                        builder.WithOrigins("http://localhost:4200", "https://fakebook.revaturelabs.com/")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials();
                     });
-            });*/
+            });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
@@ -75,7 +75,7 @@ namespace Fakebook.Posts.RestApi {
 
             app.UseRouting();
 
-            // app.UseCors();
+            app.UseCors();
 
             app.UseAuthentication();
 
