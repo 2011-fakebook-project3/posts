@@ -20,6 +20,7 @@ namespace Fakebook.Posts.Domain.Models
             UserEmail = userEmail;
             Content = content;
             Comments = new HashSet<Comment>();
+            Likes = new HashSet<string>();
         }
     }
 }
