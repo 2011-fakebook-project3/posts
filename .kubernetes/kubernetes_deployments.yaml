@@ -29,9 +29,15 @@ spec:
         ports:
         - containerPort: 80
         env:
-        - name: ConnectionStrings__Default
+        - name: ConnectionString__default
           value: 'Host=fakebook-posts-db;Database=postgres;Username=postgres;Password=Pass@word'
+        envFrom:
+        - secretRef:
+            name: fakebook-posts-config
         resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
           limits:
             cpu: 500m
             memory: 512Mi
@@ -49,6 +55,8 @@ spec:
     matchLabels:
       app: fakebook-posts
       role: db
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -58,12 +66,19 @@ spec:
       containers:
       - name: db
         image: fakebook.azurecr.io/fakebookposts-db:latest
+        env:
+        - name: POSTGRES_PASSWORD
+          value: Pass@word
         ports:
         - containerPort: 5432
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: db-volume
+          subPath: data
         resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
           limits:
             cpu: 500m
             memory: 512Mi
