@@ -1,20 +1,34 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
+using Microsoft.AspNetCore.Authentication;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers {
-    public class EditPostTests {
+    public class EditPostTests : IClassFixture<WebApplicationFactory<Startup>> {
+
+        private readonly WebApplicationFactory<Startup> _factory;
+
+        public EditPostTests(WebApplicationFactory<Startup> factory) {
+            _factory = factory;
+        }
 
         /// <summary>
         /// Tests the PostsController class' PutAsync method. Ensures that a proper Post object results in status 204NoContent.
@@ -24,6 +38,29 @@ namespace Fakebook.Posts.UnitTests.Controllers {
 
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
+            mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
+                .Returns(new ValueTask());
+
+            var posts = new HashSet<Post>();
+            posts.Add(new Post("test.user@email.com", "test content") { Id = 1 });
+
+            mockRepo.Setup(r => r.GetEnumerator())
+                .Returns(posts.GetEnumerator());
+
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
             var post = new Post("test@email.com", "message") {
                 Id = 1,
                 Comments = new HashSet<Comment>(),
@@ -31,16 +68,14 @@ namespace Fakebook.Posts.UnitTests.Controllers {
                 CreatedAt = DateTime.Now
             };
 
-            mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
-                .Returns(new ValueTask());
-
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new Mock<IBlobService>().Object, new NullLogger<PostsController>());
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PutAsync(1, post);
+            var response = await client.PutAsync("api/posts/1", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<NoContentResult>(actionResult);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
         /// <summary>
@@ -51,18 +86,43 @@ namespace Fakebook.Posts.UnitTests.Controllers {
 
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
-            var post = new Post("a", "b");
-
+            var mockFollowRepo = new Mock<IFollowsRepository>();
+            var mockBlobService = new Mock<IBlobService>();
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new Mock<IBlobService>().Object, new NullLogger<PostsController>());
+            var posts = new HashSet<Post>();
+            posts.Add(new Post("test.user@email.com", "test content") { Id = 1 });
+
+            mockRepo.Setup(r => r.GetEnumerator())
+                .Returns(posts.GetEnumerator());
+
+            var client = _factory.WithWebHostBuilder(builder => {
+                builder.ConfigureTestServices(services => {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            var post = new Post("test@email.com", "message") {
+                Id = 1,
+                Comments = new HashSet<Comment>(),
+                Picture = "picture",
+                CreatedAt = DateTime.Now
+            };
+
+            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await controller.PutAsync(1, post);
+            var response = await client.PutAsync("api/posts/1", stringContent);
 
             // Assert
-            var result = Assert.IsAssignableFrom<BadRequestObjectResult>(actionResult);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
