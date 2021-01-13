@@ -123,7 +123,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Throws(new DbUpdateException());
-
             var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
 
             // Act

@@ -23,8 +23,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
-
-
+          
             var dataAccessPost = new DataAccess.Models.Post()
             {
                 Id = 1,
