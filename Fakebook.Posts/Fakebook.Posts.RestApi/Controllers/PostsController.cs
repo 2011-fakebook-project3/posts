@@ -1,5 +1,6 @@
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +9,14 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.ExceptionServices;
-using Fakebook.Posts.RestApi.Services;
 
-namespace Fakebook.Posts.RestApi.Controllers {
+namespace Fakebook.Posts.RestApi.Controllers
+{
 
     [Route("api/posts")]
     [ApiController]
-    public class PostsController : ControllerBase {
+    public class PostsController : ControllerBase
+    {
 
         private readonly IPostsRepository _postsRepository;
         private readonly IFollowsRepository _followsRepository;
@@ -24,10 +25,11 @@ namespace Fakebook.Posts.RestApi.Controllers {
 
         public PostsController(
             IPostsRepository postsRepository,
-            IFollowsRepository followsRepository, 
+            IFollowsRepository followsRepository,
             IBlobService blobService,
             ILogger<PostsController> logger
-            ) {
+            )
+        {
             _postsRepository = postsRepository;
             _followsRepository = followsRepository;
             _blobService = blobService;
@@ -50,26 +52,36 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(int id, Post post) {
-            try {
+        public async Task<IActionResult> PutAsync(int id, Post post)
+        {
+            try
+            {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
-                if (sessionEmail != postEmail) {
+                if (sessionEmail != postEmail)
+                {
                     return Forbid();
                 }
-            } catch (InvalidOperationException e) {
+            }
+            catch (InvalidOperationException e)
+            {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
             }
 
-            try {
+            try
+            {
                 post.Id = id;
                 await _postsRepository.UpdateAsync(post);
-            } catch (ArgumentException e) {
+            }
+            catch (ArgumentException e)
+            {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}");
                 return NotFound(e.Message);
-            } catch (DbUpdateException e) {
+            }
+            catch (DbUpdateException e)
+            {
                 _logger.LogInformation(e, "Attempted to update a post which resulted in a violation of database constraints.");
                 return BadRequest(e.Message);
             }
@@ -87,21 +99,28 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(Post postModel) {
+        public async Task<IActionResult> PostAsync(Post postModel)
+        {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
-            if (email != postModel.UserEmail) {
+            if (email != postModel.UserEmail)
+            {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
                 return Forbid();
             }
 
             Post created;
-            try {
+            try
+            {
                 created = await _postsRepository.AddAsync(postModel);
-            } catch (ArgumentException e) {
+            }
+            catch (ArgumentException e)
+            {
                 _logger.LogInformation(e, "Attempted to create a post with invalid arguments.");
                 return BadRequest(e.Message);
-            } catch (DbUpdateException e) {
+            }
+            catch (DbUpdateException e)
+            {
                 _logger.LogInformation(e, "Attempted to create a post which violated database constraints.");
                 return BadRequest(e.Message);
             }
@@ -143,7 +162,8 @@ namespace Fakebook.Posts.RestApi.Controllers {
 
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
-        public async Task<IActionResult> GetAsync(int id) {
+        public async Task<IActionResult> GetAsync(int id)
+        {
             if (await _postsRepository.AsQueryable()
                 .FirstOrDefaultAsync(p => p.Id == id) is Post post) return Ok(post);
             return NotFound();
@@ -170,24 +190,34 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAsync(int id) {
-            try {
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            try
+            {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
-                if (sessionEmail != postEmail) {
+                if (sessionEmail != postEmail)
+                {
                     return Forbid();
                 }
-            } catch (InvalidOperationException e) {
+            }
+            catch (InvalidOperationException e)
+            {
                 _logger.LogInformation(e, $"Found no post entry with Id: {id}.");
                 return NotFound(e.Message);
             }
 
-            try {
+            try
+            {
                 await _postsRepository.DeletePostAsync(id);
-            } catch (ArgumentException e) {
+            }
+            catch (ArgumentException e)
+            {
                 _logger.LogInformation(e, $"Found no post entry with id: {id}.");
                 return NotFound(e.Message);
-            } catch (DbUpdateException e) {
+            }
+            catch (DbUpdateException e)
+            {
                 _logger.LogInformation(e, "Tried to remove post which resulted in a violation of a database constraint");
                 return BadRequest(e.Message);
             }
@@ -196,9 +226,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
         }
 
         [HttpPost("UploadPicture"), DisableRequestSizeLimit]
-        public async Task<ActionResult> UploadPicture(IFormFile file, string userId) 
+        public async Task<ActionResult> UploadPicture(IFormFile file, string userId)
         {
-            try {
+            try
+            {
                 using (var fileStream = file.OpenReadStream())
                 {
                     // generate a random guid from the file name
@@ -213,19 +244,48 @@ namespace Fakebook.Posts.RestApi.Controllers {
                         newFileName);
                     return Ok(new { path = result.AbsoluteUri });
                 }
-            } catch (ArgumentNullException ex) {
-                _logger.LogError(ex, ex.Message);
-                return BadRequest(ex.Message);
-            } catch (InvalidOperationException ex)
+            }
+            catch (ArgumentNullException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return BadRequest(ex.Message);
-            } catch (Azure.RequestFailedException ex)
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch (Azure.RequestFailedException ex)
             {
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
+        }
+
+        /// <summary>
+        /// Fetch the posts for a user's newsfeed baised off the session token.
+        /// A user's newsfeed contains the three most recent posts 
+        /// of the user and the users they follow.
+        /// </summary>
+        /// <returns>
+        /// Ok responce with the top 3 
+        /// </returns>
+        // Route: api/newsfeed
+        [HttpGet("newsfeed")]
+        public async Task<IActionResult> GetNewsfeedAsync()
+        {
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var followedUserEmails = _followsRepository.GetFollowedEmails(email);
+            followedUserEmails.Add(email);
+            // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
+            // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
+            var newsfeedPosts = await _postsRepository
+            .Where(p => followedUserEmails.Contains(p.UserEmail))
+            .GroupBy(p => p.UserEmail)
+            .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
+            .AsQueryable().ToListAsync();
+            return Ok(newsfeedPosts);
         }
     }
 }
