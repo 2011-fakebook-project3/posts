@@ -14,8 +14,7 @@ namespace Fakebook.Posts.RestApi.Controllers
     public class FollowsController : ControllerBase
     {
         private readonly IFollowsRepository _followsRepository;
-        private readonly ILogger<FollowsController> _logger;
-        //TODO: Remove Later 
+        private readonly ILogger<FollowsController> _logger; 
         public string userEmail = "test@email.com";
         public FollowsController(
             IFollowsRepository followsRepository, 
