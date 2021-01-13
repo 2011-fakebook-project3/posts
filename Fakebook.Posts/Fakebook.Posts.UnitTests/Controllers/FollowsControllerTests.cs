@@ -102,7 +102,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var response = await client.PostAsync("api/follows", stringContent);
 
             //Then
-            response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -138,7 +137,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
 
             //Then
-            response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -153,7 +151,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var client = BuildTestAuthClient(mockRepo);
 
             //When
-            var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
+            var response = await client.DeleteAsync("api/follows/name@domain.net");
 
             //Then
             response.EnsureSuccessStatusCode();
@@ -174,7 +172,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
             var response = await client.PutAsync("api/follows/name@domain.net", new StringContent(""));
 
             //Then
-            response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }   

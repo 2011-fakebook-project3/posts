@@ -40,7 +40,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
 
             Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
             {
-                Content = "New Content",
+                Post = domainModelPost,
                 CreatedAt = DateTime.Now
             };
 
@@ -51,6 +51,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             {
                 context.Database.EnsureCreated();
                 var repo = new PostsRepository(context);
+                context.Posts.Add(dataAccessPost);
+                context.SaveChanges();
                 result = await repo.AddCommentAsync(comment);
             }
 
@@ -112,6 +114,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             using var context = new FakebookPostsContext(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
+            context.SaveChanges();
 
             var repo = new PostsRepository(context);
 
