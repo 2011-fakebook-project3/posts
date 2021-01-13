@@ -1,8 +1,6 @@
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Fakebook.Posts.Domain.Interfaces;
-using Azure.Storage.Blobs;
-using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,19 +27,18 @@ namespace Fakebook.Posts.RestApi {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            // setup Postgres database
-            var connectionString = Configuration["ConnectionString:default"];
-            services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
-            // setup Azure Blobs Service 
-            services.AddTransient<IBlobService, BlobService>(sp => 
-                new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
-            );
+
+            var connectionString = Configuration.GetConnectionString("default");
+            if (connectionString is null) {
+                throw new InvalidOperationException("No connection string 'defaualt' found.");
+            }
+
+            services.AddDbContext<FakebookPostsContext>(options =>
+            options.UseNpgsql(connectionString));
 
             services.AddScoped<IPostsRepository, PostsRepository>();
-            services.AddScoped<IFollowsRepository, FollowsRepository>();
-            
-            services.AddControllers();
 
+            services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fakebook.Posts.RestApi", Version = "v1" });
             });

@@ -1,10 +1,7 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.DataAccess.Mappers;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -24,23 +21,5 @@ namespace Fakebook.Posts.DataAccess.Repositories
             => _context.Follows
                 .Where(x => x.FollowedEmail == followedEmail)
                 .Select(x => x.FollowerEmail).ToHashSet();
-
-        public async Task<bool> AddFollowAsync(Follow userFollow)
-        {
-            var dbFollow = userFollow.ToDataAccess();
-            if (await _context.Follows.ContainsAsync(dbFollow)) return false;
-            await _context.Follows.AddAsync(dbFollow);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> RemoveFollowAsync(Follow userFollow)
-        {
-            var dbFollow = userFollow.ToDataAccess();
-            if (!await _context.Follows.ContainsAsync(dbFollow)) return false;
-            _context.Follows.Remove(dbFollow);
-            await _context.SaveChangesAsync();
-            return true;
-        }
     }
 }

@@ -37,14 +37,14 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Returns(ValueTask.FromResult(post));
 
-            var controller = new PostsController(mockRepo.Object, null, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PostAsync(post);
 
 
             // Assert
-            var result = Assert.IsAssignableFrom<CreatedAtRouteResult>(actionResult);
+            var result = Assert.IsAssignableFrom<CreatedAtActionResult>(actionResult);
             var model = Assert.IsAssignableFrom<Post>(result.Value);
             Assert.Equal(1, model.Id);
             Assert.Equal("test@email.com", model.UserEmail);
@@ -68,7 +68,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, null, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PostAsync(post);

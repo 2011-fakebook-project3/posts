@@ -33,7 +33,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PutAsync(1, post);
@@ -55,7 +55,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PutAsync(1, post);
