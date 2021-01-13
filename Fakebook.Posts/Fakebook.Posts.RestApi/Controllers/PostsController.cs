@@ -1,6 +1,7 @@
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -34,6 +35,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutAsync(int id, Post post) {
             try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -68,6 +73,9 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// <returns>201Created on successful add, 400BadRequest on failure, 403Forbidden if post UserEmail does not match the email of the session token.</returns>
         [Authorize]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(Post postModel) {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
@@ -147,6 +155,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int id) {
             try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;

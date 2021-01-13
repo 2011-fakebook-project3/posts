@@ -34,6 +34,10 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
         [HttpDelete("{commentId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int commentId) {
             try {
                 var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -69,6 +73,9 @@ namespace Fakebook.Posts.RestApi.Controllers {
         /// </returns>
         [Authorize]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(Comment comment) {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
