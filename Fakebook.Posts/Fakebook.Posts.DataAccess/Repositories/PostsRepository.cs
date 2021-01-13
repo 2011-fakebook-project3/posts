@@ -109,7 +109,7 @@ WHERE RowNum <= 3
         /// where Posts do NOT contain their comments 
         /// </returns>
         public IAsyncEnumerator<Post> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-            => _context.Posts.Select(x => x.ToDomain()).AsAsyncEnumerable().GetAsyncEnumerator(cancellationToken);
+            => _context.Posts.Include(p => p.PostLikes).Select(x => x.ToDomain()).AsAsyncEnumerable().GetAsyncEnumerator(cancellationToken);
 
         /// <summary>
         /// Returns an enumerator that iterates through the collection.
@@ -119,7 +119,7 @@ WHERE RowNum <= 3
         /// where Posts do NOT contain their comments.
         /// </returns>
         public IEnumerator<Post> GetEnumerator()
-            => _context.Posts.Select(x => x.ToDomain()).GetEnumerator();
+            => _context.Posts.Include(p => p.PostLikes).Select(x => x.ToDomain()).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); 
 
