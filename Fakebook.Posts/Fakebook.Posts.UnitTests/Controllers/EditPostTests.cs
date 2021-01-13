@@ -1,6 +1,7 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Controllers;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -33,7 +34,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new Mock<IBlobService>().Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PutAsync(1, post);
@@ -55,7 +56,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new NullLogger<PostsController>());
+            var controller = new PostsController(mockRepo.Object, new Mock<IFollowsRepository>().Object, new Mock<IBlobService>().Object, new NullLogger<PostsController>());
 
             // Act
             var actionResult = await controller.PutAsync(1, post);

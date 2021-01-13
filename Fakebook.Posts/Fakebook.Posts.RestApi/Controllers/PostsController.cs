@@ -3,10 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using System.Runtime.ExceptionServices;
+using Fakebook.Posts.RestApi.Services;
 
 namespace Fakebook.Posts.RestApi.Controllers {
 
@@ -16,15 +19,18 @@ namespace Fakebook.Posts.RestApi.Controllers {
 
         private readonly IPostsRepository _postsRepository;
         private readonly IFollowsRepository _followsRepository;
+        private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
 
         public PostsController(
             IPostsRepository postsRepository,
             IFollowsRepository followsRepository, 
+            IBlobService blobService,
             ILogger<PostsController> logger
             ) {
             _postsRepository = postsRepository;
             _followsRepository = followsRepository;
+            _blobService = blobService;
             _logger = logger;
         }
 
@@ -233,5 +239,27 @@ namespace Fakebook.Posts.RestApi.Controllers {
             return NoContent();
         }
 
+        [HttpPost("UploadPicture"), DisableRequestSizeLimit]
+        public async Task<ActionResult> UploadPicture() 
+        {
+            try {
+                if (Request.Form.Files[0] is IFormFile file)
+                {
+                    // generate a random guid from the file name
+                    var newFileName = $"{Request.Form["userId"]}-{Guid.NewGuid()}.{file.FileName.Split('.').Last()}";
+                    // upload image
+                    var result = await _blobService.UploadFileBlobAsync(
+                        "fakebook",
+                        file.OpenReadStream(),
+                        file.ContentType,
+                        newFileName);
+                    return Ok(new { path = result.AbsoluteUri });
+                } else return BadRequest();
+            } catch (Exception ex) {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+                //ExceptionDispatchInfo.Capture(ex).Throw();
+            }
+        }
     }
 }
