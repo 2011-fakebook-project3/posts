@@ -178,7 +178,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
                 .Throws(new DbUpdateException());
-
             var client = _factory.WithWebHostBuilder(builder => {
                 builder.ConfigureTestServices(services => {
                     services.AddScoped(sp => mockRepo.Object);
@@ -190,7 +189,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
-
+            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
+            
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
 

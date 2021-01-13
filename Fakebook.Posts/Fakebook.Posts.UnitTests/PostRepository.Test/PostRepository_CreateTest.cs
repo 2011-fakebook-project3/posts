@@ -23,6 +23,20 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
+          
+            var dataAccessPost = new DataAccess.Models.Post()
+            {
+                Id = 1,
+                UserEmail = "person@domain.net",
+                Content = "post content",
+                CreatedAt = DateTime.Now
+            };
+
+            var domainModelPost = new Domain.Models.Post("person@domain.net", "post content")
+            {
+                Id = 1,
+                CreatedAt = DateTime.Now
+            };
 
             Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
             {
