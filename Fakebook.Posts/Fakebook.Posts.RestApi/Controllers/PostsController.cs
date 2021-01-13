@@ -125,7 +125,9 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
-            throw new NotImplementedException();
+            if (await _postsRepository.AsQueryable()
+                .FirstOrDefaultAsync(p => p.Id == id) is Post post) Ok(post);
+            return NotFound();
         }
 
         /// <summary>
