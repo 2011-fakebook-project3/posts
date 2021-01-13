@@ -94,10 +94,14 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
-            var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == id));
-            var comment = post.Comments.First(c => c.Id == id);
-
-            return Ok(comment);
+            if (await _postsRepository.AsQueryable()
+                .Include(x => x.Comments).FirstOrDefaultAsync(p => 
+                    p.Comments.Any(c => c.Id == id)) is Post post)
+            {
+                var comment = post.Comments.First(c => c.Id == id);
+                return Ok(comment);
+            }
+            return NotFound();
         }
     }
 }
