@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 
-
 namespace Fakebook.Posts.RestApi.Controllers {
 
     [Route("api/posts")]

@@ -1,4 +1,5 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Fakebook.Posts.Domain.Models;
@@ -24,40 +25,6 @@ namespace Fakebook.Posts.RestApi.Controllers {
         }
 
         /// <summary>
-        /// Deletes the post resource with the given id.
-        /// </summary>
-        /// <param name="id">Id of the post to be deleted</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204NoContent on success,
-        /// 400BadRequest on delete failure,
-        /// 404NotFound if the Id did not match an existing post,
-        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
-        [Authorize]
-        [HttpDelete("{postId}/comments/{commentId}")]
-        public async Task<IActionResult> DeleteAsync(int commentId) {
-            /*try {
-                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-                var postEmail = _postsRepository.First(p => p.Id == postId).UserEmail;
-                if (sessionEmail != postEmail) {
-                    return Forbid();
-                }
-            } catch (InvalidOperationException e) {
-                _logger.LogInformation(e, $"Found no post entry with Id: {postId}.");
-                return NotFound(e.Message);
-            }*/
-
-            try {
-                await _postsRepository.DeleteCommentAsync(commentId);
-            } catch (ArgumentException e) {
-                _logger.LogInformation(e, $"Found no comment entry with id: {commentId}.");
-                return NotFound(e.Message);
-            } catch (DbUpdateException e) {
-                _logger.LogInformation(e, "Tried to remove comment which resulted in a violation of a database constraint");
-                return BadRequest(e.Message);
-            }
-            return NoContent();
-        }
-        
         /// Add a new comment to the database. 
         /// </summary>
         /// <param name="comment">
@@ -94,6 +61,40 @@ namespace Fakebook.Posts.RestApi.Controllers {
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id) {
             throw new NotImplementedException();
+        }
+        
+        /// Deletes the post resource with the given id.
+        /// </summary>
+        /// <param name="id">Id of the post to be deleted</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204NoContent on success,
+        /// 400BadRequest on delete failure,
+        /// 404NotFound if the Id did not match an existing post,
+        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        [Authorize]
+        [HttpDelete("{postId}/comments/{commentId}")]
+        public async Task<IActionResult> DeleteAsync(int commentId) {
+            /*try {
+                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+                var postEmail = _postsRepository.First(p => p.Id == postId).UserEmail;
+                if (sessionEmail != postEmail) {
+                    return Forbid();
+                }
+            } catch (InvalidOperationException e) {
+                _logger.LogInformation(e, $"Found no post entry with Id: {postId}.");
+                return NotFound(e.Message);
+            }*/
+
+            try {
+                await _postsRepository.DeleteCommentAsync(commentId);
+            } catch (ArgumentException e) {
+                _logger.LogInformation(e, $"Found no comment entry with id: {commentId}.");
+                return NotFound(e.Message);
+            } catch (DbUpdateException e) {
+                _logger.LogInformation(e, "Tried to remove comment which resulted in a violation of a database constraint");
+                return BadRequest(e.Message);
+            }
+            return NoContent();
         }
     }
 }
