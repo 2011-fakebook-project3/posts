@@ -56,7 +56,7 @@ stages:
     # test on main or PRs to main
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures disallowed)
-      condition: and(succeeded(), in('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
+      condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['System.PullRequest.TargetBranch'], 'main')))
       inputs:
         command: 'test'
         arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover'
@@ -67,7 +67,7 @@ stages:
     # (identical except: fails allowed for TDD workflow)
     - task: DotNetCoreCLI@2
       displayName: dotnet test (failures allowed)
-      condition: and(succeeded(), notIn('refs/heads/main', variables['Build.SourceBranch'], variables['System.PullRequest.TargetBranch']))
+      condition: and(succeeded(), not(or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['System.PullRequest.TargetBranch'], 'main'))))
       continueOnError: true
       inputs:
         command: 'test'
