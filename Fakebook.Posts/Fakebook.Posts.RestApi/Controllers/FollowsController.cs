@@ -29,7 +29,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Follow follow)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
             {
                 if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = follow.FollowedEmail }))
@@ -56,7 +56,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPut("{email}")]
         public async Task<IActionResult> PutAsync(string email)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
             try {
                 if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
                     return NoContent();
@@ -80,7 +80,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteAsync(string email)
         {
-            //var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
+            var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; 
             try {
                 if (await _followsRepository.RemoveFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = email }))
                     return NoContent();
