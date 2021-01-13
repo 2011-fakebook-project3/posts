@@ -58,7 +58,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Content = "Comment Content",
                 Post = dbPost,
                 CreatedAt = DateTime.Now,
-                UserEmail = "person2@domain.net"
+                UserEmail = "person2@domain.net",
             };
 
             dbPost.Comments.Add(dbComent);

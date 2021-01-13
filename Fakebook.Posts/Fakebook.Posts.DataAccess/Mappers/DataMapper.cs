@@ -33,7 +33,9 @@ namespace Fakebook.Posts.DataAccess.Mappers
             domainComment.Id = comment.Id;
             domainComment.Post = post;
             domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
-            domainComment.Likes = comment.CommentLikes.Select(l => l.LikerEmail).ToHashSet();
+            if (comment.CommentLikes is not null)
+                domainComment.Likes = comment.CommentLikes
+                    .Select(l => l.LikerEmail).ToHashSet();
             return domainComment;
         }
 
