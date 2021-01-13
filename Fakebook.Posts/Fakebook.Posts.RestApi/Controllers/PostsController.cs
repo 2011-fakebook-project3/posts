@@ -130,6 +130,12 @@ namespace Fakebook.Posts.RestApi.Controllers {
             return NotFound();
         }
 
+        [HttpGet("user/{email}")]
+        public async Task<IActionResult> GetAsync(string email)
+            => Ok(await _postsRepository
+                .Where(x => x.UserEmail == email)
+                .AsQueryable().ToListAsync());
+
         /// <summary>
         /// Deletes the post resource with the given id.
         /// </summary>
