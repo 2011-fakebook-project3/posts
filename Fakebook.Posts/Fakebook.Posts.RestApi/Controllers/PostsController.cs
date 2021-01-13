@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.ExceptionServices;
+using Fakebook.Posts.RestApi.Services;
 
 namespace Fakebook.Posts.RestApi.Controllers {
 
@@ -16,10 +18,19 @@ namespace Fakebook.Posts.RestApi.Controllers {
     public class PostsController : ControllerBase {
 
         private readonly IPostsRepository _postsRepository;
+        private readonly IFollowsRepository _followsRepository;
+        private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
 
-        public PostsController(IPostsRepository postsRepository, ILogger<PostsController> logger) {
+        public PostsController(
+            IPostsRepository postsRepository,
+            IFollowsRepository followsRepository, 
+            IBlobService blobService,
+            ILogger<PostsController> logger
+            ) {
             _postsRepository = postsRepository;
+            _followsRepository = followsRepository;
+            _blobService = blobService;
             _logger = logger;
         }
 
@@ -182,6 +193,39 @@ namespace Fakebook.Posts.RestApi.Controllers {
             }
 
             return NoContent();
+        }
+
+        [HttpPost("UploadPicture"), DisableRequestSizeLimit]
+        public async Task<ActionResult> UploadPicture(IFormFile file, string userId) 
+        {
+            try {
+                using (var fileStream = file.OpenReadStream())
+                {
+                    // generate a random guid from the file name
+                    // examplePicture.gif => examplePicture gif
+                    var extension = file.FileName.Split('.').Last();
+                    var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
+                    // upload image
+                    var result = await _blobService.UploadFileBlobAsync(
+                        "fakebook",
+                        fileStream,
+                        file.ContentType,
+                        newFileName);
+                    return Ok(new { path = result.AbsoluteUri });
+                }
+            } catch (ArgumentNullException ex) {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            } catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return BadRequest(ex.Message);
+            } catch (Azure.RequestFailedException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
     }
 }

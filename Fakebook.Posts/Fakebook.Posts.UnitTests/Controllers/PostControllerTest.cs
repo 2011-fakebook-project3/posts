@@ -189,7 +189,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
-            var controller = new CommentsController(mockRepo.Object, new NullLogger<CommentsController>());
             
             // Act
             var response = await client.PostAsync("api/comments", stringContent);

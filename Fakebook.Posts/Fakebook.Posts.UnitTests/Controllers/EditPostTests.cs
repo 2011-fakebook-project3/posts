@@ -3,6 +3,7 @@ using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Authentication;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
