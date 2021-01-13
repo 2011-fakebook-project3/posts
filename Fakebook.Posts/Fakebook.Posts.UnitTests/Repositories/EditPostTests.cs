@@ -27,7 +27,7 @@ namespace Fakebook.Posts.UnitTests.Repositories
                 .Options;
 
             DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
-                Id = 1,
+                Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
@@ -37,7 +37,7 @@ namespace Fakebook.Posts.UnitTests.Repositories
 
             Domain.Models.Post updatedPost = new Domain.Models.Post("person@domain.net", updatedContent)
             {
-                Id = 1
+                Id = 3
             };
 
             using var context = new FakebookPostsContext(options);

@@ -116,6 +116,7 @@ namespace Fakebook.Posts.DataAccess {
                 .HasData(new Comment[] {
                 
                     new Comment {
+                        Id = 1,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Nice",
                         CreatedAt = DateTimeOffset.Now,

@@ -24,15 +24,15 @@ namespace Fakebook.Posts.UnitTests.Repositories {
                 .Options;
 
             DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
-                Id = 1,
+                Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
             DataAccess.Models.Comment insertedComment = new DataAccess.Models.Comment() {
-                Id = 1,
-                PostId = 1,
+                Id = 2,
+                PostId = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
@@ -47,7 +47,7 @@ namespace Fakebook.Posts.UnitTests.Repositories {
             var repo = new PostsRepository(context);
 
             //Act
-            await repo.DeleteCommentAsync(1);
+            await repo.DeleteCommentAsync(2);
             context.SaveChanges();
 
             // Assert

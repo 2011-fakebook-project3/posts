@@ -26,7 +26,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
           
             var dataAccessPost = new DataAccess.Models.Post()
             {
-                Id = 1,
+                Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "post content",
                 CreatedAt = DateTime.Now
@@ -34,12 +34,13 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
 
             var domainModelPost = new Domain.Models.Post("person@domain.net", "post content")
             {
-                Id = 1,
+                Id = 3,
                 CreatedAt = DateTime.Now
             };
 
             Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
             {
+                Id = 2,
                 Post = domainModelPost,
                 CreatedAt = DateTime.Now
             };
@@ -105,7 +106,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .Options;
 
             DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
-                Id = 1,
+                Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
@@ -120,7 +121,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
 
             // Act
             var result = repo.AsQueryable().FirstOrDefault(
-                p => p.Id == 1);
+                p => p.Id == 3);
 
             // Assert
             Assert.IsAssignableFrom<Domain.Models.Post>(result);
