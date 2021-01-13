@@ -1,4 +1,4 @@
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -282,15 +282,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> GetNewsfeedAsync()
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var followedUserEmails = _followsRepository.GetFollowedEmails(email);
-            followedUserEmails.Add(email);
-            // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
-            // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
-            var newsfeedPosts = await _postsRepository
-            .Where(p => followedUserEmails.Contains(p.UserEmail))
-            .GroupBy(p => p.UserEmail)
-            .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
-            .AsQueryable().ToListAsync();
+            var newsfeedPosts = await _postsRepository.NewsfeedAsync(email, 3);
+            // var followedUserEmails = _followsRepository.GetFollowedEmails(email);
+            // followedUserEmails.Add(email);
+            // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
+            // // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
+            // var newsfeedPosts = await _postsRepository
+            // .Where(p => followedUserEmails.Contains(p.UserEmail))
+            // .GroupBy(p => p.UserEmail)
+            // .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
+            // .AsQueryable().ToListAsync();
             return Ok(newsfeedPosts);
         }
     }
