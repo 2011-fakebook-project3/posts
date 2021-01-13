@@ -128,6 +128,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
+        [Authorize]
         [HttpPost("{id}/like")]
         public async Task<IActionResult> LikePostAsync(int id)
         {
@@ -136,6 +137,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost("{id}/unlike")]
         public async Task<IActionResult> UnlikePostAsync(int id)
         {
@@ -144,6 +146,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost("{id}/comments/{commentId}/like")]
         public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
         {
@@ -152,6 +155,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost("{id}/comments/{commentId}/unlike")]
         public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
         {
@@ -272,6 +276,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Ok responce with the top 3 
         /// </returns>
         // Route: api/newsfeed
+
+        [Authorize]
         [HttpGet("newsfeed")]
         public async Task<IActionResult> GetNewsfeedAsync()
         {
