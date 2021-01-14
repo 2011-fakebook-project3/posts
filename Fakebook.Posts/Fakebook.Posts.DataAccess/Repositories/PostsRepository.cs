@@ -22,7 +22,9 @@ namespace Fakebook.Posts.DataAccess.Repositories
         }
         public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
         {
-            var posts = await _context.Posts.FromSqlInterpolated($"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY UserEmail ORDER BY CreatedAt DESC ) AS RowNum FROM Post WHERE UserEmail = {email} OR UserEmail IN ( SELECT FollowedEmail FROM Follow WHERE FollowerEmail = {email} ) ) AS RecentPosts WHERE RowNum <= {count}").ToListAsync();
+            var posts = await _context.Posts.FromSqlInterpolated(
+                $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
+            ).ToListAsync();
             return posts.Select(p => p.ToDomain());
         }
 /*
@@ -30,18 +32,18 @@ SELECT *
 FROM (
     SELECT *, 
     ROW_NUMBER() OVER (
-        PARTITION BY UserEmail 
-        ORDER BY CreatedAt DESC
-    ) AS RowNum
-    FROM Post
-    WHERE UserEmail = @email
-    OR UserEmail IN (
-        SELECT FollowedEmail 
-        FROM Follow 
-        WHERE FollowerEmail = @email
+        PARTITION BY "UserEmail" 
+        ORDER BY "CreatedAt" DESC
+    ) AS "RowNum"
+    FROM "Fakebook"."Post"
+    WHERE "UserEmail" = @email
+    OR "UserEmail" IN (
+        SELECT "FollowedEmail" 
+        FROM "Fakebook"."UserFollows" 
+        WHERE "FollowerEmail" = @email
     )
-) AS RecentPosts
-WHERE RowNum <= 3
+) AS "RecentPosts"
+WHERE "RecentPosts"."RowNum" <= @count
 */
 
         public async ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
