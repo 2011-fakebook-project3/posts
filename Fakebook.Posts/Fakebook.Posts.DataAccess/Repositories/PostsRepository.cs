@@ -22,7 +22,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         }
         public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
         {
-            var posts = await _context.Posts.FromSqlInterpolated($"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY UserEmail ORDER BY CreatedAt DESC ) AS RowNum FROM Post WHERE UserEmail = {email} OR UserEmail IN ( SELECT FollowedEmail FROM Follow WHERE FollowerEmail = {email} ) ) AS RecentPosts WHERE RowNum <= {count}").ToListAsync();
+            var posts = await _context.Posts.FromSqlInterpolated($"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY UserEmail ORDER BY CreatedAt DESC ) AS RowNum FROM \"Fakebook\".\"Post\" WHERE UserEmail = {email} OR UserEmail IN ( SELECT FollowedEmail FROM \"Fakebook\".\"UserFollows\" WHERE FollowerEmail = {email} ) ) AS RecentPosts WHERE RowNum <= {count}").ToListAsync();
             return posts.Select(p => p.ToDomain());
         }
 /*
@@ -33,11 +33,11 @@ FROM (
         PARTITION BY UserEmail 
         ORDER BY CreatedAt DESC
     ) AS RowNum
-    FROM Post
+    FROM "Fakebook"."Post"
     WHERE UserEmail = @email
     OR UserEmail IN (
         SELECT FollowedEmail 
-        FROM Follow 
+        FROM "Fakebook"."UserFollows" 
         WHERE FollowerEmail = @email
     )
 ) AS RecentPosts
