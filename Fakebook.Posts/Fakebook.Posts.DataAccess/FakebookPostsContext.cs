@@ -93,6 +93,61 @@ namespace Fakebook.Posts.DataAccess {
                         .HasConstraintName("FK_Like_Comment")
                         .OnDelete(DeleteBehavior.Cascade);
             });
+
+            modelBuilder.Entity<Post>()
+                .HasData(new Post[] {
+
+                    new Post {
+                        Id = 1,
+                        UserEmail = "david.barnes@revature.net",
+                        Content = "Just made my first post!",
+                        CreatedAt = DateTimeOffset.Now
+                    },
+                    new Post {
+                        Id = 2,
+                        UserEmail = "testaccount@gmail.com",
+                        Content = "Fakebook is really cool.",
+                        CreatedAt = DateTimeOffset.Now
+                    }
+
+                });
+
+            modelBuilder.Entity<Comment>()
+                .HasData(new Comment[] {
+                
+                    new Comment {
+                        Id = 1,
+                        UserEmail = "testaccount@gmail.com",
+                        Content = "Nice",
+                        CreatedAt = DateTimeOffset.Now,
+                        PostId = 1
+                    }
+                
+                });
+
+            modelBuilder.Entity<Follow>()
+                .HasData(new Follow[] {
+                
+                    new Follow {
+                        FollowerEmail = "david.barnes@revature.net",
+                        FollowedEmail = "testaccount@gmail.com"
+                    },
+                    new Follow {
+                        FollowerEmail = "testaccount@gmail.com",
+                        FollowedEmail = "david.barnes@revature.net"
+                    }
+                
+                });
+
+            modelBuilder.Entity<PostLike>()
+                .HasData(new PostLike[] {
+                
+                    new PostLike {
+                        PostId = 1,
+                        LikerEmail = "testaccount@gmail.com"
+                    }
+
+                });
         }
     }
 }
