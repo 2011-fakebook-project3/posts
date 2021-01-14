@@ -26,3 +26,7 @@ WORKDIR /docker-entrypoint-initdb.d
 ENV POSTGRES_PASSWORD Pass@word
 
 COPY --from=build /app/init-db.sql .
+
+# patch generated file to avoid issue: https://github.com/npgsql/efcore.pg/issues/1631
+# should be unnecessary with Npgsql.EntityFrameworkCore.PostgreSQL versions >= 5.0.2
+RUN sed -i 's/SELECT setval/PERFORM setval/' init-db.sql
