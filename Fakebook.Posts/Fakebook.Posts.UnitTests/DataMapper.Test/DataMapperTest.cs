@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Xunit;
 using Fakebook.Posts.DataAccess.Mappers;
+using Xunit;
 
 namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 {
@@ -120,7 +120,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Content = "Comment Content",
                 CreatedAt = DateTime.Now,
                 UserEmail = "person2@domain.net",
-                CommentLikes = new HashSet<DataAccess.Models.CommentLike>{ new DataAccess.Models.CommentLike { LikerEmail = "a@b.d" } }
+                CommentLikes = new HashSet<DataAccess.Models.CommentLike> { new DataAccess.Models.CommentLike { LikerEmail = "a@b.d" } }
             };
 
             //Act
@@ -134,7 +134,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(domainComment.Likes.Count == 1);
         }
 
-        [Fact] 
+        [Fact]
         public void DomainUsertoDbUser()
         {
             //Arrange

@@ -1,19 +1,22 @@
-﻿using Fakebook.Posts.DataAccess;
+﻿using System;
+using System.Threading.Tasks;
+using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Repositories {
-    public class DeleteCommentTests {
+namespace Fakebook.Posts.UnitTests.Repositories
+{
+    public class DeleteCommentTests
+    {
 
         /// <summary>
         /// Tests the PostsRepository class' UpdateAsync method. Ensures that a proper Post object results in the database being modified.
         /// </summary>
         [Fact]
-        public async Task DeleteCommentAsync_ValidId_Removes() {
+        public async Task DeleteCommentAsync_ValidId_Removes()
+        {
 
             // Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
@@ -23,14 +26,16 @@ namespace Fakebook.Posts.UnitTests.Repositories {
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post()
+            {
                 Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
             };
 
-            DataAccess.Models.Comment insertedComment = new DataAccess.Models.Comment() {
+            DataAccess.Models.Comment insertedComment = new DataAccess.Models.Comment()
+            {
                 Id = 2,
                 PostId = 3,
                 UserEmail = "person@domain.net",

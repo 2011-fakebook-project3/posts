@@ -1,9 +1,9 @@
-﻿using Fakebook.Posts.DataAccess;
+﻿using System;
+using System.Threading.Tasks;
+using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Repositories
@@ -26,7 +26,8 @@ namespace Fakebook.Posts.UnitTests.Repositories
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post()
+            {
                 Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",

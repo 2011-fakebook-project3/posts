@@ -1,10 +1,11 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore;
 using Fakebook.Posts.DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.DataAccess
 {
-    public class FakebookPostsContext : DbContext {
+    public class FakebookPostsContext : DbContext
+    {
 
         public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) { }
 
@@ -12,12 +13,12 @@ namespace Fakebook.Posts.DataAccess
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Follow> Follows { get; set; }
         public virtual DbSet<PostLike> PostLikes { get; set; }
-        public virtual DbSet<CommentLike> CommentLikes { get; set; } 
+        public virtual DbSet<CommentLike> CommentLikes { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
-
-            modelBuilder.Entity<Post>(entity => {
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Post>(entity =>
+            {
                 entity.ToTable("Post", "Fakebook");
 
                 entity.Property(e => e.UserEmail)
@@ -35,8 +36,8 @@ namespace Fakebook.Posts.DataAccess
                       .IsRequired(false);
             });
 
-            modelBuilder.Entity<Comment>(entity => {
-
+            modelBuilder.Entity<Comment>(entity =>
+            {
                 entity.ToTable("Comment", "Fakebook");
 
                 entity.Property(e => e.UserEmail)
@@ -58,63 +59,63 @@ namespace Fakebook.Posts.DataAccess
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Follow>(entity => {
-
+            modelBuilder.Entity<Follow>(entity =>
+            {
                 entity.ToTable("UserFollows", "Fakebook");
 
                 entity.HasKey(e => new { e.FollowerEmail, e.FollowedEmail })
                       .HasName("PK_UserFollows");
             });
 
-            modelBuilder.Entity<PostLike>(entity => {
+            modelBuilder.Entity<PostLike>(entity =>
+            {
+                entity.ToTable("PostLikes", "Fakebook");
 
-                  entity.ToTable("PostLikes", "Fakebook");
+                entity.HasKey(e => new { e.LikerEmail, e.PostId })
+                      .HasName("PK_PostLikes");
 
-                  entity.HasKey(e => new { e.LikerEmail, e.PostId })
-                        .HasName("PK_PostLikes");
-                  
-                  entity.HasOne(e => e.Post)
-                        .WithMany(e  => e.PostLikes)
-                        .HasForeignKey(e => e.PostId)
-                        .HasConstraintName("FK_Like_Post")
-                        .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Post)
+                      .WithMany(e => e.PostLikes)
+                      .HasForeignKey(e => e.PostId)
+                      .HasConstraintName("FK_Like_Post")
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<CommentLike>(entity => {
+            modelBuilder.Entity<CommentLike>(entity =>
+            {
+                entity.ToTable("CommentLikes", "Fakebook");
 
-                  entity.ToTable("CommentLikes", "Fakebook");
+                entity.HasKey(e => new { e.LikerEmail, e.CommentId })
+                      .HasName("PK_CommentLikes");
 
-                  entity.HasKey(e => new { e.LikerEmail, e.CommentId })
-                        .HasName("PK_CommentLikes");
-                  
-                  entity.HasOne(e => e.Comment)
-                        .WithMany(e  => e.CommentLikes)
-                        .HasForeignKey(e => e.CommentId)
-                        .HasConstraintName("FK_Like_Comment")
-                        .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Comment)
+                      .WithMany(e => e.CommentLikes)
+                      .HasForeignKey(e => e.CommentId)
+                      .HasConstraintName("FK_Like_Comment")
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Post>()
-                .HasData(new Post[] {
-
-                    new Post {
+                .HasData(new Post[]
+                {
+                    new Post
+                    {
                         Id = 1,
                         UserEmail = "david.barnes@revature.net",
                         Content = "Just made my first post!",
                         CreatedAt = DateTimeOffset.Now
                     },
-                    new Post {
+                    new Post
+                    {
                         Id = 2,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Fakebook is really cool.",
                         CreatedAt = DateTimeOffset.Now
                     }
-
                 });
 
             modelBuilder.Entity<Comment>()
                 .HasData(new Comment[] {
-                
                     new Comment {
                         Id = 1,
                         UserEmail = "testaccount@gmail.com",
@@ -122,31 +123,31 @@ namespace Fakebook.Posts.DataAccess
                         CreatedAt = DateTimeOffset.Now,
                         PostId = 1
                     }
-                
                 });
 
             modelBuilder.Entity<Follow>()
-                .HasData(new Follow[] {
-                
-                    new Follow {
+                .HasData(new Follow[]
+                {
+                    new Follow
+                    {
                         FollowerEmail = "david.barnes@revature.net",
                         FollowedEmail = "testaccount@gmail.com"
                     },
-                    new Follow {
+                    new Follow
+                    {
                         FollowerEmail = "testaccount@gmail.com",
                         FollowedEmail = "david.barnes@revature.net"
                     }
-                
                 });
 
             modelBuilder.Entity<PostLike>()
-                .HasData(new PostLike[] {
-                
-                    new PostLike {
+                .HasData(new PostLike[]
+                {
+                    new PostLike
+                    {
                         PostId = 1,
                         LikerEmail = "testaccount@gmail.com"
                     }
-
                 });
         }
     }

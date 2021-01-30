@@ -1,27 +1,29 @@
-﻿using Fakebook.Posts.Domain.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Microsoft.AspNetCore.Authentication;
 using Fakebook.Posts.RestApi.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Controllers
 {
-    public class EditPostTests : IClassFixture<WebApplicationFactory<Startup>> {
+    public class EditPostTests : IClassFixture<WebApplicationFactory<Startup>>
+    {
 
         private readonly WebApplicationFactory<Startup> _factory;
 
-        public EditPostTests(WebApplicationFactory<Startup> factory) {
+        public EditPostTests(WebApplicationFactory<Startup> factory)
+        {
             _factory = factory;
         }
 
@@ -29,8 +31,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         /// Tests the PostsController class' PutAsync method. Ensures that a proper Post object results in status 204NoContent.
         /// </summary>
         [Fact]
-        public async Task PutAsync_ValidPost_Updates() {
-
+        public async Task PutAsync_ValidPost_Updates()
+        {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
             var mockFollowRepo = new Mock<IFollowsRepository>();
@@ -46,8 +48,10 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
 
-            var client = _factory.WithWebHostBuilder(builder => {
-                builder.ConfigureTestServices(services => {
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
                     services.AddScoped(sp => mockRepo.Object);
                     services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
@@ -58,7 +62,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var post = new Post("test@email.com", "message") {
+            var post = new Post("test@email.com", "message")
+            {
                 Id = 1,
                 Comments = new HashSet<Comment>(),
                 Picture = "picture",
@@ -79,8 +84,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         /// Tests the PostsController class' PutAsync method. Ensures that an improper Post object results in status 400BadRequest with an error message in the body.
         /// </summary>
         [Fact]
-        public async Task PutAsync_InvalidPost_BadRequest() {
-
+        public async Task PutAsync_InvalidPost_BadRequest()
+        {
             // Arrange
             var mockRepo = new Mock<IPostsRepository>();
             var mockFollowRepo = new Mock<IFollowsRepository>();
@@ -96,8 +101,10 @@ namespace Fakebook.Posts.UnitTests.Controllers
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
 
-            var client = _factory.WithWebHostBuilder(builder => {
-                builder.ConfigureTestServices(services => {
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
                     services.AddScoped(sp => mockRepo.Object);
                     services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
@@ -108,7 +115,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var post = new Post("test@email.com", "message") {
+            var post = new Post("test@email.com", "message")
+            {
                 Id = 1,
                 Comments = new HashSet<Comment>(),
                 Picture = "picture",

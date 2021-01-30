@@ -1,10 +1,10 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Fakebook.Posts.DataAccess.Mappers;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.DataAccess.Mappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -15,7 +15,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         {
             _context = context;
         }
-        public ISet<string> GetFollowedEmails(string followerEmail) 
+        public ISet<string> GetFollowedEmails(string followerEmail)
             => _context.Follows
                 .Where(x => x.FollowerEmail == followerEmail)
                 .Select(x => x.FollowedEmail).ToHashSet();

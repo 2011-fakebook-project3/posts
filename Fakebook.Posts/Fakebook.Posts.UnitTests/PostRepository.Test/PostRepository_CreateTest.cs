@@ -1,9 +1,9 @@
-﻿using Fakebook.Posts.DataAccess;
+﻿using System;
+using System.Linq;
+using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 using Xunit;
 
 
@@ -21,7 +21,7 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
-          
+
             var dataAccessPost = new DataAccess.Models.Post()
             {
                 Id = 3,
@@ -94,7 +94,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
         }
 
         [Fact]
-        public void GetPost_GetId_EqualsSetValue() {
+        public void GetPost_GetId_EqualsSetValue()
+        {
             // Arrange
             using var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
@@ -103,7 +104,8 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post() {
+            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post()
+            {
                 Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
