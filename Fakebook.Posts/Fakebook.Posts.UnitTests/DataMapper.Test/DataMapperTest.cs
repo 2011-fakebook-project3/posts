@@ -11,12 +11,12 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainPostToDbPost()
         {
             //Arrange
-            Fakebook.Posts.Domain.Models.Post domainPost = new("person1@domain.net", "Content")
+            Domain.Models.Post domainPost = new("person1@domain.net", "Content")
             {
                 CreatedAt = DateTime.Now
             };
 
-            Fakebook.Posts.Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
             {
                 Post = domainPost,
                 CreatedAt = DateTime.Now
@@ -42,18 +42,18 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbPostToDomainPost()
         {
             //Arrange
-            Fakebook.Posts.DataAccess.Models.Post dbPost = new()
+            DataAccess.Models.Post dbPost = new()
             {
 
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>(),
+                Comments = new HashSet<DataAccess.Models.Comment>(),
                 PostLikes = new HashSet<DataAccess.Models.PostLike>()
 
             };
 
-            Fakebook.Posts.DataAccess.Models.Comment dbComent = new()
+            DataAccess.Models.Comment dbComent = new()
             {
                 Content = "Comment Content",
                 Post = dbPost,
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             dbPost.PostLikes.Add(new DataAccess.Models.PostLike { LikerEmail = "a@b.d", Post = dbPost });
 
             //Act
-            Fakebook.Posts.Domain.Models.Post domainPost = dbPost.ToDomain();
+            Domain.Models.Post domainPost = dbPost.ToDomain();
 
             //Assert
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
@@ -80,16 +80,16 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainCommentToDbComment()
         {
             //Arrange
-            Fakebook.Posts.DataAccess.Models.Post dbPost = new()
+            DataAccess.Models.Post dbPost = new()
             {
                 Id = 0,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
+                Comments = new HashSet<DataAccess.Models.Comment>()
             };
 
-            Fakebook.Posts.Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
             {
                 CreatedAt = DateTime.Now
             };
@@ -110,12 +110,12 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbCommentToDomainComment()
         {
             //Arrange
-            Fakebook.Posts.Domain.Models.Post domainPost = new("person1@domain.net", "Content")
+            Domain.Models.Post domainPost = new("person1@domain.net", "Content")
             {
                 CreatedAt = DateTime.Now
             };
 
-            Fakebook.Posts.DataAccess.Models.Comment dbComment = new()
+            DataAccess.Models.Comment dbComment = new()
             {
                 Content = "Comment Content",
                 CreatedAt = DateTime.Now,
@@ -138,7 +138,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainUsertoDbUser()
         {
             //Arrange
-            Fakebook.Posts.Domain.Models.Follow domainUser = new()
+            Domain.Models.Follow domainUser = new()
             {
                 FollowerEmail = "user@email.net",
                 FollowedEmail = "followee@email.net"
@@ -156,7 +156,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbUsertoDomainUser()
         {
             //Arrange
-            Fakebook.Posts.DataAccess.Models.Follow dbUser = new()
+            DataAccess.Models.Follow dbUser = new()
             {
                 FollowerEmail = "user@email.net",
                 FollowedEmail = "followee@email.net"

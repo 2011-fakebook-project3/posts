@@ -46,7 +46,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         WHERE "RecentPosts"."RowNum" <= @count
         */
 
-        public async ValueTask<Fakebook.Posts.Domain.Models.Post> AddAsync(Fakebook.Posts.Domain.Models.Post post)
+        public async ValueTask<Post> AddAsync(Post post)
         {
             var postDb = post.ToDataAccess();
             await _context.Posts.AddAsync(postDb);
@@ -54,9 +54,9 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return postDb.ToDomain();
         }
 
-        public async ValueTask<Fakebook.Posts.Domain.Models.Comment> AddCommentAsync(Fakebook.Posts.Domain.Models.Comment comment)
+        public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is DataAccess.Models.Post post)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
             {
                 var commentDb = comment.ToDataAccess(post);
                 await _context.Comments.AddAsync(commentDb);
@@ -71,7 +71,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask DeletePostAsync(int id)
         {
-            if (await _context.Posts.FindAsync(id) is DataAccess.Models.Post post)
+            if (await _context.Posts.FindAsync(id) is Models.Post post)
             {
                 _context.Remove(post);
                 await _context.SaveChangesAsync();
@@ -84,7 +84,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask DeleteCommentAsync(int id)
         {
-            if (await _context.Comments.FindAsync(id) is DataAccess.Models.Comment comment)
+            if (await _context.Comments.FindAsync(id) is Models.Comment comment)
             {
                 _context.Remove(comment);
                 await _context.SaveChangesAsync();
@@ -100,9 +100,9 @@ namespace Fakebook.Posts.DataAccess.Repositories
         /// </summary>
         /// <param name="post">The domain post model containing the updated property values.</param>
         /// <exception cref="ArgumentException">ArgumentException</exception>
-        public async ValueTask UpdateAsync(Domain.Models.Post post)
+        public async ValueTask UpdateAsync(Post post)
         {
-            if (await _context.Posts.FindAsync(post.Id) is DataAccess.Models.Post current)
+            if (await _context.Posts.FindAsync(post.Id) is Models.Post current)
             {
                 current.Content = post.Content ?? current.Content;
 
