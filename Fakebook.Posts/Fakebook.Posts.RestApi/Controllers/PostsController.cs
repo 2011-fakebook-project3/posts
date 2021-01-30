@@ -233,20 +233,18 @@ namespace Fakebook.Posts.RestApi.Controllers
         {
             try
             {
-                using (var fileStream = file.OpenReadStream())
-                {
-                    // generate a random guid from the file name
-                    // examplePicture.gif => examplePicture gif
-                    var extension = file.FileName.Split('.').Last();
-                    var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
-                    // upload image
-                    var result = await _blobService.UploadFileBlobAsync(
-                        "fakebook",
-                        fileStream,
-                        file.ContentType,
-                        newFileName);
-                    return Ok(new { path = result.AbsoluteUri });
-                }
+                using var fileStream = file.OpenReadStream();
+                // generate a random guid from the file name
+                // examplePicture.gif => examplePicture gif
+                var extension = file.FileName.Split('.').Last();
+                var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
+                // upload image
+                var result = await _blobService.UploadFileBlobAsync(
+                    "fakebook",
+                    fileStream,
+                    file.ContentType,
+                    newFileName);
+                return Ok(new { path = result.AbsoluteUri });
             }
             catch (ArgumentNullException ex)
             {

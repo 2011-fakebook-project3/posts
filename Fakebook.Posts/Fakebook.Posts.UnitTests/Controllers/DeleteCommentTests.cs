@@ -1,23 +1,18 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers {
+namespace Fakebook.Posts.UnitTests.Controllers
+{
     public class DeleteCommentTests : IClassFixture<WebApplicationFactory<Startup>> {
 
         private readonly WebApplicationFactory<Startup> _factory;
@@ -52,8 +47,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             };
             post.Comments.Add(comment);
 
-            var posts = new HashSet<Post>();
-            posts.Add(post);
+            var posts = new HashSet<Post> { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
@@ -102,8 +96,7 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             };
             post.Comments.Add(comment);
 
-            var posts = new HashSet<Post>();
-            posts.Add(post);
+            var posts = new HashSet<Post> { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());

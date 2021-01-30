@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain;
 using Xunit;
 using Fakebook.Posts.DataAccess.Mappers;
 
@@ -15,13 +11,17 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainPostToDbPost()
         {
             //Arrange
-            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
-            domainPost.CreatedAt = DateTime.Now;
+            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content")
+            {
+                CreatedAt = DateTime.Now
+            };
 
-            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
-            domainComment.Post = domainPost;
-            domainComment.CreatedAt = DateTime.Now;
-               
+            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content")
+            {
+                Post = domainPost,
+                CreatedAt = DateTime.Now
+            };
+
             domainPost.Comments.Add(domainComment);
             domainPost.Likes.Add("a@b.d");
 
@@ -89,8 +89,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
             };
 
-            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
-            domainComment.CreatedAt = DateTime.Now;
+            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content")
+            {
+                CreatedAt = DateTime.Now
+            };
             domainComment.Likes.Add("a@b.d");
 
             //Act
@@ -108,8 +110,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbCommentToDomainComment()
         {
             //Arrange
-            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
-            domainPost.CreatedAt = DateTime.Now;
+            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content")
+            {
+                CreatedAt = DateTime.Now
+            };
 
             var dbComment = new Fakebook.Posts.DataAccess.Models.Comment
             {

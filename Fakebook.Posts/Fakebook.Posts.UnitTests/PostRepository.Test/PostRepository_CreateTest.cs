@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
-using Moq;
 
 
 namespace Fakebook.Posts.UnitTests.PostRepository.Test

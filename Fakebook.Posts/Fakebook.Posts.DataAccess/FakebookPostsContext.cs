@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Fakebook.Posts.DataAccess.Models;
 
-namespace Fakebook.Posts.DataAccess {
+namespace Fakebook.Posts.DataAccess
+{
     public class FakebookPostsContext : DbContext {
 
         public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) { }

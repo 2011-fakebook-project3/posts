@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Fakebook.Posts.DataAccess.Models;
 
 namespace Fakebook.Posts.DataAccess.Mappers

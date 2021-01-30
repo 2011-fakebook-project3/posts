@@ -1,27 +1,22 @@
 ﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Fakebook.Posts.RestApi.Controllers;
 using Microsoft.AspNetCore.Authentication;
 using Fakebook.Posts.RestApi.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers {
+namespace Fakebook.Posts.UnitTests.Controllers
+{
     public class EditPostTests : IClassFixture<WebApplicationFactory<Startup>> {
 
         private readonly WebApplicationFactory<Startup> _factory;
@@ -43,8 +38,10 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
 
-            var posts = new HashSet<Post>();
-            posts.Add(new Post("test.user@email.com", "test content") { Id = 1 });
+            var posts = new HashSet<Post>
+            {
+                new Post("test.user@email.com", "test content") { Id = 1 }
+            };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
@@ -91,8 +88,10 @@ namespace Fakebook.Posts.UnitTests.Controllers {
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var posts = new HashSet<Post>();
-            posts.Add(new Post("test.user@email.com", "test content") { Id = 1 });
+            var posts = new HashSet<Post>
+            {
+                new Post("test.user@email.com", "test content") { Id = 1 }
+            };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());

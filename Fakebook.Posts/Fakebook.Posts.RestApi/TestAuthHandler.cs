@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.RestApi {
+namespace Fakebook.Posts.RestApi
+{
     public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions> {
 
         public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,

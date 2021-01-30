@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +63,7 @@ WHERE "RecentPosts"."RowNum" <= @count
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment.Post.Id));
+                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
             }
 
         }
@@ -98,7 +97,7 @@ WHERE "RecentPosts"."RowNum" <= @count
 
                 await _context.SaveChangesAsync(); // Will throw DbUpdateException if a database constraint is violated.
             } else {
-                throw new ArgumentException("Post with given Id not found.", nameof(post.Id));
+                throw new ArgumentException("Post with given Id not found.", nameof(post));
             }
         }
 
