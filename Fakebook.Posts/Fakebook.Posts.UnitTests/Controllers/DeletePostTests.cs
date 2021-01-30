@@ -32,15 +32,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
 
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
-            var posts = new HashSet<Post>
+            HashSet<Post> posts = new()
             {
-                new Post("test.user@email.com", "test content") { Id = 1 }
+                new("test.user@email.com", "test content") { Id = 1 }
             };
 
             mockRepo.Setup(r => r.GetEnumerator())
@@ -75,15 +75,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task DeleteAsync_InvalidId_NotFound()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
-            var posts = new HashSet<Post>
+            HashSet<Post> posts = new()
             {
-                new Post("test.user@email.com", "test content") { Id = 1 }
+                new("test.user@email.com", "test content") { Id = 1 }
             };
 
             mockRepo.Setup(r => r.GetEnumerator())

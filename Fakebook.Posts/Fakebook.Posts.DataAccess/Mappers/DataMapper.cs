@@ -72,7 +72,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
         }
         public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
         {
-            var dbComment = new Comment
+            Comment dbComment = new()
             {
                 Id = comment.Id,
                 UserEmail = comment.UserEmail,

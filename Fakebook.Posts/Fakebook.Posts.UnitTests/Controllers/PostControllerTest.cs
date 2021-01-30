@@ -35,12 +35,12 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
 
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
-            var comments = new List<Comment>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
+            List<Comment> comments = new();
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Comments = comments,
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -82,15 +82,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task PostAsync_InvalidPost_BadRequest()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var comments = new List<Comment>();
+            List<Comment> comments = new();
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Comments = comments,
@@ -112,7 +112,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -128,15 +128,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task PostAsync_ValidComment_Creates()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
+            Mock<IPostsRepository> mockRepo = new();
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Picture = "picture",
                 CreatedAt = date
             };
-            var comment = new Comment("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
                 Post = post,
@@ -159,7 +159,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
@@ -176,15 +176,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task PostAsyncComment_InvalidPost_BadRequest()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
+            Mock<IPostsRepository> mockRepo = new();
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Picture = "picture",
                 CreatedAt = date
             };
-            var comment = new Comment("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
                 Post = post,
@@ -206,7 +206,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);

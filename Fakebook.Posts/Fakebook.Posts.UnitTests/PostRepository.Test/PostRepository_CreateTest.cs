@@ -15,14 +15,14 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
         public async void CreateComment()
         {
             //Arrange
-            using var connection = new SqliteConnection("Data Source=:memory:");
+            using SqliteConnection connection = new("Data Source=:memory:");
             connection.Open();
 
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
 
-            var dataAccessPost = new DataAccess.Models.Post()
+            DataAccess.Models.Post dataAccessPost = new()
             {
                 Id = 3,
                 UserEmail = "person@domain.net",
@@ -30,13 +30,13 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 CreatedAt = DateTime.Now
             };
 
-            var domainModelPost = new Domain.Models.Post("person@domain.net", "post content")
+            Domain.Models.Post domainModelPost = new("person@domain.net", "post content")
             {
                 Id = 3,
                 CreatedAt = DateTime.Now
             };
 
-            Domain.Models.Comment comment = new Domain.Models.Comment("person@domain.net", "content")
+            Domain.Models.Comment comment = new("person@domain.net", "content")
             {
                 Id = 2,
                 Post = domainModelPost,
@@ -46,10 +46,10 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             Domain.Models.Comment result;
 
             //Act
-            using (var context = new FakebookPostsContext(options))
+            using (FakebookPostsContext context = new(options))
             {
                 context.Database.EnsureCreated();
-                var repo = new PostsRepository(context);
+                PostsRepository repo = new(context);
                 context.Posts.Add(dataAccessPost);
                 context.SaveChanges();
                 result = await repo.AddCommentAsync(comment);
@@ -64,14 +64,14 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
         public async void CreatePost()
         {
             //Arrange
-            using var connection = new SqliteConnection("Data Source=:memory:");
+            using SqliteConnection connection = new("Data Source=:memory:");
             connection.Open();
 
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
 
-            Domain.Models.Post post = new Domain.Models.Post("person@domain.net", "content")
+            Domain.Models.Post post = new("person@domain.net", "content")
             {
                 Content = "New Content",
                 CreatedAt = DateTime.Now
@@ -80,10 +80,10 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
             Domain.Models.Post result;
 
             // Act
-            using (var context = new FakebookPostsContext(options))
+            using (FakebookPostsContext context = new(options))
             {
                 context.Database.EnsureCreated();
-                var repo = new PostsRepository(context);
+                PostsRepository repo = new(context);
                 result = await repo.AddAsync(post);
             }
 
@@ -97,14 +97,14 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
         public void GetPost_GetId_EqualsSetValue()
         {
             // Arrange
-            using var connection = new SqliteConnection("Data Source=:memory:");
+            using SqliteConnection connection = new("Data Source=:memory:");
             connection.Open();
 
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post()
+            DataAccess.Models.Post insertedPost = new()
             {
                 Id = 3,
                 UserEmail = "person@domain.net",
@@ -112,12 +112,12 @@ namespace Fakebook.Posts.UnitTests.PostRepository.Test
                 CreatedAt = DateTime.Now
             };
 
-            using var context = new FakebookPostsContext(options);
+            using FakebookPostsContext context = new(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
             context.SaveChanges();
 
-            var repo = new PostsRepository(context);
+            PostsRepository repo = new(context);
 
             // Act
             var result = repo.AsQueryable().FirstOrDefault(

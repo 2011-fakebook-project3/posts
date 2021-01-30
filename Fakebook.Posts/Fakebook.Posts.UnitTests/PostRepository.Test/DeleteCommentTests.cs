@@ -19,14 +19,14 @@ namespace Fakebook.Posts.UnitTests.Repositories
         {
 
             // Arrange
-            using var connection = new SqliteConnection("Data Source=:memory:");
+            using SqliteConnection connection = new("Data Source=:memory:");
             connection.Open();
 
             var options = new DbContextOptionsBuilder<FakebookPostsContext>()
                 .UseSqlite(connection)
                 .Options;
 
-            DataAccess.Models.Post insertedPost = new DataAccess.Models.Post()
+            DataAccess.Models.Post insertedPost = new()
             {
                 Id = 3,
                 UserEmail = "person@domain.net",
@@ -34,7 +34,7 @@ namespace Fakebook.Posts.UnitTests.Repositories
                 CreatedAt = DateTime.Now
             };
 
-            DataAccess.Models.Comment insertedComment = new DataAccess.Models.Comment()
+            DataAccess.Models.Comment insertedComment = new()
             {
                 Id = 2,
                 PostId = 3,
@@ -43,13 +43,13 @@ namespace Fakebook.Posts.UnitTests.Repositories
                 CreatedAt = DateTime.Now
             };
 
-            using var context = new FakebookPostsContext(options);
+            using FakebookPostsContext context = new(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
             context.Comments.Add(insertedComment);
             context.SaveChanges();
 
-            var repo = new PostsRepository(context);
+            PostsRepository repo = new(context);
 
             //Act
             await repo.DeleteCommentAsync(2);

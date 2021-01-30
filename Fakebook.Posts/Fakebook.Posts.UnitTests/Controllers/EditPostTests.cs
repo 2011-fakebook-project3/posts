@@ -34,15 +34,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task PutAsync_ValidPost_Updates()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
 
-            var posts = new HashSet<Post>
+            HashSet<Post> posts = new()
             {
-                new Post("test.user@email.com", "test content") { Id = 1 }
+                new("test.user@email.com", "test content") { Id = 1 }
             };
 
             mockRepo.Setup(r => r.GetEnumerator())
@@ -62,7 +62,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var post = new Post("test@email.com", "message")
+            Post post = new("test@email.com", "message")
             {
                 Id = 1,
                 Comments = new HashSet<Comment>(),
@@ -70,7 +70,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PutAsync("api/posts/1", stringContent);
@@ -87,15 +87,15 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async Task PutAsync_InvalidPost_BadRequest()
         {
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
-            var mockFollowRepo = new Mock<IFollowsRepository>();
-            var mockBlobService = new Mock<IBlobService>();
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            var posts = new HashSet<Post>
+            HashSet<Post> posts = new()
             {
-                new Post("test.user@email.com", "test content") { Id = 1 }
+                new("test.user@email.com", "test content") { Id = 1 }
             };
 
             mockRepo.Setup(r => r.GetEnumerator())
@@ -115,7 +115,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            var post = new Post("test@email.com", "message")
+            Post post = new("test@email.com", "message")
             {
                 Id = 1,
                 Comments = new HashSet<Comment>(),
@@ -123,7 +123,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 CreatedAt = DateTime.Now
             };
 
-            var stringContent = new StringContent(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PutAsync("api/posts/1", stringContent);

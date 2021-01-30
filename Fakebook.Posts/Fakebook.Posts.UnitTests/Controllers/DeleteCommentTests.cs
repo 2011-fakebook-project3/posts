@@ -31,19 +31,19 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
 
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
+            Mock<IPostsRepository> mockRepo = new();
 
             mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Picture = "picture",
                 CreatedAt = date
             };
-            var comment = new Comment("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
                 Post = post,
@@ -52,7 +52,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             };
             post.Comments.Add(comment);
 
-            var posts = new HashSet<Post> { post };
+            HashSet<Post> posts = new() { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
@@ -85,19 +85,19 @@ namespace Fakebook.Posts.UnitTests.Controllers
         {
 
             // Arrange
-            var mockRepo = new Mock<IPostsRepository>();
+            Mock<IPostsRepository> mockRepo = new();
 
             mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
             var date = DateTime.Now;
-            var post = new Post("test.user@email.com", "test content")
+            Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
                 Picture = "picture",
                 CreatedAt = date
             };
-            var comment = new Comment("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
                 Post = post,
@@ -106,7 +106,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             };
             post.Comments.Add(comment);
 
-            var posts = new HashSet<Post> { post };
+            HashSet<Post> posts = new() { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());

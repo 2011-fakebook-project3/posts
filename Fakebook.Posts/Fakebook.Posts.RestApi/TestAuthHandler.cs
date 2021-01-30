@@ -17,9 +17,9 @@ namespace Fakebook.Posts.RestApi
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "test.user@email.com") };
-            var identity = new ClaimsIdentity(claims, "Test");
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, "Test");
+            ClaimsIdentity identity = new(claims, "Test");
+            ClaimsPrincipal principal = new(identity);
+            AuthenticationTicket ticket = new(principal, "Test");
 
             var result = AuthenticateResult.Success(ticket);
 

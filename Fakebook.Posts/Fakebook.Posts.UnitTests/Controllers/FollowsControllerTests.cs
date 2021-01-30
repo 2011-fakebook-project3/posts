@@ -45,17 +45,17 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PostAsync_NewEmail_NoContent()
         {
             //Given
-            var myFollow = new Follow
+            Follow myFollow = new()
             {
                 FollowedEmail = It.IsAny<string>(),
                 FollowerEmail = It.IsAny<string>(),
             };
-            var stringContent = new StringContent(
+            StringContent stringContent = new(
                 JsonSerializer.Serialize(myFollow),
                 Encoding.UTF8, "application/json");
 
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
 
@@ -84,17 +84,17 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PostAsync_OldEmail_BadRequest()
         {
             //Given
-            var myFollow = new Follow
+            Follow myFollow = new()
             {
                 FollowedEmail = It.IsAny<string>(),
                 FollowerEmail = It.IsAny<string>()
             };
-            var stringContent = new StringContent(
+            StringContent stringContent = new(
                 JsonSerializer.Serialize(myFollow),
                 Encoding.UTF8, "application/json");
 
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
 
@@ -110,8 +110,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PutAsync_NewEmail_NoContent()
         {
             //Given
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
             var client = BuildTestAuthClient(mockRepo);
@@ -128,8 +128,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PutAsync_OldEmail_BadRequest()
         {
             //Given
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.AddFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
             var client = BuildTestAuthClient(mockRepo);
@@ -145,8 +145,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void DeleteAsync_OldEmail_NoContent()
         {
             //Given
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(true);
             var client = BuildTestAuthClient(mockRepo);
@@ -163,8 +163,8 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void DeleteAsync_NewEmail_BadRequest()
         {
             //Given
-            var mockRepo = new Mock<IFollowsRepository>();
-            var logger = new NullLogger<FollowsController>();
+            Mock<IFollowsRepository> mockRepo = new();
+            NullLogger<FollowsController> logger = new();
             mockRepo.Setup(r => r.RemoveFollowAsync(It.IsAny<Follow>()))
                     .ReturnsAsync(false);
             var client = BuildTestAuthClient(mockRepo);
