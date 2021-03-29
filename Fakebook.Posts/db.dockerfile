@@ -19,14 +19,10 @@ COPY . ./
 # generate SQL script from migrations
 RUN dotnet ef migrations script -p Fakebook.Posts.DataAccess -s Fakebook.Posts.RestApi -o ../init-db.sql -i
 
-FROM postgres:13.1-alpine AS runtime
+FROM postgres:13.2-alpine AS runtime
 
 WORKDIR /docker-entrypoint-initdb.d
 
 ENV POSTGRES_PASSWORD Pass@word
 
 COPY --from=build /app/init-db.sql .
-
-# patch generated file to avoid issue: https://github.com/npgsql/efcore.pg/issues/1631
-# should be unnecessary with Npgsql.EntityFrameworkCore.PostgreSQL versions >= 5.0.2
-RUN sed -i 's/SELECT setval/PERFORM setval/' init-db.sql
