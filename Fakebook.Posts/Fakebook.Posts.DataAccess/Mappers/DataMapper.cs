@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Fakebook.Posts.DataAccess.Models;
 
 namespace Fakebook.Posts.DataAccess.Mappers
@@ -12,7 +11,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
     {
         public static Domain.Models.Post ToDomain(this Post post)
         {
-            Domain.Models.Post domainPost = new (post.UserEmail, post.Content);
+            Domain.Models.Post domainPost = new(post.UserEmail, post.Content);
             domainPost.Id = post.Id;
             domainPost.Picture = post.Picture;
             domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
@@ -29,7 +28,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
         public static Domain.Models.Comment ToDomain(this Comment comment,
             Domain.Models.Post post)
         {
-            Domain.Models.Comment domainComment = new (comment.UserEmail, comment.Content);
+            Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content);
             domainComment.Id = comment.Id;
             domainComment.Post = post;
             domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
@@ -50,7 +49,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
 
         public static Post ToDataAccess(this Domain.Models.Post post)
         {
-            Post dbPost = new ();
+            Post dbPost = new();
 
             dbPost.Id = post.Id;
             dbPost.UserEmail = post.UserEmail;
@@ -61,18 +60,19 @@ namespace Fakebook.Posts.DataAccess.Mappers
                 dbPost.Comments = post.Comments
                     .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
             if (post.Likes is not null)
-                dbPost.PostLikes = post.Likes.Select(c => 
-                    new PostLike { 
-                        LikerEmail = c, 
-                        Post = dbPost, 
-                        PostId = dbPost.Id 
+                dbPost.PostLikes = post.Likes.Select(c =>
+                    new PostLike
+                    {
+                        LikerEmail = c,
+                        Post = dbPost,
+                        PostId = dbPost.Id
                     }).ToHashSet();
             return dbPost;
-            
+
         }
         public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
         {
-            var dbComment = new Comment
+            Comment dbComment = new()
             {
                 Id = comment.Id,
                 UserEmail = comment.UserEmail,

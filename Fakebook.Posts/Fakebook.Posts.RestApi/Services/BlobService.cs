@@ -1,19 +1,23 @@
-﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
-namespace Fakebook.Posts.RestApi.Services {
-    public class BlobService : IBlobService {
+namespace Fakebook.Posts.RestApi.Services
+{
+    public class BlobService : IBlobService
+    {
 
         private readonly BlobServiceClient _blobServiceClient;
 
-        public BlobService(BlobServiceClient blobServiceClient) {
+        public BlobService(BlobServiceClient blobServiceClient)
+        {
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<Uri> UploadFileBlobAsync(string blobContainerName, Stream content, string contentType, string fileName) {
+        public async Task<Uri> UploadFileBlobAsync(string blobContainerName, Stream content, string contentType, string fileName)
+        {
             var containerClient = GetContainerClient(blobContainerName);
             var blobClient = containerClient.GetBlobClient(fileName);
 
@@ -22,7 +26,8 @@ namespace Fakebook.Posts.RestApi.Services {
             return blobClient.Uri;
         }
 
-        private BlobContainerClient GetContainerClient(string blobContainerName) {
+        private BlobContainerClient GetContainerClient(string blobContainerName)
+        {
             var containerClient = _blobServiceClient.GetBlobContainerClient(blobContainerName);
 
             containerClient.CreateIfNotExists(PublicAccessType.Blob);

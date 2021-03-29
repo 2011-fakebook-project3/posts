@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain;
-using Xunit;
 using Fakebook.Posts.DataAccess.Mappers;
+using Xunit;
 
 namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 {
@@ -15,13 +11,17 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainPostToDbPost()
         {
             //Arrange
-            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
-            domainPost.CreatedAt = DateTime.Now;
+            Domain.Models.Post domainPost = new("person1@domain.net", "Content")
+            {
+                CreatedAt = DateTime.Now
+            };
 
-            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
-            domainComment.Post = domainPost;
-            domainComment.CreatedAt = DateTime.Now;
-               
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            {
+                Post = domainPost,
+                CreatedAt = DateTime.Now
+            };
+
             domainPost.Comments.Add(domainComment);
             domainPost.Likes.Add("a@b.d");
 
@@ -42,18 +42,18 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbPostToDomainPost()
         {
             //Arrange
-            var dbPost = new Fakebook.Posts.DataAccess.Models.Post
+            DataAccess.Models.Post dbPost = new()
             {
 
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>(),
+                Comments = new HashSet<DataAccess.Models.Comment>(),
                 PostLikes = new HashSet<DataAccess.Models.PostLike>()
 
             };
 
-            var dbComent = new Fakebook.Posts.DataAccess.Models.Comment
+            DataAccess.Models.Comment dbComent = new()
             {
                 Content = "Comment Content",
                 Post = dbPost,
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             dbPost.PostLikes.Add(new DataAccess.Models.PostLike { LikerEmail = "a@b.d", Post = dbPost });
 
             //Act
-            Fakebook.Posts.Domain.Models.Post domainPost = dbPost.ToDomain();
+            Domain.Models.Post domainPost = dbPost.ToDomain();
 
             //Assert
             Assert.True(dbPost.UserEmail == domainPost.UserEmail);
@@ -80,17 +80,19 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DomainCommentToDbComment()
         {
             //Arrange
-            var dbPost = new Fakebook.Posts.DataAccess.Models.Post
+            DataAccess.Models.Post dbPost = new()
             {
                 Id = 0,
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
-                Comments = new HashSet<Fakebook.Posts.DataAccess.Models.Comment>()
+                Comments = new HashSet<DataAccess.Models.Comment>()
             };
 
-            var domainComment = new Fakebook.Posts.Domain.Models.Comment("person1@domain.net", "Comment Content");
-            domainComment.CreatedAt = DateTime.Now;
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            {
+                CreatedAt = DateTime.Now
+            };
             domainComment.Likes.Add("a@b.d");
 
             //Act
@@ -108,15 +110,17 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbCommentToDomainComment()
         {
             //Arrange
-            var domainPost = new Fakebook.Posts.Domain.Models.Post("person1@domain.net", "Content");
-            domainPost.CreatedAt = DateTime.Now;
+            Domain.Models.Post domainPost = new("person1@domain.net", "Content")
+            {
+                CreatedAt = DateTime.Now
+            };
 
-            var dbComment = new Fakebook.Posts.DataAccess.Models.Comment
+            DataAccess.Models.Comment dbComment = new()
             {
                 Content = "Comment Content",
                 CreatedAt = DateTime.Now,
                 UserEmail = "person2@domain.net",
-                CommentLikes = new HashSet<DataAccess.Models.CommentLike>{ new DataAccess.Models.CommentLike { LikerEmail = "a@b.d" } }
+                CommentLikes = new HashSet<DataAccess.Models.CommentLike> { new DataAccess.Models.CommentLike { LikerEmail = "a@b.d" } }
             };
 
             //Act
@@ -130,11 +134,11 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(domainComment.Likes.Count == 1);
         }
 
-        [Fact] 
+        [Fact]
         public void DomainUsertoDbUser()
         {
             //Arrange
-            var domainUser = new Fakebook.Posts.Domain.Models.Follow
+            Domain.Models.Follow domainUser = new()
             {
                 FollowerEmail = "user@email.net",
                 FollowedEmail = "followee@email.net"
@@ -152,7 +156,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
         public void DbUsertoDomainUser()
         {
             //Arrange
-            var dbUser = new Fakebook.Posts.DataAccess.Models.Follow
+            DataAccess.Models.Follow dbUser = new()
             {
                 FollowerEmail = "user@email.net",
                 FollowedEmail = "followee@email.net"

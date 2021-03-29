@@ -1,4 +1,7 @@
-﻿using Fakebook.Posts.Domain.Interfaces;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -6,9 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
@@ -175,8 +175,10 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [HttpGet("user/{email}")]
         public async Task<IActionResult> GetAsync(string email)
-            => Ok(await _postsRepository.AsQueryable()
+        {
+            return Ok(await _postsRepository.AsQueryable()
                 .Where(x => x.UserEmail == email).ToListAsync());
+        }
 
         /// <summary>
         /// Deletes the post resource with the given id.
@@ -233,20 +235,18 @@ namespace Fakebook.Posts.RestApi.Controllers
         {
             try
             {
-                using (var fileStream = file.OpenReadStream())
-                {
-                    // generate a random guid from the file name
-                    // examplePicture.gif => examplePicture gif
-                    var extension = file.FileName.Split('.').Last();
-                    var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
-                    // upload image
-                    var result = await _blobService.UploadFileBlobAsync(
-                        "fakebook",
-                        fileStream,
-                        file.ContentType,
-                        newFileName);
-                    return Ok(new { path = result.AbsoluteUri });
-                }
+                using var fileStream = file.OpenReadStream();
+                // generate a random guid from the file name
+                // examplePicture.gif => examplePicture gif
+                var extension = file.FileName.Split('.').Last();
+                var newFileName = $"{userId}-{Guid.NewGuid()}.{extension}";
+                // upload image
+                var result = await _blobService.UploadFileBlobAsync(
+                    "fakebook",
+                    fileStream,
+                    file.ContentType,
+                    newFileName);
+                return Ok(new { path = result.AbsoluteUri });
             }
             catch (ArgumentNullException ex)
             {
@@ -268,11 +268,11 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         /// <summary>
         /// Fetch the posts for a user's newsfeed baised off the session token.
-        /// A user's newsfeed contains the three most recent posts 
+        /// A user's newsfeed contains the three most recent posts
         /// of the user and the users they follow.
         /// </summary>
         /// <returns>
-        /// Ok responce with the top 3 
+        /// Ok responce with the top 3
         /// </returns>
         // Route: api/newsfeed
 

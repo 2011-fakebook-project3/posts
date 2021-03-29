@@ -4,6 +4,6 @@ namespace Fakebook.Posts.DataAccess.Models
     {
         public string LikerEmail { get; set; }
         public int CommentId { get; set; }
-        public Comment Comment { get;  set; }
+        public Comment Comment { get; set; }
     }
 }
