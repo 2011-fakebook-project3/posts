@@ -100,7 +100,6 @@ stages:
         Dockerfile: '$(targetSolution)/app.dockerfile'
     - task: Docker@2
       displayName: docker build db image
-      continueOnError: true # until it has an actual DB
       inputs:
         repository: '$(imageName)-db'
         command: 'build'
@@ -123,7 +122,6 @@ stages:
           $(Build.BuildNumber)
     - task: Docker@2
       displayName: docker build-push db image
-      continueOnError: true # until it has an actual DB
       inputs:
         containerRegistry: 'fakebook-acr'
         repository: '$(imageName)-db'
