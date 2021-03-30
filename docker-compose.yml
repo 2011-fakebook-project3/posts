@@ -3,7 +3,7 @@
 # run in foreground: `docker-compose up`
 # run in background: `docker-compose up -d`
 # stop in background: `docker-compose down`
-# reset the db volume: `docker-compose down -v`
+# reset the db: `docker-compose down -v && docker-compose build`
 
 services:
   db:
