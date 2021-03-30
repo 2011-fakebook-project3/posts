@@ -101,7 +101,7 @@ namespace Fakebook.Posts.DataAccess
                     new Post
                     {
                         Id = 1,
-                        UserEmail = "david.barnes@revature.net",
+                        UserEmail = "john.werner@revature.net",
                         Content = "Just made my first post!",
                         CreatedAt = DateTimeOffset.Now
                     },
@@ -130,13 +130,13 @@ namespace Fakebook.Posts.DataAccess
                 {
                     new Follow
                     {
-                        FollowerEmail = "david.barnes@revature.net",
+                        FollowerEmail = "john.werner@revature.net",
                         FollowedEmail = "testaccount@gmail.com"
                     },
                     new Follow
                     {
                         FollowerEmail = "testaccount@gmail.com",
-                        FollowedEmail = "david.barnes@revature.net"
+                        FollowedEmail = "john.werner@revature.net"
                     }
                 });
 
