@@ -9,7 +9,7 @@ services:
   db:
     build:
       context: ./Fakebook.Posts
-      dockerfile: Fakebook.Posts/db.dockerfile
+      dockerfile: db.dockerfile
     image: fakebookposts-db:latest
     ports:
     - 5432:5432
