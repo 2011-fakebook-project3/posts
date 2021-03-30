@@ -29,7 +29,7 @@ namespace Fakebook.Posts.RestApi
             // setup Postgres database
             var connectionString = Configuration["ConnectionString:default"];
             services.AddDbContext<FakebookPostsContext>(options => options.UseNpgsql(connectionString));
-            // setup Azure Blobs Service 
+            // setup Azure Blobs Service
             services.AddTransient<IBlobService, BlobService>(sp =>
                 new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
             );
@@ -59,7 +59,7 @@ namespace Fakebook.Posts.RestApi
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.Authority = "https://dev-2875280.okta.com/oauth2/default";
+                    options.Authority = "https://revature-p3.okta.com/oauth2/default";
                     options.Audience = "api://default";
                 });
         }
