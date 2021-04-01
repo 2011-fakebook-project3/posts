@@ -36,23 +36,23 @@ namespace Fakebook.Posts.RestApi.Controllers
             _logger = logger;
         }
 
+
         /// <summary>
-        /// Updates the properties of the resource at the given id to be those contained within the given post object.
+        /// Updates the Post's Content given an EditPost DTO
         /// </summary>
-        /// <param name="id">The Id of the post to be updated.</param>
-        /// <param name="post">A post object containing the properties which are to be updated.</param>
+        /// <param name="post">Post DTO containing new content and post id</param>
         /// <returns>An IActionResult containing either a:
-        /// 204NoContent on success,
-        /// 400BadRequest on update failure,
-        /// 404NotFound if the Id did not match an existing post,
-        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        /// 204 No Content on success
+        /// 400 Bad Request on update failure
+        /// 403 Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.
+        /// 404 Not Found if the Id did not match an existing post.</returns>
         [Authorize]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(int id, Post post)
+        public async Task<IActionResult> Put(int id, Post post)
         {
             try
             {
@@ -89,17 +89,21 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NoContent();
         }
 
+
         /// <summary>
-        /// Adds a new post to the database.
+        /// Adds a new post to the database given a NewPost DTO.
         /// </summary>
-        /// <param name="postModel">The post object to be added.</param>
-        /// <returns>201Created on successful add, 400BadRequest on failure, 403Forbidden if post UserEmail does not match the email of the session token.</returns>
+        /// <param name="postModel">New Post DTO</param>
+        /// <returns>An IActionResult containing either a:
+        /// 201 Created on succes
+        /// 400 Bad Request on failure
+        /// 403 Forbidden if post UserEmail does not match the email of the session token.</returns>
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(Post postModel)
+        public async Task<IActionResult> Post(Post postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
@@ -125,77 +129,120 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return BadRequest(e.Message);
             }
 
-            return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
+
+        /// <summary>
+        /// Likes a Post for a User given a post ID.
+        /// </summary>
+        /// <param name="id">Post ID to be liked</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success
+        /// 404 Not Found if Post can't be found</returns>
         [Authorize]
         [HttpPost("{id}/like")]
-        public async Task<IActionResult> LikePostAsync(int id)
+        public async Task<IActionResult> LikePost(int id)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.LikePostAsync(id, email)) return Ok();
             return NotFound();
         }
 
+        /// <summary>
+        /// Unlikes a Post for a User given a post ID.
+        /// </summary>
+        /// <param name="id">Post ID to be liked</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success
+        /// 404 Not Found if Post can't be found</returns>
         [Authorize]
         [HttpPost("{id}/unlike")]
-        public async Task<IActionResult> UnlikePostAsync(int id)
+        public async Task<IActionResult> UnlikePost(int id)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.UnlikePostAsync(id, email)) return Ok();
             return NotFound();
         }
 
+        /// <summary>
+        /// Likes a comment for a User given a comment ID.
+        /// </summary>
+        /// <param name="id">Comment ID of comment to be liked</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success
+        /// 404 Not Found if Comment can't be found</returns>
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/like")]
-        public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> LikeComment(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
             return NotFound();
         }
 
+        /// <summary>
+        /// Unlikes a comment for a User given a comment ID.
+        /// </summary>
+        /// <param name="id">Comment ID of comment to be unliked</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success
+        /// 404 Not Found if Comment can't be found</returns>
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/unlike")]
-        public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> UnlikeComment(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();
             return NotFound();
         }
 
+        /// <summary>
+        /// Gets a post by ID
+        /// </summary>
+        /// <param name="id">Id of Post</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success
+        /// 404 Not Found if Post can't be found</returns>
         [HttpGet("{id}")]
-        [ActionName(nameof(GetAsync))]
-        public async Task<IActionResult> GetAsync(int id)
+        [ActionName(nameof(Get))]
+        public async Task<IActionResult> Get(int id)
         {
             if (await _postsRepository.AsQueryable()
                 .FirstOrDefaultAsync(p => p.Id == id) is Post post) return Ok(post);
             return NotFound();
         }
 
+        /// <summary>
+        /// Gets posts for a given user based off email
+        /// </summary>
+        /// <param name="email">string containing email of person's posts you'd like to view</param>
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success</returns>
         [HttpGet("user/{email}")]
-        public async Task<IActionResult> GetAsync(string email)
+        public async Task<IActionResult> Get(string email)
         {
             return Ok(await _postsRepository.AsQueryable()
                 .Where(x => x.UserEmail == email).ToListAsync());
         }
+
 
         /// <summary>
         /// Deletes the post resource with the given id.
         /// </summary>
         /// <param name="id">Id of the post to be deleted</param>
         /// <returns>An IActionResult containing either a:
-        /// 204NoContent on success,
-        /// 400BadRequest on delete failure,
-        /// 404NotFound if the Id did not match an existing post,
-        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        /// 204 NoContent on success
+        /// 400 BadRequest on delete failure
+        /// 403 Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.
+        /// 404 NotFound if the Id did not match an existing post</returns>
         [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -229,6 +276,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
             return NoContent();
         }
+
 
         [HttpPost("UploadPicture"), DisableRequestSizeLimit]
         public async Task<ActionResult> UploadPicture(IFormFile file, string userId)
@@ -266,19 +314,15 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         }
 
+
         /// <summary>
         /// Fetch the posts for a user's newsfeed baised off the session token.
-        /// A user's newsfeed contains the three most recent posts
-        /// of the user and the users they follow.
         /// </summary>
-        /// <returns>
-        /// Ok responce with the top 3
-        /// </returns>
-        // Route: api/newsfeed
-
+        /// <returns>An IActionResult containing either a:
+        /// 200 OK on success</returns>
         [Authorize]
         [HttpGet("newsfeed")]
-        public async Task<IActionResult> GetNewsfeedAsync()
+        public async Task<IActionResult> GetNewsfeed()
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             var newsfeedPosts = await _postsRepository.NewsfeedAsync(email, 3);
