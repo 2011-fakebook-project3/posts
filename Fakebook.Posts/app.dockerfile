@@ -9,6 +9,7 @@ COPY Fakebook.Posts.Domain/*.csproj Fakebook.Posts.Domain/
 COPY Fakebook.Posts.DataAccess/*.csproj Fakebook.Posts.DataAccess/
 COPY Fakebook.Posts.RestApi/*.csproj Fakebook.Posts.RestApi/
 COPY Fakebook.Posts.UnitTests/*.csproj Fakebook.Posts.UnitTests/
+COPY Fakebook.Posts.IntegrationTests/*.csproj Fakebook.Posts.IntegrationTests/
 COPY *.sln ./
 RUN dotnet restore
 # ---------------------------------
