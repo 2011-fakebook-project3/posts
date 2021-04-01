@@ -7,22 +7,27 @@ namespace Fakebook.Posts.Domain.Models
     public class Comment
     {
         public int Id { get; set; }
-        private string _Content; 
+        private string _Content;
         public Post Post { get; set; }
         private string _UserEmail;
         public DateTime CreatedAt { get; set; }
         public ICollection<string> Likes { get; set; }
-        
 
-        public string UserEmail{
-            get{
+
+        public string UserEmail
+        {
+            get
+            {
                 return _UserEmail;
             }
-            set{
-                if(value.Contains('@')){
+            set
+            {
+                if (value.Contains('@'))
+                {
                     _UserEmail = value;
                 }
-                else{
+                else
+                {
                     throw new ArgumentException("A correct email format is required.");
                 }
             }
@@ -30,16 +35,20 @@ namespace Fakebook.Posts.Domain.Models
         }
 
 
-        public string Content{
-            get{
+        public string Content
+        {
+            get
+            {
                 return _Content;
             }
-            set{
-                if(value.Length > 1)
+            set
+            {
+                if (value.Length > 1)
                 {
                     _Content = value;
                 }
-                else{
+                else
+                {
                     throw new ArgumentException("Please enter a comment.");
                 }
             }
