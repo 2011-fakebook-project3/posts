@@ -18,6 +18,7 @@ namespace Fakebook.Posts.Domain.Models
             if (string.IsNullOrWhiteSpace(userEmail)) throw new ArgumentException("User email is required.", nameof(userEmail));
             if (string.IsNullOrWhiteSpace(content)) throw new ArgumentException("Post content is required.", nameof(content));
             if (!userEmail.Contains("@")) throw new ArgumentException("Post content is required.", nameof(content));
+            
             UserEmail = userEmail;
             Content = content;
             Comments = new HashSet<Comment>();
