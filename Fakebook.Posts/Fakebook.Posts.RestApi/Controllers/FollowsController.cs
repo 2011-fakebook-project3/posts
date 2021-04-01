@@ -24,16 +24,9 @@ namespace Fakebook.Posts.RestApi.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Fallows a fallower for a folowee given a fallower and fallowee ^^
-        /// </summary>
-        /// <param name="follow">Follower DTO containing follower and followee</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204 No Content on success
-        /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post(Follow follow)
+        public async Task<IActionResult> PostAsync(Follow follow)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
@@ -50,15 +43,17 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Fallows the given email for the current User.
+        /// Follow a user with a given email.
         /// </summary>
-        /// <param name="email">string: Email of person you wish to follow</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204 No Content on success
-        /// 400 BadRequest on delete failure</returns>
+        /// <param name="email">
+        /// The email of the user to follow.
+        /// </param>
+        /// <returns>
+        /// NoContent result on success or BadRequest on failure.
+        /// </returns>
         [Authorize]
         [HttpPut("{email}")]
-        public async Task<IActionResult> Put(string email)
+        public async Task<IActionResult> PutAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
@@ -75,15 +70,17 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Unfallows the given email for the current User.
+        /// Unfollow a user with email "email"
         /// </summary>
-        /// <param name="email">string: Email of person you wish to unfollow</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204 No Content on success
-        /// 400 BadRequest on delete failure</returns>
+        /// <param name="email">
+        /// The email of the user to unfollow.
+        /// </param>
+        /// <returns>
+        /// NoContent on success, BadRequest on Failure.
+        /// </returns>
         [Authorize]
         [HttpDelete("{email}")]
-        public async Task<IActionResult> Delete(string email)
+        public async Task<IActionResult> DeleteAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
