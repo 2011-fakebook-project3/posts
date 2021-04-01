@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Repositories
+namespace Fakebook.Posts.IntegrationTests.Repositories
 {
     public class EditPostTests
     {

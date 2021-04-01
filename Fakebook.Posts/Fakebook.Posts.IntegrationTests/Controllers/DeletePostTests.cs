@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers
+namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class DeletePostTests : IClassFixture<WebApplicationFactory<Startup>>
     {
