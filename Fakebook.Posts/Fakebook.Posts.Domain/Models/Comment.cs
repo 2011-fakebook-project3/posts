@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Net.Mail;
 namespace Fakebook.Posts.Domain.Models
 {
     public class Comment
@@ -18,7 +18,7 @@ namespace Fakebook.Posts.Domain.Models
             if (string.IsNullOrWhiteSpace(content)) throw new ArgumentException("Post content is required.", nameof(content));
             try
             {
-                userEmail = new System.Net.Mail.MailAddress(userEmail).Address;
+                userEmail = new MailAddress(userEmail).Address;
             }
             catch (FormatException e)
             {
