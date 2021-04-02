@@ -137,6 +137,38 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+
+
+        /* return posts made in the last 'recentInMinutes'
+        public async Task<List<Post>> GetRecentPostsAsync(int userId, int recentInMinutes)
+        {
+            DateTime dateNow = DateTime.Now;
+
+            List<Post> posts = new();
+            var query = await _context.Posts
+                .Where(u => u.UserId = userId)
+                .Where(t => t.CreatedAt.AddMinutes(recentInMinutes) < dateNow)
+                .ToListAsync();
+
+            foreach(var post in query)
+            {
+                posts.Add(new Models.Post
+                {
+                    Id = post.Id,
+                    UserId = post.UserId, // 
+                    UserEmail = post.UserEmail,
+                    Content = post.Content,
+                    Picture = post.Picture,
+                    CreatedAt = post.CreatedAt,
+                    Comments = post.Comments,
+                    PostLikes = post.PostLikes
+                });
+            }
+            return posts;
+        }
+        */
+
+
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
             try

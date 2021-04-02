@@ -34,6 +34,7 @@ namespace Fakebook.Posts.RestApi
                 new BlobService(new BlobServiceClient(Configuration["BlobStorage:ConnectionString"]))
             );
 
+            services.AddHttpContextAccessor();
             services.AddScoped<IPostsRepository, PostsRepository>();
             services.AddScoped<IFollowsRepository, FollowsRepository>();
 
