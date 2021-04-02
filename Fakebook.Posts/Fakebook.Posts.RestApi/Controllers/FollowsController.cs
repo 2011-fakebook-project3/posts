@@ -75,7 +75,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Unfallows the given email for the current User.
+        /// Unfollows the given email for the current User.
         /// </summary>
         /// <param name="email">string: Email of person you wish to unfollow</param>
         /// <returns>An IActionResult containing either a:

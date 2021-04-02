@@ -39,7 +39,7 @@ stages:
         projectName: 'posts'
         projectVersion: '0.2'
         extraProperties: |
-          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/*/coverage.opencover.xml
           sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/*.trx
 
     # switch to .net 5
