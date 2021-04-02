@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -89,20 +90,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(Comment comment)
+        public async Task<IActionResult> PostAsync(NewCommentDTO comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-
-            if (email != comment.UserEmail)
-            {
-                _logger.LogInformation("Authenticated user email did not match user email of the comment.");
-                return Forbid();
-            }
 
             Comment created;
             try
             {
-                created = await _postsRepository.AddCommentAsync(comment);
+                Comment newComment = new Comment(email, comment.Content);
+                created = await _postsRepository.AddCommentAsync(newComment);
             }
             catch (ArgumentException e)
             {
