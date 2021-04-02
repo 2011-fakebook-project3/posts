@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -26,12 +27,12 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PostAsync(Follow follow)
+        public async Task<IActionResult> PostAsync(FollowDTO follow)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try
             {
-                if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = follow.FollowedEmail }))
+                if (await _followsRepository.AddFollowAsync(new Follow { FollowerEmail = userEmail, FollowedEmail = follow.Email }))
                     return NoContent();
                 return BadRequest("The user is already being followed.");
             }
