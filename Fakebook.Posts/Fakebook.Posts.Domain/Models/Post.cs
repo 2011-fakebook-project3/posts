@@ -21,9 +21,9 @@ namespace Fakebook.Posts.Domain.Models
             {
                 userEmail = new System.Net.Mail.MailAddress(userEmail).Address;
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
-                throw new ArgumentException("Enter a correct email format.", nameof(userEmail));
+                throw new ArgumentException("Enter a correct email format.", e);
             }
 
             UserEmail = userEmail;
