@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 
-namespace Fakebook.Posts.UnitTests.PostRepository.Test
+namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
 {
     public class PostRepository_CreateTest
     {

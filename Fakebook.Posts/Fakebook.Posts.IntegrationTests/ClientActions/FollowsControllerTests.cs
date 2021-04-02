@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers
+namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class FollowsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
