@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.RestApi.DTOs;
+using Fakebook.Posts.RestApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -27,7 +27,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> PostAsync(FollowDTO follow)
+        public async Task<IActionResult> PostAsync(FollowDto follow)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             try

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.RestApi.DTOs;
+using Fakebook.Posts.RestApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -90,7 +90,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(NewCommentDTO comment)
+        public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
