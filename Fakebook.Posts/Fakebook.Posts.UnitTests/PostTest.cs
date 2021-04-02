@@ -35,6 +35,19 @@ namespace Fakebook.Posts.UnitTests
             Assert.NotNull(newpost.Content);
         }
 
+        [Fact]
+        public void Post_EmailEquality()
+        {
+            //arrange
+            const string Content = "This is some content";
+            const string userEmail = "damion.silver@test.com";
+            //act
+            Post newpost = new Post(userEmail, Content);
+
+            //assert
+            Assert.Equal(userEmail, newpost.UserEmail);
+        }
+
         /// <summary>
         /// Post_EmailFormationThrowsException_ReturnsArgumentException method checks to ensure that when an email is inputted incorrectly,
         /// an argument exception is thrown.
@@ -59,6 +72,19 @@ namespace Fakebook.Posts.UnitTests
 
             //assert
             Assert.NotNull(newcomment);
+        }
+
+        [Fact]
+        public void Comment_EmailEquality()
+        {
+            //arrange
+            const string Content = "This is some content";
+            const string userEmail = "damion.silver@test.com";
+            //act
+            Comment newcomment = new Comment(userEmail, Content);
+
+            //assert
+            Assert.Equal(userEmail, newcomment.UserEmail);
         }
 
         [Fact]
