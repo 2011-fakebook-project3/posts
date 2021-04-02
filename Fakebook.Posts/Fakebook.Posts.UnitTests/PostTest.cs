@@ -20,9 +20,6 @@ namespace Fakebook.Posts.UnitTests
             const string userEmail = "damion.silver@test.com";
             //act
             Post newpost = new Post(userEmail, Content);
-
-            //assert
-            Assert.NotNull(newpost);
         }
 
         [Fact]
