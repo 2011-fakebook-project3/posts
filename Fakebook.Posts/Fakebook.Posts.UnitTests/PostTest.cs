@@ -61,8 +61,11 @@ namespace Fakebook.Posts.UnitTests
             Assert.Contains("@", newpost.UserEmail);
         }
 
+        /// <summary>
+        /// Post_EmailFormationThrowsException_ReturnsArgumentException method checks to ensure that when an email is inputted incorrectly,
+        /// an argument exception is thrown.
+        /// </summary>
         [Fact]
-        //test method that test if an email in the wrong format throws an argument exception for a Post Model
         public void Post_EmailFormationThrowsException_ReturnsArgumentException()
         {
             const string content = "This is some content";
@@ -110,8 +113,11 @@ namespace Fakebook.Posts.UnitTests
             Assert.NotNull(newcomment.Content);
         }
 
+        /// <summary>
+        /// Comment_EmailFormationThrowsException_ReturnsArgumentException method checks to ensure that when an email is inputted incorrectly,
+        /// an argument exception is thrown.
+        /// </summary>
         [Fact]
-        //test method that test if an email in the wrong format throws an argument exception for a Comment Model
         public void Comment_EmailFormationThrowsException_ReturnsArgumentException()
         {
             const string content = "This is some content";
