@@ -31,17 +31,17 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// </summary>
         /// <param name="id">Id of the post to be deleted</param>
         /// <returns>An IActionResult containing either a:
-        /// 204 NoContent on success
-        /// 400 BadRequest on delete failure
-        /// 404 NotFound if the Id did not match an existing post
-        /// 403 Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        /// 204NoContent on success,
+        /// 400BadRequest on delete failure,
+        /// 404NotFound if the Id did not match an existing post,
+        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
         [HttpDelete("{commentId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(int commentId)
+        public async Task<IActionResult> DeleteAsync(int commentId)
         {
             try
             {
@@ -76,20 +76,20 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Creates a comment, given a comment object.
+        /// Add a new comment to the database. 
         /// </summary>
-        /// <param name="Comment">Comment DTO, Properties: PostId, Content .</param>
-        /// <returns>An IActionResult containing either a:
-        /// 201 Created on success
-        /// 400 Invalid Argument on comment
-        /// 403 Forbidden on user email not matching</returns>
+        /// <param name="comment">
+        /// A domain comment. 
+        /// </param>
+        /// <returns>
+        /// The newly created comment
+        /// </returns>
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> Post(Comment comment)
+        public async Task<IActionResult> PostAsync(Comment comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
@@ -115,19 +115,12 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return BadRequest(e.Message);
             }
 
-            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
-        /// <summary>
-        /// Gets a comment given the comment Id.
-        /// </summary>
-        /// <param name="id">Comment Id.</param>
-        /// <returns>An IActionResult containing either a:
-        /// 200 OK on success.
-        /// 404 Not found if comment with id is not found.</returns>
         [HttpGet("{id}")]
-        [ActionName(nameof(Get))]
-        public async Task<IActionResult> Get(int id)
+        [ActionName(nameof(GetAsync))]
+        public async Task<IActionResult> GetAsync(int id)
         {
             if (await _postsRepository.AsQueryable()
                 .Include(x => x.Comments).FirstOrDefaultAsync(p =>
