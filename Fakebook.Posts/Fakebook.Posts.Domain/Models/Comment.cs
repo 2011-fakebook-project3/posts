@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace Fakebook.Posts.Domain.Models
 {
     public class Comment
@@ -17,6 +16,14 @@ namespace Fakebook.Posts.Domain.Models
         {
             if (string.IsNullOrWhiteSpace(userEmail)) throw new ArgumentException("User email is required.", nameof(userEmail));
             if (string.IsNullOrWhiteSpace(content)) throw new ArgumentException("Post content is required.", nameof(content));
+            try
+            {
+                userEmail = new System.Net.Mail.MailAddress(userEmail).Address;
+            }
+            catch (FormatException e)
+            {
+                throw new ArgumentException("Enter a correct email format.", nameof(userEmail), e);
+            }
             UserEmail = userEmail;
             Content = content;
             Likes = new HashSet<string>();
