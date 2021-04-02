@@ -6,6 +6,7 @@ using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
+using Fakebook.Posts.RestApi.DTOs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -45,13 +46,9 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PostAsync_NewEmail_NoContent()
         {
             //Given
-            Follow myFollow = new()
-            {
-                FollowedEmail = It.IsAny<string>(),
-                FollowerEmail = It.IsAny<string>(),
-            };
+            FollowDTO followDTO = new FollowDTO() { Email = "mrbeans123@gmail.com" };
             StringContent stringContent = new(
-                JsonSerializer.Serialize(myFollow),
+                JsonSerializer.Serialize(followDTO),
                 Encoding.UTF8, "application/json");
 
             Mock<IFollowsRepository> mockRepo = new();
