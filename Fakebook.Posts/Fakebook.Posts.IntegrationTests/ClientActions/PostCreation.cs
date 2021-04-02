@@ -164,7 +164,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            NewCommentDTO newComment = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
@@ -209,9 +211,11 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 });
             }).CreateClient();
 
+            NewCommentDTO newComment = new() { Content = "Valid Content" };
+
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
