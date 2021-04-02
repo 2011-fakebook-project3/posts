@@ -23,19 +23,6 @@ namespace Fakebook.Posts.UnitTests
         }
 
         [Fact]
-        public void Post_EmailIsNotNull()
-        {
-            //arrange
-            const string Content = "This is some content";
-            const string userEmail = "damion.silver@test.com";
-            //act
-            Post newpost = new Post(userEmail, Content);
-
-            //assert
-            Assert.NotNull(newpost.UserEmail);
-        }
-
-        [Fact]
         public void Post_EmailEquality()
         {
             //arrange
