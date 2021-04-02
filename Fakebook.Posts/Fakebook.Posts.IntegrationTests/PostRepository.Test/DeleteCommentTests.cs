@@ -6,16 +6,16 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Repositories
+namespace Fakebook.Posts.IntegrationTests.Repositories
 {
-    public class DeletePostTests
+    public class DeleteCommentTests
     {
 
         /// <summary>
         /// Tests the PostsRepository class' UpdateAsync method. Ensures that a proper Post object results in the database being modified.
         /// </summary>
         [Fact]
-        public async Task DeletePostAsync_ValidId_Removes()
+        public async Task DeleteCommentAsync_ValidId_Removes()
         {
 
             // Arrange
@@ -34,19 +34,29 @@ namespace Fakebook.Posts.UnitTests.Repositories
                 CreatedAt = DateTime.Now
             };
 
+            DataAccess.Models.Comment insertedComment = new()
+            {
+                Id = 2,
+                PostId = 3,
+                UserEmail = "person@domain.net",
+                Content = "New Content",
+                CreatedAt = DateTime.Now
+            };
+
             using FakebookPostsContext context = new(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
+            context.Comments.Add(insertedComment);
             context.SaveChanges();
 
             PostsRepository repo = new(context);
 
             //Act
-            await repo.DeletePostAsync(3);
+            await repo.DeleteCommentAsync(2);
             context.SaveChanges();
 
             // Assert
-            Assert.DoesNotContain(insertedPost, context.Posts);
+            Assert.DoesNotContain(insertedComment, context.Comments);
         }
     }
 }

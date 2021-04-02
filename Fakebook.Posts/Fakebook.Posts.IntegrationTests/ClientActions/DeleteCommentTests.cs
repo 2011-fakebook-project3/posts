@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -12,14 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers
+namespace Fakebook.Posts.IntegrationTests.Controllers
 {
-    public class DeletePostTests : IClassFixture<WebApplicationFactory<Startup>>
+    public class DeleteCommentTests : IClassFixture<WebApplicationFactory<Startup>>
     {
 
         private readonly WebApplicationFactory<Startup> _factory;
 
-        public DeletePostTests(WebApplicationFactory<Startup> factory)
+        public DeleteCommentTests(WebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -33,15 +32,27 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
-            Mock<IBlobService> mockBlobService = new();
-            mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
+
+            mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
-            HashSet<Post> posts = new()
+            var date = DateTime.Now;
+            Post post = new("test.user@email.com", "test content")
             {
-                new("test.user@email.com", "test content") { Id = 1 }
+                Id = 1,
+                Picture = "picture",
+                CreatedAt = date
             };
+            Comment comment = new("test.user@email.com", "comment content")
+            {
+                Id = 1,
+                Post = post,
+                Content = "picture",
+                CreatedAt = date,
+            };
+            post.Comments.Add(comment);
+
+            HashSet<Post> posts = new() { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
@@ -51,8 +62,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
-                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
@@ -61,7 +70,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             // Act
-            var response = await client.DeleteAsync("api/posts/1");
+            var response = await client.DeleteAsync("api/comments/1");
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -74,17 +83,30 @@ namespace Fakebook.Posts.UnitTests.Controllers
         [Fact]
         public async Task DeleteAsync_InvalidId_NotFound()
         {
+
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
-            Mock<IBlobService> mockBlobService = new();
-            mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
+
+            mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
-            HashSet<Post> posts = new()
+            var date = DateTime.Now;
+            Post post = new("test.user@email.com", "test content")
             {
-                new("test.user@email.com", "test content") { Id = 1 }
+                Id = 1,
+                Picture = "picture",
+                CreatedAt = date
             };
+            Comment comment = new("test.user@email.com", "comment content")
+            {
+                Id = 1,
+                Post = post,
+                Content = "picture",
+                CreatedAt = date,
+            };
+            post.Comments.Add(comment);
+
+            HashSet<Post> posts = new() { post };
 
             mockRepo.Setup(r => r.GetEnumerator())
                 .Returns(posts.GetEnumerator());
@@ -94,8 +116,6 @@ namespace Fakebook.Posts.UnitTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
-                    services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
@@ -104,7 +124,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             // Act
-            var response = await client.DeleteAsync("api/posts/1");
+            var response = await client.DeleteAsync("api/comments/1");
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
