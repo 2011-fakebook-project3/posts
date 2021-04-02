@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
+using Fakebook.Posts.RestApi.DTOs;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -65,7 +66,9 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            NewPostDTO newPost = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -112,7 +115,9 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            NewPostDTO newPost = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -210,6 +215,52 @@ namespace Fakebook.Posts.UnitTests.Controllers
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Tests the PostsController clases ability to reject an invalid DTO.
+        /// </summary>
+        [Fact]
+        public async Task PostAsync_InvalidPostDTO_BadRequest()
+        {
+            // Arrange
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
+            mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
+                .Throws(new DbUpdateException());
+
+            List<Comment> comments = new();
+            var date = DateTime.Now;
+            Post post = new("test.user@email.com", "test content")
+            {
+                Id = 1,
+                Comments = comments,
+                Picture = "picture",
+                CreatedAt = date
+            };
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await client.PostAsync("api/posts", stringContent);
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
