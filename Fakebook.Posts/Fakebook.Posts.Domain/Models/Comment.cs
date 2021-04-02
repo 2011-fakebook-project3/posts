@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+
 namespace Fakebook.Posts.Domain.Models
 {
     public class Comment
