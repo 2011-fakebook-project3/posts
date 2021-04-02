@@ -23,19 +23,6 @@ namespace Fakebook.Posts.UnitTests
         }
 
         [Fact]
-        public void Post_EmailEquality()
-        {
-            //arrange
-            const string Content = "This is some content";
-            const string userEmail = "damion.silver@test.com";
-            //act
-            Post newpost = new Post(userEmail, Content);
-
-            //assert
-            Assert.Equal(userEmail, newpost.UserEmail);
-        }
-
-        [Fact]
         public void Post_ContentIsNotNull()
         {
             //arrange
@@ -46,19 +33,6 @@ namespace Fakebook.Posts.UnitTests
 
             //assert
             Assert.NotNull(newpost.Content);
-        }
-
-        [Fact]
-        public void Post_EmailisFormattedCorrectly()
-        {
-            //arrange
-            const string Content = "This is some content";
-            const string userEmail = "damion.silver@test.com";
-            //act
-            Post newpost = new Post(userEmail, Content);
-
-            //assert
-            Assert.Contains("@", newpost.UserEmail);
         }
 
         /// <summary>
@@ -85,19 +59,6 @@ namespace Fakebook.Posts.UnitTests
 
             //assert
             Assert.NotNull(newcomment);
-        }
-
-        [Fact]
-        public void Comment_EmailEquality()
-        {
-            //arrange
-            const string Content = "This is some content";
-            const string userEmail = "damion.silver@test.com";
-            //act
-            Comment newcomment = new Comment(userEmail, Content);
-
-            //assert
-            Assert.Equal(userEmail, newcomment.UserEmail);
         }
 
         [Fact]
