@@ -23,7 +23,7 @@ namespace Fakebook.Posts.Domain.Models
             }
             catch (FormatException e)
             {
-                throw new ArgumentException("Enter a correct email format.", e);
+                throw new ArgumentException("Enter a correct email format.", nameof(userEmail), e);
             }
 
             UserEmail = userEmail;
