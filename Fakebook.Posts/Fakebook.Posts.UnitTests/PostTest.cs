@@ -62,12 +62,13 @@ namespace Fakebook.Posts.UnitTests
         }
 
         [Fact]
-        public void Post_EmailFormationThrowsException()
+        //test method that test if an email in the wrong format throws an argument exception for a Post Model
+        public void Post_EmailFormationThrowsException_ReturnsArgumentException()
         {
-            const string Content = "This is some content";
-            const string userEmail = "damion.silvertest.com";
+            const string content = "This is some content";
+            const string invalidEmail = "damion.silvertest.com";
 
-            Assert.Throws<ArgumentException>(() => new Post(userEmail, Content));
+            Assert.Throws<ArgumentException>(() => new Post(invalidEmail, content));
         }
 
         [Fact]
@@ -110,12 +111,13 @@ namespace Fakebook.Posts.UnitTests
         }
 
         [Fact]
-        public void Comment_EmailFormationThrowsException()
+        //test method that test if an email in the wrong format throws an argument exception for a Comment Model
+        public void Comment_EmailFormationThrowsException_ReturnsArgumentException()
         {
-            const string Content = "This is some content";
-            const string userEmail = "damion.silvertest.com";
+            const string content = "This is some content";
+            const string invalidEmail = "damion.silvertest.com";
 
-            Assert.ThrowsAny<ArgumentException>(() => new Comment(userEmail, Content));
+            Assert.ThrowsAny<ArgumentException>(() => new Comment(invalidEmail, content));
         }
     }
 }
