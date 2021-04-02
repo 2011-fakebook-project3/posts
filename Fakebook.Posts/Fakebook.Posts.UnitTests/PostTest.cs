@@ -61,6 +61,19 @@ namespace Fakebook.Posts.UnitTests
             Assert.Contains("@", newpost.UserEmail);
         }
 
+        /// <summary>
+        /// Post_EmailFormationThrowsException_ReturnsArgumentException method checks to ensure that when an email is inputted incorrectly,
+        /// an argument exception is thrown.
+        /// </summary>
+        [Fact]
+        public void Post_EmailFormationThrowsException_ReturnsArgumentException()
+        {
+            const string content = "This is some content";
+            const string invalidEmail = "damion.silvertest.com";
+
+            Assert.Throws<ArgumentException>(() => new Post(invalidEmail, content));
+        }
+
         [Fact]
         public void Comment_Constructor_Pass()
         {
@@ -98,6 +111,19 @@ namespace Fakebook.Posts.UnitTests
 
             //assert
             Assert.NotNull(newcomment.Content);
+        }
+
+        /// <summary>
+        /// Comment_EmailFormationThrowsException_ReturnsArgumentException method checks to ensure that when an email is inputted incorrectly,
+        /// an argument exception is thrown.
+        /// </summary>
+        [Fact]
+        public void Comment_EmailFormationThrowsException_ReturnsArgumentException()
+        {
+            const string content = "This is some content";
+            const string invalidEmail = "damion.silvertest.com";
+
+            Assert.ThrowsAny<ArgumentException>(() => new Comment(invalidEmail, content));
         }
     }
 }
