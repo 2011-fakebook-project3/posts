@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
@@ -26,6 +27,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         /// <summary>
         /// Tests the PostsController class' DeleteAsync method. Ensures that a proper id results in status 204NoContent.
         /// </summary>
+
         [Fact]
         public async Task DeleteAsync_ValidId_Deletes()
         {
