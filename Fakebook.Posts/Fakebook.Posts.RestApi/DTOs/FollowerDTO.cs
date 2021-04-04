@@ -4,12 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fakebook.Posts.RestApi.DTOs
+namespace Fakebook.Posts.RestApi.Dtos
 {
-    public class FollowDTO
+    public class FollowDto
     {
         [Required]
-        [DataType(DataType.EmailAddress)]
         [EmailAddress]
         public string Email { get; set; }
     }
