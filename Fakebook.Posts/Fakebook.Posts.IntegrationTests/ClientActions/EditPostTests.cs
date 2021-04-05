@@ -19,7 +19,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class EditPostTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-
         private readonly WebApplicationFactory<Startup> _factory;
 
         public EditPostTests(WebApplicationFactory<Startup> factory)
@@ -67,7 +66,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Id = 1,
                 Comments = new HashSet<Comment>(),
                 Picture = "picture",
-                CreatedAt = DateTime.Now
+                CreatedAt = new DateTime(2021, 4, 4)
             };
 
             StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
@@ -120,7 +119,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Id = 1,
                 Comments = new HashSet<Comment>(),
                 Picture = "picture",
-                CreatedAt = DateTime.Now
+                CreatedAt = new DateTime(2021, 4, 4)
             };
 
             StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
