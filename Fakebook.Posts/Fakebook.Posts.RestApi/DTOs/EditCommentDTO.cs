@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Fakebook.Posts.Domain.Constants;
 
 namespace Fakebook.Posts.RestApi.Dtos
