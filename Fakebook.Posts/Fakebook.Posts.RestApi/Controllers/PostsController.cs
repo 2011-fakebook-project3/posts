@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -99,20 +100,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(Post postModel)
+        public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
-            if (email != postModel.UserEmail)
-            {
-                _logger.LogInformation("Authenticated user email did not match user email of the post.");
-                return Forbid();
-            }
+            Post post = new Post(email, postModel.Content);
 
             Post created;
             try
             {
-                created = await _postsRepository.AddAsync(postModel);
+                created = await _postsRepository.AddAsync(post);
             }
             catch (ArgumentException e)
             {
@@ -148,7 +145,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/like")]
-        public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> LikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
@@ -157,7 +154,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/unlike")]
-        public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> UnlikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();
