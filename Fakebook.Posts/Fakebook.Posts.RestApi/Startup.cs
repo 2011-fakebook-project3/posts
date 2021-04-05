@@ -11,6 +11,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Fakebook.Posts.RestApi
 {
@@ -57,12 +60,50 @@ namespace Fakebook.Posts.RestApi
                     });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
                 {
-                    options.Authority = "https://revature-p3.okta.com/oauth2/default";
-                    options.Audience = "api://default";
+                    options.Authority = "https://localhost:5001";
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
                 });
+            
+            
+            /* might be used in a cookie-type format
+            services.AddAuthentication( options =>
+                {
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookies")
+                .AddOpenIdConnect("oidc", options =>
+                {
+                    
+                    options.Authority = "https://localhost:5001";
+
+                    options.ClientId = "mvc";
+                    options.ClientSecret = "secret";
+                    options.ResponseType = "code";
+
+                    options.SaveTokens = true;
+
+                });
+            */
+
+
+            // may need to be disabled if authority is over restrictive, should require token to be from IdentityServer
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ApiScope", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireClaim("scope", "scope1");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +123,6 @@ namespace Fakebook.Posts.RestApi
             app.UseCors();
 
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
