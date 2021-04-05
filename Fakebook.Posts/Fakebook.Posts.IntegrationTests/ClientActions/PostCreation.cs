@@ -19,7 +19,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-
         private readonly WebApplicationFactory<Startup> _factory;
 
         public PostControllerTest(WebApplicationFactory<Startup> factory)
@@ -33,13 +32,12 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         [Fact]
         public async Task PostAsync_ValidPost_Creates()
         {
-
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             List<Comment> comments = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -89,7 +87,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 .Throws(new DbUpdateException());
 
             List<Comment> comments = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -129,7 +127,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -167,8 +165,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
-
         }
+
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
         /// </summary>
@@ -177,7 +175,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,

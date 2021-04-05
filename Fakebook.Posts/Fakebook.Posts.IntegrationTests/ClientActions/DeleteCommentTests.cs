@@ -15,7 +15,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class DeleteCommentTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-
         private readonly WebApplicationFactory<Startup> _factory;
 
         public DeleteCommentTests(WebApplicationFactory<Startup> factory)
@@ -29,14 +28,13 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         [Fact]
         public async Task DeleteAsync_ValidId_Deletes()
         {
-
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
 
             mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
 
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -83,14 +81,13 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         [Fact]
         public async Task DeleteAsync_InvalidId_NotFound()
         {
-
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
 
             mockRepo.Setup(r => r.DeleteCommentAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
 
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
