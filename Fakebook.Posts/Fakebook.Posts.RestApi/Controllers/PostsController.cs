@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.RestApi.DTOs;
+using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -100,7 +100,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        public async Task<IActionResult> PostAsync(NewPostDTO postModel)
+        public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
@@ -145,7 +145,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/like")]
-        public async Task<IActionResult> LikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> LikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
@@ -154,7 +154,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/unlike")]
-        public async Task<IActionResult> UnlikeCommentAsync(int id, int commentId)
+        public async Task<IActionResult> UnlikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();

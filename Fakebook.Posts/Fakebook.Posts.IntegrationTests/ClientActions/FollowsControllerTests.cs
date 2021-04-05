@@ -6,7 +6,7 @@ using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Controllers;
-using Fakebook.Posts.RestApi.DTOs;
+using Fakebook.Posts.RestApi.Dtos;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 
-namespace Fakebook.Posts.UnitTests.Controllers
+namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class FollowsControllerTests : IClassFixture<WebApplicationFactory<Startup>>
     {
@@ -46,7 +46,7 @@ namespace Fakebook.Posts.UnitTests.Controllers
         public async void PostAsync_NewEmail_NoContent()
         {
             //Given
-            FollowDTO followDTO = new FollowDTO() { Email = "mrbeans123@gmail.com" };
+            FollowDto followDTO = new FollowDto() { Email = "mrbeans123@gmail.com" };
             StringContent stringContent = new(
                 JsonSerializer.Serialize(followDTO),
                 Encoding.UTF8, "application/json");
