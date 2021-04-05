@@ -117,16 +117,16 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             // Initialize a string, and then use a forloop to add to the string until it is one longer than the allowed post size
 
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder longPost = new StringBuilder();
 
             for (int i = 0; i < Constants.PostMaxLength + 1; i++)
             {
-                stringBuilder.Append("X");
+                longPost.Append("X");
             }
 
             //Create New Post DTO objects that will be sent to the API.
 
-            NewPostDto invalidPostTooLong = new() { Content = stringBuilder.ToString() };
+            NewPostDto invalidPostTooLong = new() { Content = longPost.ToString() };
             NewPostDto invalidPostNoContent = new() { Content = "" };
 
             //  Serializes request object into json format.
