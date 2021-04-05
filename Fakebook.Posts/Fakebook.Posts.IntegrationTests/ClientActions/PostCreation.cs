@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
+using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
 using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -20,7 +21,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>>
     {
-
         private readonly WebApplicationFactory<Startup> _factory;
 
         public PostControllerTest(WebApplicationFactory<Startup> factory)
@@ -34,13 +34,12 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         [Fact]
         public async Task PostAsync_ValidPost_Creates()
         {
-
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             List<Comment> comments = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -66,7 +65,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            NewPostDto newPost = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -90,7 +91,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 .Throws(new DbUpdateException());
 
             List<Comment> comments = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -113,7 +114,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            NewPostDto newPost = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
@@ -130,7 +133,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -160,7 +163,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            NewCommentDto newComment = new() { Content = "Valid Content" };
+
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
@@ -168,8 +173,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
-
         }
+
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
         /// </summary>
@@ -178,7 +183,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            var date = DateTime.Now;
+            var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
             {
                 Id = 1,
@@ -205,9 +210,11 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 });
             }).CreateClient();
 
+            NewCommentDto newComment = new() { Content = "Valid Content" };
+
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(comment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
@@ -215,5 +222,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
+
     }
 }
