@@ -28,7 +28,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Deletes a commend with a given Id.
+        /// Deletes a comment with a given Id.
         /// </summary>
         /// <param name="id">Id of the post to be deleted</param>
         /// <returns>An IActionResult containing either a:
