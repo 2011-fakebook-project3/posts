@@ -31,10 +31,10 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Deletes a comment with a given Id.
         /// </summary>
         /// <param name="id">Id of the post to be deleted</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204 NoContent on success
-        /// 400 BadRequest on delete failure
-        /// 404 NotFound if the Id did not match an existing post
+        /// <returns>An IActionResult containing either a:<br></br>
+        /// 204 NoContent on success<br></br>
+        /// 400 BadRequest on delete failure<br></br>
+        /// 404 NotFound if the Id did not match an existing post<br></br>
         /// 403 Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
         [Authorize]
         [HttpDelete("{commentId}")]
@@ -81,9 +81,9 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Add a new comment to the database. 
         /// </summary>
         /// <param name="comment"> NewCommentDto, Properties: Content </param>
-        /// <returns>An IActionResult containing either a:
-        /// 201 Created on success
-        /// 400 Invalid Argument on comment
+        /// <returns>An IActionResult containing either a:<br></br>
+        /// 201 Created on success<br></br>
+        /// 400 Invalid Argument on comment<br></br>
         /// 403 Forbidden on user email not matching</returns>
         [Authorize]
         [HttpPost]
@@ -119,8 +119,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Gets a comment given the comment Id.
         /// </summary>
         /// <param name="id">Comment Id.</param>
-        /// <returns>An IActionResult containing either a:
-        /// 200 OK on success.
+        /// <returns>An IActionResult containing either a:<br></br>
+        /// 200 OK on success.<br></br>
         /// 404 Not found if comment with id is not found.</returns>
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
