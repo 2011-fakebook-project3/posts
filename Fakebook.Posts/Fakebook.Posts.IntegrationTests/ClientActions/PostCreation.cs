@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Constants;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
@@ -14,6 +15,9 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Headers;
+using System.Net;
+using System.Text.Json;
 using Moq;
 using Xunit;
 
@@ -63,19 +67,20 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 });
             }).CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
             NewPostDto newPost = new() { Content = "Valid Content" };
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
-
+                
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
+
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
@@ -87,9 +92,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
-            mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
-                .Throws(new DbUpdateException());
-
             List<Comment> comments = new();
             var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
@@ -99,6 +101,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
+
+            mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
+                .ReturnsAsync(post);
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -112,17 +117,37 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 });
             }).CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
-            NewPostDto newPost = new() { Content = "Valid Content" };
+            // Initialize a string, and then use a forloop to add to the string until it is one longer than the allowed post size
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
+            StringBuilder longPost = new StringBuilder();
+
+            for (int i = 0; i < Constants.PostMaxLength + 1; i++)
+            {
+                longPost.Append("X");
+            }
+
+            //Create New Post DTO objects that will be sent to the API.
+            NewPostDto invalidPostTooLong = new() { Content = longPost.ToString() };
+            NewPostDto invalidPostNoContent = new() { Content = "" };
+            NewCommentDto nullPost = new() { };
+
+            //  Serializes request object into json format.
+            StringContent invalidStringTooMuchContent = new(JsonSerializer.Serialize(invalidPostTooLong), Encoding.UTF8, "application/json");
+            StringContent invalidstringNoContent = new(JsonSerializer.Serialize(invalidPostNoContent), Encoding.UTF8, "application/json");
+            StringContent nullContent = new(JsonSerializer.Serialize(nullPost), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/posts", stringContent);
+            var invalidresponseTooMuchContent = await client.PostAsync("api/posts", invalidStringTooMuchContent);
+            var invalidResponseNoContent = await client.PostAsync("api/posts", invalidstringNoContent);
+            var invalidResponseNullContent = await client.PostAsync("api/posts", nullContent);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            // Ensures that the valid request was created, and that posts that are too long or too short are rejected.
+            Assert.Equal(HttpStatusCode.BadRequest, invalidresponseTooMuchContent.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, invalidResponseNoContent.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, invalidResponseNullContent.StatusCode);
         }
 
         /// <summary>
@@ -161,18 +186,18 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 });
             }).CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
             NewCommentDto newComment = new() { Content = "Valid Content" };
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
 
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
         /// <summary>
@@ -212,15 +237,15 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             NewCommentDto newComment = new() { Content = "Valid Content" };
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PostAsync("api/comments", stringContent);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
+using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
 using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -62,15 +63,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            Post post = new("test@email.com", "message")
-            {
-                Id = 1,
-                Comments = new HashSet<Comment>(),
-                Picture = "picture",
-                CreatedAt = new DateTime(2021, 4, 4)
-            };
+            EditPostDto editPostDto = new EditPostDto() { Content = "Valid Content" };
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(editPostDto), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PutAsync("api/posts/1", stringContent);
@@ -115,15 +110,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            Post post = new("test@email.com", "message")
-            {
-                Id = 1,
-                Comments = new HashSet<Comment>(),
-                Picture = "picture",
-                CreatedAt = new DateTime(2021, 4, 4)
-            };
+            EditPostDto editPostDto = new EditPostDto() { Content = "Valid Content" };
 
-            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(post), Encoding.UTF8, "application/json");
+            StringContent stringContent = new(System.Text.Json.JsonSerializer.Serialize(editPostDto), Encoding.UTF8, "application/json");
 
             // Act
             var response = await client.PutAsync("api/posts/1", stringContent);
