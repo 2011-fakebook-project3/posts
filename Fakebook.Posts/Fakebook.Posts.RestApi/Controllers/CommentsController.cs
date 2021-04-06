@@ -95,6 +95,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
 
             Comment created;
+
             try
             {
                 Comment newComment = new Comment(email, comment.Content);
