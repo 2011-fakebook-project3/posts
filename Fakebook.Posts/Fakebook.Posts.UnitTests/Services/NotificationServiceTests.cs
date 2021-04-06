@@ -9,6 +9,7 @@ using System.Net;
 using Xunit;
 using Moq;
 using Moq.Protected;
+using System.Threading;
 
 namespace Fakebook.Posts.UnitTests.Services
 {
@@ -18,6 +19,7 @@ namespace Fakebook.Posts.UnitTests.Services
         public async Task NotificationService_ValidPost_Pass()
         {
             // arrange
+            string endpoint = "http://localhost:5000/api/notifications/comments";
             NotificationDTO notification = new NotificationDTO()
             {
                 LoggedInUser = "loggedIn@email.com",
@@ -35,14 +37,15 @@ namespace Fakebook.Posts.UnitTests.Services
             handlerMock
                .Protected()
                .Setup<Task<HttpResponseMessage>>(
-                  "PostAsync",
-                  ItExpr.IsAny<HttpRequestMessage>())
+                  "SendAsync",
+                  ItExpr.IsAny<HttpRequestMessage>(),
+                  ItExpr.IsAny<CancellationToken>())
                .ReturnsAsync(response);
             var httpClient = new HttpClient(handlerMock.Object);
             INotificationService notificationService = new NotificationService(httpClient);
 
             // act
-            var newResponse = await notificationService.SendNotificationAsync("comments", notification);
+            var newResponse = await notificationService.SendNotificationAsync(endpoint, notification);
 
             // assert
             Assert.Equal(response.StatusCode, newResponse.StatusCode);
