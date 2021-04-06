@@ -89,7 +89,6 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -124,6 +123,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 404 Not found if comment with id is not found.</returns>
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(int id)
         {
             if (await _postsRepository.AsQueryable()

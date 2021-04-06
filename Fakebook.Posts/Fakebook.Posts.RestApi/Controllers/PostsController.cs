@@ -107,7 +107,6 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
@@ -143,6 +142,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 404 Not Found if Post can't be found</returns>
         [Authorize]
         [HttpPost("{id}/like")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> LikePostAsync(int id)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -159,6 +160,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 404 Not Found if Post can't be found</returns>
         [Authorize]
         [HttpPost("{id}/unlike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UnlikePostAsync(int id)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -175,6 +178,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 404 Not Found if Comment can't be found</returns>
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/like")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> LikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -191,6 +196,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 404 Not Found if Comment can't be found</returns>
         [Authorize]
         [HttpPost("{id}/comments/{commentId}/unlike")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UnlikeCommentAsync(int commentId)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -205,6 +212,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <returns>An IActionResult containing either a:<br></br>
         /// 200 OK on success<br></br>
         /// 404 Not Found if Post can't be found</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id)
@@ -221,6 +230,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <returns>An IActionResult containing a:<br></br>
         /// 200 OK on success</returns>
         [HttpGet("user/{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAsync(string email)
         {
             return Ok(await _postsRepository.AsQueryable()
@@ -278,6 +288,9 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         [HttpPost("UploadPicture"), DisableRequestSizeLimit]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> UploadPicture(IFormFile file, string userId)
         {
             try
@@ -322,6 +335,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 200 OK on success</returns>
         [Authorize]
         [HttpGet("newsfeed")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNewsfeedAsync()
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;

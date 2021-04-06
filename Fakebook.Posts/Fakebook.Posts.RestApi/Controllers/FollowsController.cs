@@ -4,6 +4,7 @@ using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -34,6 +35,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(FollowDto follow)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -59,6 +62,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpPut("{email}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -84,6 +89,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpDelete("{email}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
