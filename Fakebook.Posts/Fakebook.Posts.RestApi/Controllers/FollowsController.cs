@@ -25,6 +25,13 @@ namespace Fakebook.Posts.RestApi.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Takes in an email of someone to be followed, and follows them for the current user.
+        /// </summary>
+        /// <param name="follow">Follower DTO containing email of person to be followed</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204 No Content on success
+        /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(FollowDto follow)
@@ -46,12 +53,10 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <summary>
         /// Follow a user with a given email.
         /// </summary>
-        /// <param name="email">
-        /// The email of the user to follow.
-        /// </param>
-        /// <returns>
-        /// NoContent result on success or BadRequest on failure.
-        /// </returns>
+        /// <param name="email">string: Email of person you wish to follow</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204 No Content on success
+        /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpPut("{email}")]
         public async Task<IActionResult> PutAsync(string email)
@@ -71,14 +76,12 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Unfollow a user with email "email"
+        /// Unfollow an email for the current user.
         /// </summary>
-        /// <param name="email">
-        /// The email of the user to unfollow.
-        /// </param>
-        /// <returns>
-        /// NoContent on success, BadRequest on Failure.
-        /// </returns>
+        /// <param name="email">string: Email of person you wish to unfollow</param>
+        /// <returns>An IActionResult containing either a:
+        /// 204 No Content on success
+        /// 400 BadRequest on delete failure</returns>
         [Authorize]
         [HttpDelete("{email}")]
         public async Task<IActionResult> DeleteAsync(string email)
