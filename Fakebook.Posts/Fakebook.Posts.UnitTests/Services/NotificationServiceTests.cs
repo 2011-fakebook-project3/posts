@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net;
 using Xunit;
 using Moq;
+using Moq.Protected;
 
 namespace Fakebook.Posts.UnitTests.Services
 {
@@ -24,17 +25,28 @@ namespace Fakebook.Posts.UnitTests.Services
                 PostId = 1,
             };
 
-            Mock<IHttpClientWrapper> httpClient = new();
+            var handlerMock = new Mock<HttpMessageHandler>();
+            var response = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(@"[{ ""id"": 1, ""title"": ""Cool post!""}, { ""id"": 100, ""title"": ""Some title""}]"),
+            };
 
-            httpClient.Setup(x => x.GetAsync(It.IsAny<string>())).ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
-
-            INotificationService notificationService = new NotificationService(httpClient.Object);
+            handlerMock
+               .Protected()
+               .Setup<Task<HttpResponseMessage>>(
+                  "PostAsync",
+                  ItExpr.IsAny<HttpRequestMessage>())
+               .ReturnsAsync(response);
+            var httpClient = new HttpClient(handlerMock.Object);
+            INotificationService notificationService = new NotificationService(httpClient);
 
             // act
-            var response = await notificationService.SendNotificationAsync("comments", notification);
+            var newResponse = await notificationService.SendNotificationAsync("comments", notification);
 
             // assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(response.StatusCode, newResponse.StatusCode);
+            Assert.Equal(response.Content, newResponse.Content);
         }
     }
 }
