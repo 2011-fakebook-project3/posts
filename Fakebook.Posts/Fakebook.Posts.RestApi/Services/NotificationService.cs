@@ -14,7 +14,8 @@ namespace Fakebook.Posts.RestApi.Services
         public async Task<HttpResponseMessage> SendNotificationAsync(string endpoint, NotificationDTO notification)
         {
             string jsonContent = JsonSerializer.Serialize(notification);
-            var response = await _client.PostAsync(endpoint, new StringContent(jsonContent));
+            string fullUri = $"http://fakebook-notifications-api:27017/notifications/{endpoint}";
+            var response = await _client.PostAsync(fullUri, new StringContent(jsonContent));
             return response;
         }
     }

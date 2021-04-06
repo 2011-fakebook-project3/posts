@@ -38,6 +38,7 @@ namespace Fakebook.Posts.RestApi
             services.AddScoped<IFollowsRepository, FollowsRepository>();
 
             services.AddControllers();
+            services.AddHttpClient<INotificationService, NotificationService>();
 
             services.AddSwaggerGen(c =>
             {

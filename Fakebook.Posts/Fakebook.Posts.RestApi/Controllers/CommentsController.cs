@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,19 +13,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
-
     [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
     {
-
         private readonly IPostsRepository _postsRepository;
         private readonly ILogger<CommentsController> _logger;
+        private readonly INotificationService _notificationService;
 
-        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger)
+        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger, INotificationService notificationService)
         {
             _postsRepository = postsRepository;
             _logger = logger;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -77,10 +78,10 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NoContent();
         }
 
-        /// Add a new comment to the database. 
+        /// Add a new comment to the database.
         /// </summary>
         /// <param name="comment">
-        /// A domain comment. 
+        /// A domain comment.
         /// </param>
         /// <returns>
         /// The newly created comment
@@ -112,6 +113,12 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return BadRequest(e.Message);
             }
 
+            await _notificationService.SendNotificationAsync("like", new DTOs.NotificationDTO()
+            {
+                LoggedInUser = email,
+                TriggeredUser = _postsRepository.AsQueryable().First(p => p.Id == created.Id).UserEmail,
+                PostId = created.Id,
+            });
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
