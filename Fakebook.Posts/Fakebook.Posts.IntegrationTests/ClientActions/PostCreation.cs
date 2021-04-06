@@ -128,28 +128,25 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             }
 
             //Create New Post DTO objects that will be sent to the API.
-
             NewPostDto invalidPostTooLong = new() { Content = longPost.ToString() };
             NewPostDto invalidPostNoContent = new() { Content = "" };
+            NewCommentDto nullPost = new() { };
 
             //  Serializes request object into json format.
-
             StringContent invalidStringTooMuchContent = new(JsonSerializer.Serialize(invalidPostTooLong), Encoding.UTF8, "application/json");
             StringContent invalidstringNoContent = new(JsonSerializer.Serialize(invalidPostNoContent), Encoding.UTF8, "application/json");
+            StringContent nullContent = new(JsonSerializer.Serialize(nullPost), Encoding.UTF8, "application/json");
 
             // Act
-
             var invalidresponseTooMuchContent = await client.PostAsync("api/posts", invalidStringTooMuchContent);
             var invalidResponseNoContent = await client.PostAsync("api/posts", invalidstringNoContent);
+            var invalidResponseNullContent = await client.PostAsync("api/posts", nullContent);
 
             // Assert
             // Ensures that the valid request was created, and that posts that are too long or too short are rejected.
-
             Assert.Equal(HttpStatusCode.BadRequest, invalidresponseTooMuchContent.StatusCode);
             Assert.Equal(HttpStatusCode.BadRequest, invalidResponseNoContent.StatusCode);
-
-
-
+            Assert.Equal(HttpStatusCode.BadRequest, invalidResponseNullContent.StatusCode);
         }
 
         /// <summary>
