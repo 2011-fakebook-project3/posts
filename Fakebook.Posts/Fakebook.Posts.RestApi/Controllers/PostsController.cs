@@ -318,7 +318,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// A user's newsfeed contains the three most recent posts
         /// of the user and the users they follow.
         /// </summary>
-        /// <returns>An IActionResult containing either a:
+        /// <returns>An IActionResult containing a:
         /// 200 OK on success</returns>
         [Authorize]
         [HttpGet("newsfeed")]
