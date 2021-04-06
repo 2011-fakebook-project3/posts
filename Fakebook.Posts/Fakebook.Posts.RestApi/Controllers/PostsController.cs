@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
@@ -53,11 +54,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutAsync(int id, Post post)
+        public async Task<IActionResult> PutAsync(int id, EditPostDto postDTO)
         {
+            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+
+            Post post = new Post(sessionEmail, postDTO.Content);
+
+            post.Id = id;
+
             try
-            {
-                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            { 
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
                 if (sessionEmail != postEmail)
@@ -73,7 +79,6 @@ namespace Fakebook.Posts.RestApi.Controllers
 
             try
             {
-                post.Id = id;
                 await _postsRepository.UpdateAsync(post);
             }
             catch (ArgumentException e)
@@ -103,12 +108,13 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-
-            Post post = new Post(email, postModel.Content);
-
+            
             Post created;
+
             try
             {
+                Post post = new Post(email, postModel.Content);
+
                 created = await _postsRepository.AddAsync(post);
             }
             catch (ArgumentException e)
