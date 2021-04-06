@@ -30,9 +30,11 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Takes in an email of someone to be followed, and follows them for the current user.
         /// </summary>
         /// <param name="follow">Follower DTO containing email of person to be followed</param>
-        /// <returns>An IActionResult containing either a:<br></br>
-        /// 204 No Content on success<br></br>
-        /// 400 BadRequest on delete failure</returns>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
+        /// </returns>
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -57,9 +59,11 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Follow a user with a given email.
         /// </summary>
         /// <param name="email">string: Email of person you wish to follow</param>
-        /// <returns>An IActionResult containing either a:<br></br>
-        /// 204 No Content on success<br></br>
-        /// 400 BadRequest on delete failure</returns>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
+        /// </returns>
         [Authorize]
         [HttpPut("{email}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -84,9 +88,11 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// Unfollow an email for the current user.
         /// </summary>
         /// <param name="email">string: Email of person you wish to unfollow</param>
-        /// <returns>An IActionResult containing either a:<br></br>
-        /// 204 No Content on success<br></br>
-        /// 400 BadRequest on delete failure</returns>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
+        /// </returns>
         [Authorize]
         [HttpDelete("{email}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
