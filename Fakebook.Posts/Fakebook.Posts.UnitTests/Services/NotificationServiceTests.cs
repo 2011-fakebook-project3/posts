@@ -19,7 +19,7 @@ namespace Fakebook.Posts.UnitTests.Services
         public async Task NotificationService_ValidPost_Pass()
         {
             // arrange
-            string endpoint = "http://localhost:5000/api/notifications/comments";
+            string endpoint = "comments";
             NotificationDTO notification = new NotificationDTO()
             {
                 LoggedInUser = "loggedIn@email.com",
