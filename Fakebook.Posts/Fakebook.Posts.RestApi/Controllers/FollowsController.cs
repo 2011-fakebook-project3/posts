@@ -4,6 +4,7 @@ using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -25,8 +26,19 @@ namespace Fakebook.Posts.RestApi.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Takes in an email of someone to be followed, and follows them for the current user.
+        /// </summary>
+        /// <param name="follow">Follower DTO containing email of person to be followed</param>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
+        /// </returns>
         [Authorize]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(FollowDto follow)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -46,14 +58,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <summary>
         /// Follow a user with a given email.
         /// </summary>
-        /// <param name="email">
-        /// The email of the user to follow.
-        /// </param>
+        /// <param name="email">string: Email of person you wish to follow</param>
         /// <returns>
-        /// NoContent result on success or BadRequest on failure.
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
         /// </returns>
         [Authorize]
         [HttpPut("{email}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -71,16 +85,18 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Unfollow a user with email "email"
+        /// Unfollow an email for the current user.
         /// </summary>
-        /// <param name="email">
-        /// The email of the user to unfollow.
-        /// </param>
+        /// <param name="email">string: Email of person you wish to unfollow</param>
         /// <returns>
-        /// NoContent on success, BadRequest on Failure.
+        /// An IActionResult containing either a:
+        /// <br/>204 No Content on success
+        /// <br/>400 BadRequest on delete failure
         /// </returns>
         [Authorize]
         [HttpDelete("{email}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteAsync(string email)
         {
             var userEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
