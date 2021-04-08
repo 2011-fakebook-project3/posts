@@ -103,6 +103,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             try
             {
                 Comment newComment = new Comment(email, comment.Content);
+                newComment.CreatedAt = _timeService.GetCurrentTime();
                 created = await _postsRepository.AddCommentAsync(newComment);
             }
             catch (ArgumentException e)

@@ -121,7 +121,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             try
             {
                 Post post = new Post(email, postModel.Content);
-
+                post.CreatedAt = _timeService.GetCurrentTime();
                 created = await _postsRepository.AddAsync(post);
             }
             catch (ArgumentException e)
