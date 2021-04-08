@@ -101,8 +101,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(Post postModel)
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-
+            //var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
+            var email = "john.werner@revature.net";
             if (email != postModel.UserEmail)
             {
                 _logger.LogInformation("Authenticated user email did not match user email of the post.");
