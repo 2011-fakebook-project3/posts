@@ -20,13 +20,40 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(string email)
         {
-            var posts = await _context.Posts.FromSqlInterpolated(
-                $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
-            ).ToListAsync();
-            return posts.Select(p => p.ToDomain());
+            var following = await _context.Follows.Where(f => f.FollowerEmail == email).ToListAsync();
+            var userpost = await _context.Posts.Where(b => b.UserEmail == email).ToListAsync();
+            List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
+
+
+                foreach (var item in following)
+                {
+                    foreach (var i in _context.Posts.Where(b => b.UserEmail == item.FollowedEmail).Select(d => d.ToDomain()))
+                    {
+                        posts.Add(i);
+                    }
+                }
+
+           
+                foreach (var item in userpost)
+                {
+                    posts.Add(item.ToDomain());
+                }
+
+
+
+            return posts;
         }
+
+
+        /*
+                   var posts = await _context.Posts.FromSqlInterpolated(
+                       $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
+                   ).ToListAsync();
+                   return posts.Select(p => p.ToDomain());
+               }
+               */
         /*
         SELECT *
         FROM (

@@ -276,13 +276,14 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// </returns>
         // Route: api/newsfeed
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("newsfeed")]
         public async Task<IActionResult> GetNewsfeedAsync()
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var newsfeedPosts = await _postsRepository.NewsfeedAsync(email, 3);
-            // var followedUserEmails = _followsRepository.GetFollowedEmails(email);
+           // var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var email = "john.werner@revature.net";
+            var newsfeedPosts = await _postsRepository.NewsfeedAsync(email);
+            var followedUserEmails = _followsRepository.GetFollowedEmails(email);
             // followedUserEmails.Add(email);
             // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
             // // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
@@ -292,6 +293,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             // .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
             // .ToListAsync();
             return Ok(newsfeedPosts);
+            
         }
     }
 }
