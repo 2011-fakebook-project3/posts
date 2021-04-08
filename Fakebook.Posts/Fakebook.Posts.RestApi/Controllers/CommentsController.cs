@@ -28,14 +28,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Deletes the post resource with the given id.
+        /// Deletes a comment with a given Id.
         /// </summary>
         /// <param name="id">Id of the post to be deleted</param>
-        /// <returns>An IActionResult containing either a:
-        /// 204NoContent on success,
-        /// 400BadRequest on delete failure,
-        /// 404NotFound if the Id did not match an existing post,
-        /// or 403Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.</returns>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>204 NoContent on success
+        /// <br/>400 BadRequest on delete failure
+        /// <br/>404 NotFound if the Id did not match an existing post
+        /// <br/>403 Forbidden if the UserEmail on the original post does not match the email on the token of the request sender.
+        /// </returns>
         [Authorize]
         [HttpDelete("{commentId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -77,19 +79,20 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NoContent();
         }
 
+        /// <summary> 
         /// Add a new comment to the database. 
         /// </summary>
-        /// <param name="comment">
-        /// A domain comment. 
-        /// </param>
+        /// <param name="comment"> NewCommentDto, Properties: Content </param>
         /// <returns>
-        /// The newly created comment
+        /// An IActionResult containing either a:
+        /// <br/>201 Created on success
+        /// <br/>400 Invalid Argument on comment
+        /// <br/>403 Forbidden on user email not matching
         /// </returns>
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
@@ -115,8 +118,19 @@ namespace Fakebook.Posts.RestApi.Controllers
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 
+        /// <summary>
+        /// Gets a comment given the comment Id.
+        /// </summary>
+        /// <param name="id">Comment Id.</param>
+        /// <returns>
+        /// An IActionResult containing either a:
+        /// <br/>200 OK on success.
+        /// <br/>404 Not found if comment with id is not found.
+        /// </returns>
         [HttpGet("{id}")]
         [ActionName(nameof(GetAsync))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(int id)
         {
             if (await _postsRepository.AsQueryable()
