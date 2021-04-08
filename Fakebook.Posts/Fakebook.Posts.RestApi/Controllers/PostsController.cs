@@ -113,15 +113,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
-
-            //var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-            var email = "john.werner@revature.net";
-         
-                _logger.LogInformation("Authenticated user email did not match user email of the post.");
-                return Forbid();
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
             
-
-
             Post created;
 
             try
@@ -359,21 +352,14 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// An IActionResult containing a:
         /// <br/>200 OK on success
         /// </returns>
-
-        // Route: api/newsfeed
-
-        //[Authorize]
-
-       
-
+        [Authorize]
         [HttpGet("newsfeed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNewsfeedAsync()
         {
-           // var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var email = "john.werner@revature.net";
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             var newsfeedPosts = await _postsRepository.NewsfeedAsync(email);
-            var followedUserEmails = _followsRepository.GetFollowedEmails(email);
+            // var followedUserEmails = _followsRepository.GetFollowedEmails(email);
             // followedUserEmails.Add(email);
             // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
             // // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
@@ -383,7 +369,6 @@ namespace Fakebook.Posts.RestApi.Controllers
             // .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
             // .ToListAsync();
             return Ok(newsfeedPosts);
-            
         }
     }
 }
