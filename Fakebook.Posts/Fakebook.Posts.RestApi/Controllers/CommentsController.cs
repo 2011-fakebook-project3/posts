@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
@@ -10,6 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
@@ -103,7 +103,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             try
             {
                 Comment newComment = new Comment(email, comment.Content);
-                newComment.CreatedAt = _timeService.GetCurrentTime();
+                newComment.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddCommentAsync(newComment);
             }
             catch (ArgumentException e)

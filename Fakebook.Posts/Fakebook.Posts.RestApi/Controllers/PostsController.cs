@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
@@ -11,6 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
@@ -121,7 +120,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             try
             {
                 Post post = new Post(email, postModel.Content);
-                post.CreatedAt = _timeService.GetCurrentTime();
+                post.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddAsync(post);
             }
             catch (ArgumentException e)

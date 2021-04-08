@@ -1,9 +1,5 @@
 ﻿using Fakebook.Posts.RestApi.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.Services
@@ -28,7 +24,7 @@ namespace Fakebook.Posts.UnitTests.Services
             TimeService timeService = new TimeService();
 
             // act
-            DateTime currentTime = timeService.GetCurrentTime();
+            DateTime currentTime = timeService.CurrentTime;
 
             // assert
             Assert.True((DateTime.Now - currentTime) < TimeSpan.FromMilliseconds(1));
