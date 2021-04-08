@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Fakebook.Posts.RestApi
+namespace Fakebook.Posts.IntegrationTests.Services
 {
     public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
