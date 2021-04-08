@@ -7,6 +7,6 @@ namespace Fakebook.Posts.RestApi.Services
 {
     public class TimeService : ITimeService
     {
-        public DateTime GetCurrentTime() => throw new NotImplementedException();
+        public DateTime GetCurrentTime() => DateTime.Now;
     }
 }
