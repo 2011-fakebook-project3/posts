@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
@@ -11,31 +7,35 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
-
     [Route("api/posts")]
     [ApiController]
     public class PostsController : ControllerBase
     {
-
         private readonly IPostsRepository _postsRepository;
         private readonly IFollowsRepository _followsRepository;
         private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
+        private readonly ITimeService _timeService;
 
         public PostsController(
             IPostsRepository postsRepository,
             IFollowsRepository followsRepository,
             IBlobService blobService,
-            ILogger<PostsController> logger
+            ILogger<PostsController> logger,
+            ITimeService timeService
             )
         {
             _postsRepository = postsRepository;
             _followsRepository = followsRepository;
             _blobService = blobService;
             _logger = logger;
+            _timeService = timeService;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             post.Id = id;
 
             try
-            { 
+            {
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
                 if (sessionEmail != postEmail)
@@ -114,13 +114,13 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-            
+
             Post created;
 
             try
             {
                 Post post = new Post(email, postModel.Content);
-
+                post.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddAsync(post);
             }
             catch (ArgumentException e)
@@ -340,7 +340,6 @@ namespace Fakebook.Posts.RestApi.Controllers
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
         }
 
         /// <summary>
