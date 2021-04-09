@@ -117,6 +117,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
+
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
             Post created;
 
@@ -125,7 +126,7 @@ namespace Fakebook.Posts.RestApi.Controllers
                 Post post = new Post(email, postModel.Content);
                 post.CreatedAt = _timeService.CurrentTime;
                 bool postNotSpam = await _checkSpamService.CheckPostSpam(post);
-                if (postNotSpam == true)
+                if (postNotSpam)
                 {
                     created = await _postsRepository.AddAsync(post);
                 }

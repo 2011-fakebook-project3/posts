@@ -20,15 +20,13 @@ using Fakebook.Posts.RestApi.Services;
 namespace Fakebook.Posts.RestApi.Services
 {
 
-	public class CheckSpamService
+	public class CheckSpamService : ICheckSpamService
 	{
-		private readonly IHttpContextAccessor _httpContextAccessor;
 		private readonly IPostsRepository _postRepository;
 		private readonly ITimeService _timeService;
 
-		public CheckSpamService(IHttpContextAccessor httpContextAccessor, IPostsRepository postRepository, ITimeService timeService)
+		public CheckSpamService(IPostsRepository postRepository, ITimeService timeService)
 		{
-			_httpContextAccessor = httpContextAccessor;
 			_postRepository = postRepository;
 			_timeService = timeService;
 		}
@@ -36,39 +34,37 @@ namespace Fakebook.Posts.RestApi.Services
 		public async Task<bool> CheckPostSpam(Post userPost)
 		{
 			int recentInMin = 5;
-			var currentUser = _httpContextAccessor.HttpContext.User;
+			var dateNow = _timeService.CurrentTime;
+			bool isNotSpam = false;
+			// very old post default
+			DateTime earliestPost = new DateTime(1950, 10, 10, 10, 10, 10);
 
-			if (currentUser.Identity.IsAuthenticated)
+			string userEmail = userPost.UserEmail;
+			// change secondsTimeOut to set how often a user can post
+			int secondsTimeOut = 10;
+
+
+
+			var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
+			foreach (var post in recentPosts)
 			{
+				// keep poster from re-posting for secondsTimeOut time
+				if(dateNow - post.CreatedAt < TimeSpan.FromSeconds(secondsTimeOut))
+                {
+					isNotSpam = false;
+					return isNotSpam;
+                }
 
-				var dateNow = _timeService.CurrentTime;
-
-				string userEmail = userPost.UserEmail;
-				//var userId = currentUser.Identity;
-				// change secondsTimeOut to set how often a user can post
-				int secondsTimeOut = 10;   
-
-
-				// keep user from posting again for certain time
-				if (userPost.CreatedAt.AddSeconds(secondsTimeOut) > dateNow)
+				if (string.Equals(userPost.Content, post.Content))
 				{
-					return false;
+					isNotSpam = false;
+					return isNotSpam;
 				}
-
-				var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
-				foreach (var post in recentPosts)
-				{
-					if (string.Equals(userPost.Content, post.Content))
-					{
-						return false;
-					}
-				}
-				return true;
 			}
-			else
-			{
-				return false;
-			}
+			isNotSpam = true;
+			return isNotSpam;
 		}
+
 	}
 }
+
