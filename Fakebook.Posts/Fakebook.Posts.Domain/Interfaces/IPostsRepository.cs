@@ -11,6 +11,7 @@ namespace Fakebook.Posts.Domain.Interfaces
         ValueTask UpdateAsync(Post post);
         ValueTask DeletePostAsync(int id);
         ValueTask DeleteCommentAsync(int id);
+        //Task<List<Post>> GetRecentPostsAsync(int userId, int recentInMinutes);
         Task<bool> LikePostAsync(int postId, string userEmail);
         Task<bool> UnlikePostAsync(int postId, string userEmail);
         Task<bool> LikeCommentAsync(int commentId, string userEmail);
