@@ -15,58 +15,60 @@ using Microsoft.AspNetCore.Authentication;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.DataAccess.Repositories;
 using Fakebook.Posts.DataAccess;
+using Fakebook.Posts.RestApi.Services;
 
-public class CheckSpamService
+namespace Fakebook.Posts.RestApi.Services
 {
-	private readonly IHttpContextAccessor _httpContextAccessor;
-	private readonly IPostsRepository _postRepository;
-	private readonly ITimeService _timeService;
 
-	public CheckSpamService(IHttpContextAccessor httpContextAccessor, IPostsRepository postRepository, ITimeService timeService)
+	public class CheckSpamService
 	{
-		_httpContextAccessor = httpContextAccessor;
-		_postRepository = postRepository;
-		_timeService = timeService;
-	}
+		private readonly IHttpContextAccessor _httpContextAccessor;
+		private readonly IPostsRepository _postRepository;
+		private readonly ITimeService _timeService;
+
+		public CheckSpamService(IHttpContextAccessor httpContextAccessor, IPostsRepository postRepository, ITimeService timeService)
+		{
+			_httpContextAccessor = httpContextAccessor;
+			_postRepository = postRepository;
+			_timeService = timeService;
+		}
+
+		public async Task<bool> CheckPostSpam(Post userPost)
+		{
+			int recentInMin = 5;
+			var currentUser = _httpContextAccessor.HttpContext.User;
+
+			if (currentUser.Identity.IsAuthenticated)
+			{
+
+				var dateNow = _timeService.CurrentTime;
+
+				string userEmail = userPost.UserEmail;
+				//var userId = currentUser.Identity;
+				// change secondsTimeOut to set how often a user can post
+				int secondsTimeOut = 10;   
 
 
-	// check current post with recent posts where user id = current user
-	// will not work until 'Post' has a userId from Auth
-	
-	public async Task<bool> CheckPostSpam(Post userPost)
-	{
-		int recentInMin = 5;
-		var currentUser = _httpContextAccessor.HttpContext.User;
-		
-		if(currentUser.Identity.IsAuthenticated)
-        {
+				// keep user from posting again for certain time
+				if (userPost.CreatedAt.AddSeconds(secondsTimeOut) > dateNow)
+				{
+					return false;
+				}
 
-			var dateNow = _timeService.CurrentTime();
-
-			string userEmail = userPost.UserEmail;
-			//var userId = currentUser.Identity;
-			int secondsTimeOut = 30;
-
-			// keep user from posting again for certain time
-			if (userPost.CreatedAt.AddSeconds(secondsTimeOut) > dateNow)
+				var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
+				foreach (var post in recentPosts)
+				{
+					if (string.Equals(userPost.Content, post.Content))
+					{
+						return false;
+					}
+				}
+				return true;
+			}
+			else
 			{
 				return false;
 			}
-
-
-			var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
-			foreach(var post in recentPosts)
-            {
-				if( string.Equals(userPost.Content, post.Content))
-                {
-					return false;
-                }
-            }
-			return true;
-        }
-		else
-        {
-			return false;
-        }
+		}
 	}
 }
