@@ -20,17 +20,19 @@ public class CheckSpamService
 {
 	private readonly IHttpContextAccessor _httpContextAccessor;
 	private readonly IPostsRepository _postRepository;
+	private readonly ITimeService _timeService;
 
-	public CheckSpamService(IHttpContextAccessor httpContextAccessor, IPostsRepository postRepository)
+	public CheckSpamService(IHttpContextAccessor httpContextAccessor, IPostsRepository postRepository, ITimeService timeService)
 	{
 		_httpContextAccessor = httpContextAccessor;
 		_postRepository = postRepository;
+		_timeService = timeService;
 	}
 
 
 	// check current post with recent posts where user id = current user
 	// will not work until 'Post' has a userId from Auth
-	/*
+	
 	public async Task<bool> CheckPostSpam(Post userPost)
 	{
 		int recentInMin = 5;
@@ -38,16 +40,21 @@ public class CheckSpamService
 		
 		if(currentUser.Identity.IsAuthenticated)
         {
-			DateTime dateNow = DateTime.Now;
-			var userId = currentUser.Identity;
+
+			var dateNow = _timeService.CurrentTime();
+
+			string userEmail = userPost.UserEmail;
+			//var userId = currentUser.Identity;
 			int secondsTimeOut = 30;
+
 			// keep user from posting again for certain time
 			if (userPost.CreatedAt.AddSeconds(secondsTimeOut) > dateNow)
-            {
+			{
 				return false;
-            }
-			// needs userId to be inside of 'Post' model
-			var recentPosts = await _postRepository.GetRecentPostsAsync(userId, recentInMin);
+			}
+
+
+			var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
 			foreach(var post in recentPosts)
             {
 				if( string.Equals(userPost.Content, post.Content))
@@ -62,5 +69,4 @@ public class CheckSpamService
 			return false;
         }
 	}
-	*/
 }
