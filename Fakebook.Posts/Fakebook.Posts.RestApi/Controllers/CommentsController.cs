@@ -1,30 +1,31 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
+using Fakebook.Posts.RestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
-
     [Route("api/comments")]
     [ApiController]
     public class CommentsController : ControllerBase
     {
-
         private readonly IPostsRepository _postsRepository;
         private readonly ILogger<CommentsController> _logger;
+        private readonly ITimeService _timeService;
 
-        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger)
+        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger, ITimeService timeService)
         {
             _postsRepository = postsRepository;
             _logger = logger;
+            _timeService = timeService;
         }
 
         /// <summary>
@@ -79,8 +80,8 @@ namespace Fakebook.Posts.RestApi.Controllers
             return NoContent();
         }
 
-        /// <summary> 
-        /// Add a new comment to the database. 
+        /// <summary>
+        /// Add a new comment to the database.
         /// </summary>
         /// <param name="comment"> NewCommentDto, Properties: Content </param>
         /// <returns>
@@ -102,6 +103,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             try
             {
                 Comment newComment = new Comment(email, comment.Content);
+                newComment.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddCommentAsync(newComment);
             }
             catch (ArgumentException e)
