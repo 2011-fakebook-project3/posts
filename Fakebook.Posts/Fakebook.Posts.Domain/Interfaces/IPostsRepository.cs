@@ -7,6 +7,7 @@ namespace Fakebook.Posts.Domain.Interfaces
     public interface IPostsRepository : IEnumerable<Post>, IAsyncEnumerable<Post>
     {
         ValueTask<Post> AddAsync(Post post);
+        ValueTask<Post> GetPostAsync(int id);
         ValueTask<Comment> AddCommentAsync(Comment comment);
         ValueTask UpdateAsync(Post post);
         ValueTask DeletePostAsync(int id);

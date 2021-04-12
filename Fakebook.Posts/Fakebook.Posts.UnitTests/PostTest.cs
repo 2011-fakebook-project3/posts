@@ -67,8 +67,10 @@ namespace Fakebook.Posts.UnitTests
             //arrange
             const string Content = "This is some content";
             const string userEmail = "damion.silver@test.com";
+            const int PostID = 1;
+
             //act
-            Comment newcomment = new Comment(userEmail, Content);
+            Comment newcomment = new Comment(userEmail, Content, PostID);
 
             //assert
             Assert.NotNull(newcomment);
@@ -80,8 +82,9 @@ namespace Fakebook.Posts.UnitTests
             //arrange
             const string Content = "This is some content";
             const string userEmail = "damion.silver@test.com";
+            const int PostID = 1;
             //act
-            Comment newcomment = new Comment(userEmail, Content);
+            Comment newcomment = new Comment(userEmail, Content,PostID );
 
             //assert
             Assert.Equal(userEmail, newcomment.UserEmail);
@@ -93,8 +96,9 @@ namespace Fakebook.Posts.UnitTests
             //arrange
             const string Content = "This is some content";
             const string userEmail = "damion.silver@test.com";
+            const int PostID = 1;
             //act
-            Comment newcomment = new Comment(userEmail, Content);
+            Comment newcomment = new Comment(userEmail, Content,PostID);
 
             //assert
             Assert.NotNull(newcomment.Content);
@@ -109,8 +113,9 @@ namespace Fakebook.Posts.UnitTests
         {
             const string content = "This is some content";
             const string invalidEmail = "damion.silvertest.com";
+            const int PostID = 1;
 
-            Assert.ThrowsAny<ArgumentException>(() => new Comment(invalidEmail, content));
+            Assert.ThrowsAny<ArgumentException>(() => new Comment(invalidEmail, content,PostID));
         }
     }
 }

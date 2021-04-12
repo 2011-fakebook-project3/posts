@@ -36,7 +36,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
                 CreatedAt = DateTime.Now
             };
 
-            Domain.Models.Comment comment = new("person@domain.net", "content")
+            Domain.Models.Comment comment = new("person@domain.net", "content", 3)
             {
                 Id = 2,
                 Post = domainModelPost,

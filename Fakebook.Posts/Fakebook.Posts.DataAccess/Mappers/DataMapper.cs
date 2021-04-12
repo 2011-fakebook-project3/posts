@@ -28,9 +28,10 @@ namespace Fakebook.Posts.DataAccess.Mappers
         public static Domain.Models.Comment ToDomain(this Comment comment,
             Domain.Models.Post post)
         {
-            Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content);
+            Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content, comment.PostId);
             domainComment.Id = comment.Id;
             domainComment.Post = post;
+            domainComment.PostId = comment.PostId;
             domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
             if (comment.CommentLikes is not null)
                 domainComment.Likes = comment.CommentLikes
