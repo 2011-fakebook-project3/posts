@@ -8,6 +8,6 @@ namespace Fakebook.Posts.RestApi.Services
 {
     public interface ICheckSpamService
     {
-        Task<bool> CheckPostSpam(Post userPost);
+        Task<bool> IsPostNotSpam(Post userPost);
     }
 }

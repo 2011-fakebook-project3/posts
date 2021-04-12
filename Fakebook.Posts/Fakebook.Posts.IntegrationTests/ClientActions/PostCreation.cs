@@ -52,7 +52,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            mockSpamService.Setup(s => s.CheckPostSpam(It.IsAny<Post>()))
+            mockSpamService.Setup(s => s.IsPostNotSpam(It.IsAny<Post>()))
                 .ReturnsAsync(true);
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .ReturnsAsync(post);

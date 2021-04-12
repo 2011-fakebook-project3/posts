@@ -125,7 +125,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             {
                 Post post = new Post(email, postModel.Content);
                 post.CreatedAt = _timeService.CurrentTime;
-                bool postNotSpam = await _checkSpamService.CheckPostSpam(post);
+                bool postNotSpam = await _checkSpamService.IsPostNotSpam(post);
                 if (postNotSpam)
                 {
                     created = await _postsRepository.AddAsync(post);

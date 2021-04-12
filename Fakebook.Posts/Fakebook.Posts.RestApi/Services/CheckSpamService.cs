@@ -31,40 +31,62 @@ namespace Fakebook.Posts.RestApi.Services
 			_timeService = timeService;
 		}
 
-		public async Task<bool> CheckPostSpam(Post userPost)
+		public async Task<bool> IsPostNotSpam(Post userPost)
 		{
+			// posts can't be the same content within 'recentInMin' minutes
 			int recentInMin = 5;
-			var dateNow = _timeService.CurrentTime;
-			bool isNotSpam = false;
-			// very old post default
-			DateTime earliestPost = new DateTime(1950, 10, 10, 10, 10, 10);
-
-			string userEmail = userPost.UserEmail;
-			// change secondsTimeOut to set how often a user can post
+			// can't make new posts within 'secondsTimeout' seconds of another
 			int secondsTimeOut = 10;
-
+			var dateNow = _timeService.CurrentTime;
+			string userEmail = userPost.UserEmail;
+			string userEmailContent = userPost.Content;
 
 
 			var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
-			foreach (var post in recentPosts)
-			{
-				// keep poster from re-posting for secondsTimeOut time
-				if(dateNow - post.CreatedAt < TimeSpan.FromSeconds(secondsTimeOut))
+
+			if(!CheckTimeSpam(recentPosts, secondsTimeOut, dateNow))
+            {
+				return false;
+            }			
+			if(!CheckSamePostSpam(recentPosts, userEmailContent))
+            {
+				return false;
+            }
+
+			return true;
+		}
+
+		public bool CheckTimeSpam(List<Post> posts, int secondsTimeout, DateTime dateNow)
+        {
+			bool isNotSpam;
+
+			foreach(var post in posts)
+            {
+				if(dateNow - post.CreatedAt < TimeSpan.FromSeconds(secondsTimeout))
                 {
 					isNotSpam = false;
 					return isNotSpam;
                 }
-
-				if (string.Equals(userPost.Content, post.Content))
-				{
-					isNotSpam = false;
-					return isNotSpam;
-				}
-			}
+            }
 			isNotSpam = true;
 			return isNotSpam;
-		}
+        }
 
+		public bool CheckSamePostSpam(List<Post> posts, string userContent)
+        {
+			bool isNotSpam;
+
+			foreach(var post in posts)
+            {
+				if(string.Equals(post.Content, userContent))
+                {
+					isNotSpam = false;
+					return isNotSpam;
+                }
+            }
+			isNotSpam = true;
+			return isNotSpam;
+        }
 	}
 }
 
