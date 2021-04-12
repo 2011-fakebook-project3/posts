@@ -21,7 +21,7 @@ namespace Fakebook.Posts.UnitTests.Services
     public class SpamServiceTests
     {
         
-        private readonly WebApplicationFactory<Startup> _factory;
+
         protected ITimeService _timeService;
         protected IPostsRepository _postRepository;
 
