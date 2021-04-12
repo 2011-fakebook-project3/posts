@@ -1,13 +1,14 @@
-﻿using System;
-using Fakebook.Posts.DataAccess.Models;
+﻿using Fakebook.Posts.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Fakebook.Posts.DataAccess
 {
     public class FakebookPostsContext : DbContext
     {
-
-        public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) { }
+        public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options)
+        {
+        }
 
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
@@ -103,14 +104,14 @@ namespace Fakebook.Posts.DataAccess
                         Id = 1,
                         UserEmail = "john.werner@revature.net",
                         Content = "Just made my first post!",
-                        CreatedAt = DateTimeOffset.Now
+                        CreatedAt = new DateTimeOffset(new DateTime(2021, 2, 2, 2, 2, 2))
                     },
                     new Post
                     {
                         Id = 2,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Fakebook is really cool.",
-                        CreatedAt = DateTimeOffset.Now
+                        CreatedAt = new DateTimeOffset(new DateTime(2021, 3, 3, 3, 3, 3))
                     }
                 });
 
@@ -120,7 +121,7 @@ namespace Fakebook.Posts.DataAccess
                         Id = 1,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Nice",
-                        CreatedAt = DateTimeOffset.Now,
+                        CreatedAt = = new DateTimeOffset(new DateTime(2021, 3, 3, 3, 2, 2)),
                         PostId = 1
                     }
                 });
