@@ -353,12 +353,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <br/>200 OK on success
         /// </returns>
         [Authorize]
-        [HttpGet("newsfeed")]
+        [HttpPost("newsfeed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetNewsfeedAsync()
+        public async Task<IActionResult> GetNewsfeedAsync(NewsFeedDTO newsfeedemails)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var newsfeedPosts = await _postsRepository.NewsfeedAsync(email);
+            newsfeedemails.Emails.Add(email);
+
+            
+            var newsfeedPosts = await _postsRepository.NewsfeedAsync(newsfeedemails.Emails);
+
             // var followedUserEmails = _followsRepository.GetFollowedEmails(email);
             // followedUserEmails.Add(email);
             // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
