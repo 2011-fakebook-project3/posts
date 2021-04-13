@@ -232,11 +232,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var post = await _postsRepository.GetAsync(id);
-            if (post is not null)
+            try
+            {
+                var post = await _postsRepository.GetAsync(id);
                 return Ok(post);
-            else
+            }
+            catch (InvalidOperationException)
+            {
                 return NotFound();
+            }
         }
 
         /// <summary>
