@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.IntegrationTests.Services;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
-using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.IntegrationTests.Controllers
@@ -36,7 +35,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
@@ -54,7 +52,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
@@ -83,7 +80,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
@@ -101,7 +97,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });

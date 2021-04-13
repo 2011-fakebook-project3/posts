@@ -1,24 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Constants;
+﻿using Fakebook.Posts.Domain.Constants;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.IntegrationTests.Services;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
-using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
-using System.Net;
-using System.Text.Json;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.IntegrationTests.Controllers
@@ -40,7 +40,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             List<Comment> comments = new();
             var date = new DateTime(2021, 4, 4);
@@ -60,7 +59,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
@@ -75,12 +73,11 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
-                
+
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
-
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that an improper Post object results in Status400BadRequest with an error message in the body.
@@ -90,7 +87,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             List<Comment> comments = new();
             var date = new DateTime(2021, 4, 4);
@@ -110,7 +106,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
@@ -247,6 +242,5 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
-
     }
 }

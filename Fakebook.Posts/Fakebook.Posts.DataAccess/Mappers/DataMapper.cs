@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Fakebook.Posts.DataAccess.Models;
+﻿using Fakebook.Posts.DataAccess.Models;
+using System.Linq;
 
 namespace Fakebook.Posts.DataAccess.Mappers
 {
@@ -38,15 +38,6 @@ namespace Fakebook.Posts.DataAccess.Mappers
             return domainComment;
         }
 
-        public static Domain.Models.Follow ToDomain(this Follow user)
-        {
-            return new Domain.Models.Follow
-            {
-                FollowerEmail = user.FollowerEmail,
-                FollowedEmail = user.FollowedEmail
-            };
-        }
-
         public static Post ToDataAccess(this Domain.Models.Post post)
         {
             Post dbPost = new();
@@ -68,8 +59,8 @@ namespace Fakebook.Posts.DataAccess.Mappers
                         PostId = dbPost.Id
                     }).ToHashSet();
             return dbPost;
-
         }
+
         public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
         {
             Comment dbComment = new()
@@ -84,15 +75,6 @@ namespace Fakebook.Posts.DataAccess.Mappers
             };
 
             return dbComment;
-        }
-
-        public static Follow ToDataAccess(this Domain.Models.Follow user)
-        {
-            return new Follow
-            {
-                FollowerEmail = user.FollowerEmail,
-                FollowedEmail = user.FollowedEmail
-            };
         }
     }
 }

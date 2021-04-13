@@ -18,21 +18,18 @@ namespace Fakebook.Posts.RestApi.Controllers
     public class PostsController : ControllerBase
     {
         private readonly IPostsRepository _postsRepository;
-        private readonly IFollowsRepository _followsRepository;
         private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
         private readonly ITimeService _timeService;
 
         public PostsController(
             IPostsRepository postsRepository,
-            IFollowsRepository followsRepository,
             IBlobService blobService,
             ILogger<PostsController> logger,
             ITimeService timeService
             )
         {
             _postsRepository = postsRepository;
-            _followsRepository = followsRepository;
             _blobService = blobService;
             _logger = logger;
             _timeService = timeService;

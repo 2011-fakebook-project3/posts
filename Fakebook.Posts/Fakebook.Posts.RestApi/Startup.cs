@@ -35,7 +35,6 @@ namespace Fakebook.Posts.RestApi
             );
 
             services.AddScoped<IPostsRepository, PostsRepository>();
-            services.AddScoped<IFollowsRepository, FollowsRepository>();
             services.AddSingleton<ITimeService, TimeService>();
 
             services.AddControllers();
