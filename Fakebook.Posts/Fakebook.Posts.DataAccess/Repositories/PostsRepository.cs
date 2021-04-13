@@ -57,33 +57,19 @@ namespace Fakebook.Posts.DataAccess.Repositories
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
 
-            Fakebook.Posts.DataAccess.Models.Comment newcomment =  new Fakebook.Posts.DataAccess.Models.Comment
+            DataAccess.Models.Post postforcomment = await _context.Posts.FirstOrDefaultAsync(a => a.Id == comment.PostId);
+            if (postforcomment != default)
             {
-                Id = comment.Id,
-                Content = comment.Content,
-                PostId = comment.PostId,
-                UserEmail = comment.UserEmail,
-                CreatedAt = comment.CreatedAt,
-                
-            };
+                Fakebook.Posts.DataAccess.Models.Comment newcomment = comment.ToDataAccess(postforcomment);
 
-            
-            
-            await _context.Comments.AddAsync(newcomment);
-            await _context.SaveChangesAsync();
-            return comment;
-
-            // if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
-            // {
-            //     var commentDb = comment.ToDataAccess(post);
-            //     await _context.Comments.AddAsync(commentDb);
-            //     await _context.SaveChangesAsync();
-            //     return commentDb.ToDomain(null);
-            // }
-            // else
-            // {
-            //     throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
-            // }
+                await _context.Comments.AddAsync(newcomment);
+                await _context.SaveChangesAsync();
+                return newcomment.ToDomain(null);
+            }
+            else
+            {
+                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+            }
         }
 
         public async ValueTask DeletePostAsync(int id)
@@ -204,9 +190,9 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return false;
         }
 
-        public async ValueTask<Post>  GetPostAsync(int id)
+        public async ValueTask<Post> GetPostAsync(int id)
         {
-            
+
             var post = await _context.Posts.Where(b => b.Id == id).Select(b => b.ToDomain()).SingleOrDefaultAsync();
 
             return post;

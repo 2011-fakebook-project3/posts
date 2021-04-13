@@ -78,7 +78,6 @@ namespace Fakebook.Posts.DataAccess.Mappers
                 Id = comment.Id,
                 UserEmail = comment.UserEmail,
                 PostId = post.Id,
-                Post = post,
                 Content = comment.Content,
                 CreatedAt = comment.CreatedAt,
                 CommentLikes = comment.Likes.Select(l => new CommentLike { CommentId = comment.Id, LikerEmail = l }).ToHashSet()
