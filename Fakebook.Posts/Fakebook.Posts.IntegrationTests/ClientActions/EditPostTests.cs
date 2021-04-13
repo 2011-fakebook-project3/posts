@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,13 +40,10 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Returns(new ValueTask());
 
-            HashSet<Post> posts = new()
-            {
-                new("test.user@email.com", "test content") { Id = 1 }
-            };
+            Post post = new("test.user@email.com", "test content") { Id = 1 };
 
-            mockRepo.Setup(r => r.GetEnumerator())
-                .Returns(posts.GetEnumerator());
+            mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
+                .ReturnsAsync(post);
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -88,13 +84,10 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             mockRepo.Setup(r => r.UpdateAsync(It.IsAny<Post>()))
                 .Throws(new DbUpdateException());
 
-            HashSet<Post> posts = new()
-            {
-                new("test.user@email.com", "test content") { Id = 1 }
-            };
+            Post post = new("test.user@email.com", "test content") { Id = 1 };
 
-            mockRepo.Setup(r => r.GetEnumerator())
-                .Returns(posts.GetEnumerator());
+            mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
+                .ReturnsAsync(post);
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -133,14 +126,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
                 .Throws(new InvalidOperationException());
-
-            HashSet<Post> posts = new()
-            {
-                new("test.user@email.com", "test content") { Id = 1 }
-            };
-
-            mockRepo.Setup(r => r.GetEnumerator())
-                .Returns(posts.GetEnumerator());
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
