@@ -233,7 +233,10 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> GetAsync(int id)
         {
             var post = await _postsRepository.GetAsync(id);
-            return Ok(post);
+            if (post is not null)
+                return Ok(post);
+            else
+                return NotFound();
         }
 
         /// <summary>
