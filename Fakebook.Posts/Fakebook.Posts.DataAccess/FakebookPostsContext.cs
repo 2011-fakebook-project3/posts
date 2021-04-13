@@ -121,7 +121,7 @@ namespace Fakebook.Posts.DataAccess
                         Id = 1,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Nice",
-                        CreatedAt = new DateTimeOffset(new DateTime(2021, 3, 3, 3, 2, 2)),
+                        CreatedAt = = new DateTimeOffset(new DateTime(2021, 3, 3, 3, 2, 2)),
                         PostId = 1
                     }
                 });
