@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,15 +33,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Returns(new ValueTask<Post>());
-
-            HashSet<Post> posts = new()
-            {
-                new("test.user@email.com", "test content") { Id = 1 }
-            };
-
-            mockRepo.Setup(r => r.GetEnumerator())
-                .Returns(posts.GetEnumerator());
+                .Returns(ValueTask.FromResult(new Post("test.user@email.com", "test content") { Id = 1 }));
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
