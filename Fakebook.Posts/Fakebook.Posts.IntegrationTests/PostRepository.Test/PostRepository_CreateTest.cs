@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
@@ -12,7 +13,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
     public class PostRepository_CreateTest
     {
         [Fact]
-        public async void CreateComment()
+        public async Task CreateComment()
         {
             //Arrange
             using SqliteConnection connection = new("Data Source=:memory:");
@@ -61,7 +62,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
             Assert.True(result.CreatedAt == comment.CreatedAt);
         }
         [Fact]
-        public async void CreatePost()
+        public async Task CreatePost()
         {
             //Arrange
             using SqliteConnection connection = new("Data Source=:memory:");

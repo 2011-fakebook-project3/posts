@@ -100,7 +100,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
-            Assert.Equal(dbPost, dbComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(dbComment.CommentLikes.Count == 1);
@@ -149,7 +148,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(domainUser.FollowerEmail == dbUser.FollowerEmail);
-            Assert.True(domainUser.FollowedEmail == domainUser.FollowedEmail);
+            Assert.True(domainUser.FollowedEmail == dbUser.FollowedEmail);
         }
 
         [Fact]
