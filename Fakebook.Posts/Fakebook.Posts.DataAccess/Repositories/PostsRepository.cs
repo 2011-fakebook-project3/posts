@@ -57,7 +57,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Post> GetAsync(int postId)
         {
-            var post = await _context.Posts.FirstOrDefaultAsync(p => p.Id == postId);
+            var post = await _context.Posts.FirstAsync(p => p.Id == postId);
             return post.ToDomain();
         }
 
