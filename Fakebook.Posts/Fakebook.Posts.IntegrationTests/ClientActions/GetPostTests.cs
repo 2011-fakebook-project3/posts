@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -34,7 +35,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Mock<IBlobService> mockBlobService = new();
             Post post = new Post("test.user@email.com", "test content") { Id = 1 };
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Returns(ValueTask.FromResult(post));
+                .ReturnsAsync(post);
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -51,7 +52,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             // Act
-            var response = await client.GetAsync("api/posts/1");
+            var response = await client.GetAsync(new Uri("api/posts/1", UriKind.Relative));
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -69,7 +70,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Returns(ValueTask.FromResult<Post>(null));
+                .ReturnsAsync(null as Post);
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -86,7 +87,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
             // Act
-            var response = await client.GetAsync("api/posts/1");
+            var response = await client.GetAsync(new Uri("api/posts/1", UriKind.Relative));
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
