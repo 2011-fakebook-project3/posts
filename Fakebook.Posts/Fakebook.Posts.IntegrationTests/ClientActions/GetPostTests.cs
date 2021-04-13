@@ -32,8 +32,9 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
+            Post post = new Post("test.user@email.com", "test content") { Id = 1 };
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Returns(ValueTask.FromResult(new Post("test.user@email.com", "test content") { Id = 1 }));
+                .Returns(ValueTask.FromResult(post));
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
