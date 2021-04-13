@@ -66,7 +66,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
             try
             {
-                var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
+                var postEmail = (await _postsRepository.GetAsync(id)).UserEmail;
 
                 if (sessionEmail != postEmail)
                 {
