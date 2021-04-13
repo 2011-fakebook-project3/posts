@@ -23,7 +23,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         }
 
         /// <summary>
-        /// Tests the PostsController class' PutAsync method. Ensures that a proper Post object results in status 204NoContent.
+        /// Tests the PostsController class' GetAsync method. Ensures that a proper post id results in status 200 Ok.
         /// </summary>
         [Fact]
         public async Task GetAsync_ValidId_ReturnsPost()
@@ -56,6 +56,40 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
+
+        /// <summary>
+        /// Tests the PostsController class' GetAsync method. Ensures that an invalid id results in status 404 NotFound.
+        /// </summary>
+        [Fact]
+        public async Task GetAsync_InvalidId_ReturnsNotFound()
+        {
+            // Arrange
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
+            mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
+                .Returns(ValueTask.FromResult<Post>(null));
+
+            var client = _factory.WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(services =>
+                {
+                    services.AddScoped(sp => mockRepo.Object);
+                    services.AddScoped(sp => mockFollowRepo.Object);
+                    services.AddTransient(sp => mockBlobService.Object);
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+                });
+            }).CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+
+            // Act
+            var response = await client.GetAsync("api/posts/1");
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         }
     }
 }
