@@ -1,13 +1,13 @@
+using Fakebook.Posts.DataAccess.Mappers;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -27,6 +27,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             ).ToListAsync();
             return posts.Select(p => p.ToDomain());
         }
+
         /*
         SELECT *
         FROM (
@@ -52,6 +53,11 @@ namespace Fakebook.Posts.DataAccess.Repositories
             await _context.Posts.AddAsync(postDb);
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
+        }
+
+        public async ValueTask<Post> GetAsync(int postId)
+        {
+            return null;
         }
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
