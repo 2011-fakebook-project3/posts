@@ -70,7 +70,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .ReturnsAsync(null as Post);
+                .Throws(new InvalidOperationException());
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
