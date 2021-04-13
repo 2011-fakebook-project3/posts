@@ -20,13 +20,13 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(List<string> followingemail)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(List<string> followingemail, int maxPost = 5)
         {
 
             List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
 
 
-            var recentpost = _context.Posts.OrderByDescending(t => t.CreatedAt).Take(50);
+            var recentpost = await _context.Posts.OrderByDescending(t => t.CreatedAt).Take(maxPost).ToListAsync();
 
             foreach (var item in recentpost)
             {
