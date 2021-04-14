@@ -140,14 +140,16 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async Task<List<Post>> GetRecentPostsAsync(string userEmail, int recentInMinutes, DateTime dateNow)
         {
-           
+
+            var latestTime = new DateTimeOffset(dateNow - TimeSpan.FromMinutes(recentInMinutes));
+            
+
             var query = await _context.Posts
                 .Where(u => u.UserEmail == userEmail)
-                .Where(t => dateNow - t.CreatedAt < TimeSpan.FromMinutes(recentInMinutes))
-                .Select(s => s.ToDomain())
+                .Where(t => DateTimeOffset.Compare(t.CreatedAt, latestTime) >= 0)
                 .ToListAsync();
-
-            return query;
+            var queryResult = query.Select(s => s.ToDomain());
+            return queryResult.ToList();
         }
         
 
