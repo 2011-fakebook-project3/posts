@@ -20,7 +20,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(List<string> followingemail, int maxPost = 5)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(List<string> followingemail, int maxPost = 50)
         {
 
             List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
