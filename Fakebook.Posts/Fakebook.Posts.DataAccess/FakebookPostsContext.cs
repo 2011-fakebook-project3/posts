@@ -1,17 +1,17 @@
-﻿using System;
-using Fakebook.Posts.DataAccess.Models;
+﻿using Fakebook.Posts.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Fakebook.Posts.DataAccess
 {
     public class FakebookPostsContext : DbContext
     {
-
-        public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options) { }
+        public FakebookPostsContext(DbContextOptions<FakebookPostsContext> options) : base(options)
+        {
+        }
 
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
-        public virtual DbSet<Follow> Follows { get; set; }
         public virtual DbSet<PostLike> PostLikes { get; set; }
         public virtual DbSet<CommentLike> CommentLikes { get; set; }
 
@@ -57,14 +57,6 @@ namespace Fakebook.Posts.DataAccess
                       .HasForeignKey(e => e.PostId)
                       .HasConstraintName("FK_Comment_Post")
                       .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<Follow>(entity =>
-            {
-                entity.ToTable("UserFollows", "Fakebook");
-
-                entity.HasKey(e => new { e.FollowerEmail, e.FollowedEmail })
-                      .HasName("PK_UserFollows");
             });
 
             modelBuilder.Entity<PostLike>(entity =>
@@ -122,21 +114,6 @@ namespace Fakebook.Posts.DataAccess
                         Content = "Nice",
                         CreatedAt = DateTimeOffset.Now,
                         PostId = 1
-                    }
-                });
-
-            modelBuilder.Entity<Follow>()
-                .HasData(new Follow[]
-                {
-                    new Follow
-                    {
-                        FollowerEmail = "john.werner@revature.net",
-                        FollowedEmail = "testaccount@gmail.com"
-                    },
-                    new Follow
-                    {
-                        FollowerEmail = "testaccount@gmail.com",
-                        FollowedEmail = "john.werner@revature.net"
                     }
                 });
 

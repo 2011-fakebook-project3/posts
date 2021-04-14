@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Fakebook.Posts.DataAccess.Mappers;
+using System;
 using System.Collections.Generic;
-using Fakebook.Posts.DataAccess.Mappers;
 using Xunit;
 
 namespace Fakebook.Posts.UnitTests.DataMapper_Testing
@@ -35,7 +35,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbPost.CreatedAt == domainPost.CreatedAt);
             Assert.True(dbPost.Comments.Count == 1);
             Assert.True(dbPost.PostLikes.Count == 1);
-
         }
 
         [Fact]
@@ -44,13 +43,11 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             //Arrange
             DataAccess.Models.Post dbPost = new()
             {
-
                 UserEmail = "person1@domain.net",
                 Content = "Content",
                 CreatedAt = DateTime.Now,
                 Comments = new HashSet<DataAccess.Models.Comment>(),
                 PostLikes = new HashSet<DataAccess.Models.PostLike>()
-
             };
 
             DataAccess.Models.Comment dbComent = new()
@@ -74,7 +71,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbPost.Comments.Count == 1);
             Assert.True(dbPost.PostLikes.Count == 1);
         }
-
 
         [Fact]
         public void DomainCommentToDbComment()
@@ -132,42 +128,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(domainComment.Likes.Count == 1);
-        }
-
-        [Fact]
-        public void DomainUsertoDbUser()
-        {
-            //Arrange
-            Domain.Models.Follow domainUser = new()
-            {
-                FollowerEmail = "user@email.net",
-                FollowedEmail = "followee@email.net"
-            };
-
-            //Act
-            var dbUser = domainUser.ToDataAccess();
-
-            //Assert
-            Assert.True(domainUser.FollowerEmail == dbUser.FollowerEmail);
-            Assert.True(domainUser.FollowedEmail == domainUser.FollowedEmail);
-        }
-
-        [Fact]
-        public void DbUsertoDomainUser()
-        {
-            //Arrange
-            DataAccess.Models.Follow dbUser = new()
-            {
-                FollowerEmail = "user@email.net",
-                FollowedEmail = "followee@email.net"
-            };
-
-            //Act
-            var domainUser = dbUser.ToDomain();
-
-            //Assert
-            Assert.True(dbUser.FollowerEmail == domainUser.FollowerEmail);
-            Assert.True(dbUser.FollowedEmail == domainUser.FollowedEmail);
         }
     }
 }

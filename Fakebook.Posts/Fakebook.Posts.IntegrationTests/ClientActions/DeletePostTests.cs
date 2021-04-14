@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Fakebook.Posts.Domain.Interfaces;
+﻿using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
+using Fakebook.Posts.IntegrationTests.Services;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Services;
-using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class DeletePostTests : IClassFixture<WebApplicationFactory<Startup>>
     {
-
         private readonly WebApplicationFactory<Startup> _factory;
 
         public DeletePostTests(WebApplicationFactory<Startup> factory)
@@ -31,10 +30,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         [Fact]
         public async Task DeleteAsync_ValidId_Deletes()
         {
-
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Returns(new ValueTask());
@@ -52,7 +49,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
@@ -77,7 +73,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.DeletePostAsync(It.IsAny<int>()))
                 .Throws(new ArgumentException());
@@ -95,7 +90,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
