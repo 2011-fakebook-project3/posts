@@ -38,24 +38,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return posts;
         }
 
-        /*
-        SELECT *
-        FROM (
-            SELECT *,
-            ROW_NUMBER() OVER (
-                PARTITION BY "UserEmail"
-                ORDER BY "CreatedAt" DESC
-            ) AS "RowNum"
-            FROM "Fakebook"."Post"
-            WHERE "UserEmail" = @email
-            OR "UserEmail" IN (
-                SELECT "FollowedEmail"
-                FROM "Fakebook"."UserFollows"
-                WHERE "FollowerEmail" = @email
-            )
-        ) AS "RecentPosts"
-        WHERE "RecentPosts"."RowNum" <= @count
-        */
 
         public async ValueTask<Post> AddAsync(Post post)
         {
