@@ -1,13 +1,13 @@
+using Fakebook.Posts.DataAccess.Mappers;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -38,14 +38,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return posts;
         }
 
-
-        /*
-                   var posts = await _context.Posts.FromSqlInterpolated(
-                       $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
-                   ).ToListAsync();
-                   return posts.Select(p => p.ToDomain());
-               }
-               */
         /*
         SELECT *
         FROM (
@@ -71,6 +63,12 @@ namespace Fakebook.Posts.DataAccess.Repositories
             await _context.Posts.AddAsync(postDb);
             await _context.SaveChangesAsync();
             return postDb.ToDomain();
+        }
+
+        public async ValueTask<Post> GetAsync(int postId)
+        {
+            var post = await _context.Posts.FirstAsync(p => p.Id == postId);
+            return post.ToDomain();
         }
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)

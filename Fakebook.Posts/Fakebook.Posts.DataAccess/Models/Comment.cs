@@ -10,7 +10,7 @@ namespace Fakebook.Posts.DataAccess.Models
         public int PostId { get; set; }
         public Post Post { get; set; }
         public string Content { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public virtual ICollection<CommentLike> CommentLikes { get; set; }
     }
 }
