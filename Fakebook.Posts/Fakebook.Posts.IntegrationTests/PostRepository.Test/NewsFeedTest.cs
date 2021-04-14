@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
@@ -12,7 +13,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
     public class NewsFeedAsync
     {
         [Fact]
-        public async void NewsFeedAsync_ValidPost_ReturnsPost()
+        public async Task NewsFeedAsync_ValidPost_ReturnsPost()
         {
             //Arrange
             using SqliteConnection connection = new("Data Source=:memory:");
