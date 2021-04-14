@@ -30,7 +30,8 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
             foreach (var item in recentpost)
             {
-                if(followingemail.Contains(item.UserEmail)){
+                if (followingemail.Contains(item.UserEmail))
+                {
                     posts.Add(item.ToDomain());
                 }
             }

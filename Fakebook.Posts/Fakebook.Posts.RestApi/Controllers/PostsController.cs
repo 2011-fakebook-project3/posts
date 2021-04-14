@@ -360,8 +360,9 @@ namespace Fakebook.Posts.RestApi.Controllers
         [Authorize]
         [HttpPost("newsfeed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetNewsfeedAsync(NewsFeedDTO newsfeedemails)
+        public async Task<IActionResult> GetNewsfeedAsync(NewsFeedDto newsfeedemails)
         {
+            
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             newsfeedemails.Emails.Add(email);
 

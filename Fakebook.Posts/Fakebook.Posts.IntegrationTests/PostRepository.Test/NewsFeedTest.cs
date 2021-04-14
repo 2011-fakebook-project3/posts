@@ -59,7 +59,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
                 context.SaveChanges();
                 List<string> useremails = new List<string> { "person@domain.net", "person2@domain.net" };
                 List<Fakebook.Posts.Domain.Models.Post> newsfeedpost = new List<Fakebook.Posts.Domain.Models.Post>(await repo.NewsfeedAsync(useremails));
-                var count = newsfeedpost.Count();
+                var count = newsfeedpost.Count;
                 //Assert
                 Assert.Equal(2, count);
             }
