@@ -244,9 +244,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id)
         {
-            if (await _postsRepository.AsQueryable()
-                .FirstOrDefaultAsync(p => p.Id == id) is Post post) return Ok(post);
-            return NotFound();
+            try
+            {
+                var post = await _postsRepository.GetAsync(id);
+                return Ok(post);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
         }
 
         /// <summary>
