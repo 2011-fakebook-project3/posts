@@ -20,12 +20,22 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(List<string> followingemail, int maxPost = 50)
         {
-            var posts = await _context.Posts.FromSqlInterpolated(
-                $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
-            ).ToListAsync();
-            return posts.Select(p => p.ToDomain());
+
+            List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
+
+
+            var recentpost = await _context.Posts.OrderByDescending(t => t.CreatedAt).Take(maxPost).ToListAsync();
+
+            foreach (var item in recentpost)
+            {
+                if(followingemail.Contains(item.UserEmail)){
+                    posts.Add(item.ToDomain());
+                }
+            }
+
+            return posts;
         }
 
         /*
