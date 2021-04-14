@@ -31,7 +31,6 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             Post post = new Post("test.user@email.com", "test content") { Id = 1 };
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
@@ -42,7 +41,6 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
@@ -67,7 +65,6 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         {
             // Arrange
             Mock<IPostsRepository> mockRepo = new();
-            Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
             mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
                 .Throws(new InvalidOperationException());
@@ -77,7 +74,6 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
                 builder.ConfigureTestServices(services =>
                 {
                     services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
                     services.AddAuthentication("Test")
                         .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
