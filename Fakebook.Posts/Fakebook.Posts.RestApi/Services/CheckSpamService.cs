@@ -17,7 +17,6 @@ namespace Fakebook.Posts.RestApi.Services
 			_timeService = timeService;
 		}
 
-
 		/// <summary>
 		/// Takes in a Post and checks that the post wasn't made too close to another post or the contents are the same as
 		/// a recent post.
@@ -27,9 +26,9 @@ namespace Fakebook.Posts.RestApi.Services
 		public async Task<bool> IsPostNotSpam(Post userPost)
 		{
 			if(userPost.Content == null)
-            {
+			{
 				return false;
-            }
+			}
 
 			// posts can't be the same content within 'recentInMin' minutes
 			int recentInMin = 5;
