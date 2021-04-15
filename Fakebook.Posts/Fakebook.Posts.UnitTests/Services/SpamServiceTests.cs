@@ -31,6 +31,10 @@ namespace Fakebook.Posts.UnitTests.Services
             dateNow = timeService.CurrentTime;
         }
 
+        /// <summary>
+        /// Tests CheckTimeSpam method in CheckSpamService comparing a new post with an old post.
+        /// asserts true because old post should be older than the secondsTimeout.
+        /// </summary>
         [Fact]
         public void CheckSpamService_IsNotSpammingByTime_IsTrue()
         {
@@ -51,6 +55,10 @@ namespace Fakebook.Posts.UnitTests.Services
             Assert.True(isNotSpam);
         }
 
+        /// <summary>
+        /// Tests CheckTimeSpam method in CheckSpamService comparing a new post with an old post.
+        /// asserts false because the old post is created too soon to the new post.
+        /// </summary>
         [Fact]
         public void CheckSpamService_IsNotSpammingByTime_IsFalse()
         {
@@ -71,6 +79,10 @@ namespace Fakebook.Posts.UnitTests.Services
             Assert.False(isNotSpam);
         }
 
+        /// <summary>
+        /// Tests CheckSamePostSpam in CheckSpamService comparing a new posts content with old posts content.
+        /// asserts true because the new posts content is not the same as the old posts content.
+        /// </summary>
         [Fact]
         public void CheckSpamService_IsNotSpammingByRecentContent_IsTrue()
         {
@@ -98,6 +110,10 @@ namespace Fakebook.Posts.UnitTests.Services
             Assert.True(isNotSpam);
         }
 
+        /// <summary>
+        /// Tests CheckSamePostSpam in CheckSpamService comparing a new posts content with an old posts content.
+        /// Asserts false because the new posts content is the same as the old posts content.
+        /// </summary>
         [Fact]
         public void CheckSpamService_IsNotSpammingByRecentContent_IsFalse()
         {
@@ -125,6 +141,13 @@ namespace Fakebook.Posts.UnitTests.Services
             Assert.False(isNotSpam);
         }
 
+        /// <summary>
+        /// Tests CheckSpamService that uses GetRecentPostsAsync to get a list of recent posts
+        /// and uses both CheckTimeSpam and CheckSamePostSpam methods together for checking a users post for spam.
+        /// Asserts true for GetRecentPostsAsync retrieving lists properly, CheckTimeSpam returning true, and
+        /// CheckSamePostSpam returning true.
+        /// </summary>
+        /// <returns>Task of IsPostNotSpam</returns>
         [Fact]
         public async Task CheckSpamService_IsNotSpammingByTimeAndRecentPosts_IsTrue()
         {

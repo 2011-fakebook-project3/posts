@@ -11,7 +11,16 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
 {
     public class GetRecentPostsTests
     {
-
+        /// <summary>
+        /// Tests GetRecentPostAsync postRepository method for getting a list of recent posts 
+        /// in a span of minutes from the time of 'now'.
+        /// Test does not add addedPost1 to the list because of wrong userEmail.
+        /// Test is supposed to add addedPost2 and addedPost3 because they are posts by the User
+        /// and the time is recent.
+        /// Test does not add addedPost4 to the list because it is an old post.
+        /// Asserts that the returned posts are addedPost2 and addedPost3.
+        /// </summary>
+        /// <returns>Task of GetRecentPostsAsync test.</returns>
         [Fact]
         public async Task GetRecentPostsAsync_ValidPosts_ReturnsPostsList()
         {
@@ -24,8 +33,6 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
                 .Options;
 
             DateTime now = new DateTime(2020, 2, 2, 2, 2, 2);
-
-
             DateTime date1 = now - TimeSpan.FromMinutes(3);
             DateTime date2 = now - TimeSpan.FromMinutes(2);
             DateTime date3 = now - TimeSpan.FromMinutes(5);
@@ -66,25 +73,20 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
             context.Database.EnsureCreated();
             context.Posts.Add(addedPost1);
             context.Posts.Add(addedPost2);
-            context.Posts.Add(addedPost3);
             context.Posts.Add(addedPost4);
+            context.Posts.Add(addedPost3);
             context.SaveChanges();
-
+            
             PostsRepository repo = new(context);
-
             string userEmail = "testerWoman@yoohoo.net";
             int recentPostsInMinutes = 10;
 
-            
             // Act
             var actualList = await repo.GetRecentPostsAsync(userEmail, recentPostsInMinutes, now);
 
+            // Assert
             Assert.Equal(addedPost2.Content, actualList[0].Content);
             Assert.Equal(addedPost3.Content, actualList[1].Content);
-
-
-
         }
-
     }
 }

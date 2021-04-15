@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 
-
 namespace Fakebook.Posts.RestApi.Services
 {
-
 	public class CheckSpamService : ICheckSpamService
 	{
 		private readonly IPostsRepository _postRepository;
@@ -19,6 +17,13 @@ namespace Fakebook.Posts.RestApi.Services
 			_timeService = timeService;
 		}
 
+
+		/// <summary>
+		/// Takes in a Post and checks that the post wasn't made too close to another post or the contents are the same as
+		/// a recent post.
+		/// </summary>
+		/// <param name="userPost"> takes in a newly made post to compare for spam</param>
+		/// <returns>boolean true for not spam: false for is spam</returns>
 		public async Task<bool> IsPostNotSpam(Post userPost)
 		{
 			if(userPost.Content == null)
@@ -34,9 +39,7 @@ namespace Fakebook.Posts.RestApi.Services
 			string userEmail = userPost.UserEmail;
 			string userEmailContent = userPost.Content;
 
-
 			var recentPosts = await _postRepository.GetRecentPostsAsync(userEmail, recentInMin, dateNow);
-
 			if(!CheckTimeSpam(recentPosts, secondsTimeOut, dateNow))
             {
 				return false;
@@ -45,14 +48,20 @@ namespace Fakebook.Posts.RestApi.Services
             {
 				return false;
             }
-
 			return true;
 		}
 
+		/// <summary>
+		/// checks a Post in comparison to recently made posts of the user to see 
+		/// if the post was made too soon to another Post.
+		/// </summary>
+		/// <param name="posts">A list of recent posts that is retrieved from GetRecentPostsAsync</param>
+		/// <param name="secondsTimeout">an amount of seconds until a User can make another Post</param>
+		/// <param name="dateNow"> the DateTime 'now' made by TimeService to represent a newly made post</param>
+		/// <returns>Boolean: True for no Time Spam: False for post was made too soon to another post</returns>
 		public bool CheckTimeSpam(List<Post> posts, int secondsTimeout, DateTime dateNow)
         {
 			bool isNotSpam;
-
 			foreach(var post in posts)
             {
 				if(dateNow - post.CreatedAt < TimeSpan.FromSeconds(secondsTimeout))
@@ -65,10 +74,17 @@ namespace Fakebook.Posts.RestApi.Services
 			return isNotSpam;
         }
 
+		/// <summary>
+		/// checks a Post content in comparison to recently made posts of the user to see
+		/// if the post content is the same as another Post.
+		/// </summary>
+		/// <param name="posts">A list of recently made posts</param>
+		/// <param name="userContent">the content of the Users new post to be compared to other posts</param>
+		/// <returns>Boolean: True for contents are not the same as others: False for post has same contents
+		/// as another post</returns>
 		public bool CheckSamePostSpam(List<Post> posts, string userContent)
         {
 			bool isNotSpam;
-
 			foreach(var post in posts)
             {
 				if(string.Equals(post.Content, userContent))
@@ -82,4 +98,3 @@ namespace Fakebook.Posts.RestApi.Services
         }
 	}
 }
-
