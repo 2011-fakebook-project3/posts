@@ -20,6 +20,10 @@ using System.Net;
 using System.Text.Json;
 using Moq;
 using Xunit;
+using Fakebook.Posts.RestApi.Controllers;
+using Microsoft.Extensions.Logging;
+
+
 
 
 
@@ -33,8 +37,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             _factory = factory;
         }
-
-
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Post object results in Status201Created.
@@ -255,18 +257,18 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
 
         [Fact]
-        public void GetNewsFeedAsyn_DtoIsNotNull_ReturnsOk()
+        public void GetNewsFeedAsync_DtoIsNotNull_ReturnsOk()
         {
 
-                        // Arrange
+            // Arrange
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
-            Mock<Microsoft.Extensions.Logging.ILogger<Fakebook.Posts.RestApi.Controllers.PostsController>> mockLoggerService = new();
+            Mock<ILogger<PostsController>> mockLoggerService = new();
             Mock<ITimeService> mockTimeService = new();
 
             // arrange
-            var controller = new Fakebook.Posts.RestApi.Controllers.PostsController(mockRepo.Object,mockFollowRepo.Object,mockBlobService.Object,mockLoggerService.Object,mockTimeService.Object);
+            var controller = new Fakebook.Posts.RestApi.Controllers.PostsController(mockRepo.Object, mockFollowRepo.Object, mockBlobService.Object, mockLoggerService.Object, mockTimeService.Object);
 
 
 

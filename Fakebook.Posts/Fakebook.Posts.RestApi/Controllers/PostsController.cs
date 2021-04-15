@@ -362,19 +362,14 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetNewsfeedAsync(NewsFeedDto newsfeedemails)
         {
-            if (newsfeedemails != null)
-            {
+           
                 var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
                 newsfeedemails.Emails.Add(email);
 
 
                 var newsfeedPosts = await _postsRepository.NewsfeedAsync(newsfeedemails.Emails);
                 return Ok(newsfeedPosts);
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(newsfeedemails), "The NewsFeedDto cannot be null.");
-            }
+            
         }
     }
 }

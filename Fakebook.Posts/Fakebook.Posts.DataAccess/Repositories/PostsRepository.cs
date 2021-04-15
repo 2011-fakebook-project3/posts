@@ -27,7 +27,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
                 List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
 
 
-                var recentpost = await _context.Posts.OrderByDescending(t => t.CreatedAt).Take(maxPost).ToListAsync();
+                var recentpost = await _context.Posts.OrderByDescending(t => t.CreatedAt).ToListAsync();
 
                 foreach (var item in recentpost)
                 {
@@ -38,7 +38,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
                     }
                 }
 
-                return posts;
+                return posts.Take(maxPost);
             }
             else
             {

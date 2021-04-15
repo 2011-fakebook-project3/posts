@@ -6,6 +6,8 @@ using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
+using Fakebook.Posts.Domain.Models;
+
 
 namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
 {
@@ -57,7 +59,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
                 context.Posts.Add(dataAccessPost3);
                 context.SaveChanges();
                 List<string> useremails = new List<string> { "person@domain.net", "person2@domain.net" };
-                List<Fakebook.Posts.Domain.Models.Post> newsfeedpost = new List<Fakebook.Posts.Domain.Models.Post>(await repo.NewsfeedAsync(useremails));
+                List<Post> newsfeedpost = new List<Post>(await repo.NewsfeedAsync(useremails));
                 var count = newsfeedpost.Count;
                 //Assert
                 Assert.Equal(2, count);
