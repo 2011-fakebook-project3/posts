@@ -7,6 +7,6 @@ namespace Fakebook.Posts.RestApi.Dtos
     public class NewsFeedDto
     {
         [Required]
-        public List<string> Emails { get; set; }
+        public ICollection<string> Emails { get; set; }
     }
 }
