@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.EntityFrameworkCore;
@@ -78,7 +76,6 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
             int recentPostsInMinutes = 10;
 
             
-
             // Act
             var actualList = await repo.GetRecentPostsAsync(userEmail, recentPostsInMinutes, now);
 

@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Security.Claims;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.AspNetCore.Http;
 using Fakebook.Posts.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.DataAccess.Repositories;
-using Fakebook.Posts.DataAccess;
-using Fakebook.Posts.RestApi.Services;
+
 
 namespace Fakebook.Posts.RestApi.Services
 {
@@ -33,6 +21,11 @@ namespace Fakebook.Posts.RestApi.Services
 
 		public async Task<bool> IsPostNotSpam(Post userPost)
 		{
+			if(userPost.Content == null)
+            {
+				throw new ArgumentNullException("Null exception at Spam Checking");
+            }
+
 			// posts can't be the same content within 'recentInMin' minutes
 			int recentInMin = 5;
 			// can't make new posts within 'secondsTimeout' seconds of another

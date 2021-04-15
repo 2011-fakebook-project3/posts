@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Fakebook.Posts.RestApi.Services;
-using Fakebook.Posts.DataAccess.Repositories;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Moq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Sqlite;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Fakebook.Posts.RestApi;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Sqlite;
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Mappers;
@@ -24,42 +16,33 @@ namespace Fakebook.Posts.UnitTests.Services
     public class SpamServiceTests
     {
 
-
         private readonly IPostsRepository _postRepository;
         private readonly ITimeService _timeService;
+        private readonly TimeService timeService = new();
 
-
-        TimeService timeService = new TimeService();
         public string contentIsDuplicate = "this is an old post";
         public string contentIsNotDuplicate = "testing a post";
         public string oldPostContent = "this is an old post";
-
         public string testUserEmail = "test.user@revature.net";
-
         public int secondsTimeout = 10;
+
         public DateTime dateNow;
         public DateTime dateNotRecent = new DateTime(2021, 4, 4);
         
+        public SpamServiceTests()
+        {
+            dateNow = timeService.CurrentTime;
+        }
 
         [Fact]
         public void CheckSpamService_IsNotSpammingByTime_IsTrue()
         {
- 
-            DateTime dateNow = timeService.CurrentTime;
-
-           
+       
             Post post = new(testUserEmail, oldPostContent)
             {
                 Id = 1,
                 Picture = "picture",
                 CreatedAt = dateNotRecent
-            };
-
-            Post postPass = new(testUserEmail, contentIsNotDuplicate)
-            {
-                Id = 1,
-                Picture = "picture",
-                CreatedAt = dateNow
             };
 
             CheckSpamService checkSpamService = new CheckSpamService(_postRepository, _timeService);
@@ -71,21 +54,11 @@ namespace Fakebook.Posts.UnitTests.Services
             Assert.True(isNotSpam);
         }
 
-
         [Fact]
         public void CheckSpamService_IsNotSpammingByTime_IsFalse()
         {
 
-            DateTime dateNow = timeService.CurrentTime;
-
             Post post = new(testUserEmail, oldPostContent)
-            {
-                Id = 1,
-                Picture = "picture",
-                CreatedAt = dateNow
-            };
-
-            Post postPass = new(testUserEmail, contentIsNotDuplicate)
             {
                 Id = 1,
                 Picture = "picture",
@@ -104,9 +77,6 @@ namespace Fakebook.Posts.UnitTests.Services
         [Fact]
         public void CheckSpamService_IsNotSpammingByRecentContent_IsTrue()
         {
-
-            DateTime dateNow = timeService.CurrentTime;
-
 
             Post post = new(testUserEmail, oldPostContent)
             {
@@ -135,8 +105,6 @@ namespace Fakebook.Posts.UnitTests.Services
         public void CheckSpamService_IsNotSpammingByRecentContent_IsFalse()
         {
 
-            DateTime dateNow = timeService.CurrentTime;
-
             Post post = new(testUserEmail, oldPostContent)
             {
                 Id = 1,
@@ -163,7 +131,6 @@ namespace Fakebook.Posts.UnitTests.Services
         [Fact]
         public async Task CheckSpamService_IsNotSpammingByTimeAndRecentPosts_IsTrue()
         {
-
 
             DateTime now = new DateTime(2020, 2, 2, 2, 2, 2);
 
@@ -225,15 +192,6 @@ namespace Fakebook.Posts.UnitTests.Services
             Mock<ITimeService> mockTimeService = new();
             mockTimeService.Setup(t => t.CurrentTime).Returns(now);
             CheckSpamService checkSpamService = new CheckSpamService(mockPostRepository.Object, mockTimeService.Object);
-
-            
-
-            using SqliteConnection connection = new("Data Source=:memory:");
-            connection.Open();
-
-            var options = new DbContextOptionsBuilder<FakebookPostsContext>()
-                .UseSqlite(connection)
-                .Options;
             
             bool isPostSpam = await checkSpamService.IsPostNotSpam(testedPost);
 
