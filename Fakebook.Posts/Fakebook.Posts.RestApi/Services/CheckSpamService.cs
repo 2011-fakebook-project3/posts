@@ -23,7 +23,7 @@ namespace Fakebook.Posts.RestApi.Services
 		{
 			if(userPost.Content == null)
             {
-				throw new ArgumentNullException("Null exception at Spam Checking");
+				return false;
             }
 
 			// posts can't be the same content within 'recentInMin' minutes

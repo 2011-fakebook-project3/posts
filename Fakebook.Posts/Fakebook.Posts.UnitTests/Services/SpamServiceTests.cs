@@ -6,9 +6,6 @@ using Fakebook.Posts.RestApi.Services;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Moq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Mappers;
 
 namespace Fakebook.Posts.UnitTests.Services
