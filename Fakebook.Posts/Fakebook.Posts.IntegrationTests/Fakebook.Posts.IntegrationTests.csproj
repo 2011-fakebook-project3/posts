@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Fakebook.Posts.RestApi\Fakebook.Posts.RestApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>
