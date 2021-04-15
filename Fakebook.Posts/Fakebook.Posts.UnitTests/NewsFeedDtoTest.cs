@@ -6,8 +6,6 @@ namespace Fakebook.Posts.UnitTests
 {
     public class NewsFeedDtoTest
     {
-        private const int Id = 1;
-
         [Fact]
         public void NewsFeedDto_ValidatingEmails_ReturnsTrue()
         {
