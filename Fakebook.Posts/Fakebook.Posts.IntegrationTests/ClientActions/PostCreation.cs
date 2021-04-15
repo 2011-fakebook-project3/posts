@@ -257,7 +257,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
 
         [Fact]
-        public void GetNewsFeedAsync_DtoIsNotNull_ReturnsOk()
+        public async Task GetNewsFeedAsync_DtoIsNotNull_ReturnsOk()
         {
 
             // Arrange
@@ -270,16 +270,36 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             // arrange
             var controller = new Fakebook.Posts.RestApi.Controllers.PostsController(mockRepo.Object, mockFollowRepo.Object, mockBlobService.Object, mockLoggerService.Object, mockTimeService.Object);
 
+            var client = _factory.WithWebHostBuilder(builder =>
+          {
+              builder.ConfigureTestServices(services =>
+              {
+                  services.AddScoped(sp => mockRepo.Object);
+                  services.AddScoped(sp => mockFollowRepo.Object);
+                  services.AddTransient(sp => mockBlobService.Object);
+                  services.AddAuthentication("Test")
+                      .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+              });
+          }).CreateClient();
 
+            HttpClient clientAPP = new HttpClient();
 
-
-            // act
             NewsFeedDto newsFeedDto = new NewsFeedDto();
             newsFeedDto.Emails = new List<string> { "test@domain.com, test2@domain.com" };
-            var result = controller.GetNewsfeedAsync(newsFeedDto);
 
-            // assert
-            Assert.NotNull(result);
+            var json = JsonSerializer.Serialize(newsFeedDto);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            var response = await client.PostAsync(new Uri("api/posts/newsfeed", UriKind.Relative), httpContent);
+
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+
+
         }
     }
 }
