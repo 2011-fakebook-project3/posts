@@ -21,6 +21,8 @@ using System.Text.Json;
 using Moq;
 using Xunit;
 
+
+
 namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>>
@@ -31,6 +33,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         {
             _factory = factory;
         }
+
+
 
         /// <summary>
         /// Tests the PostsController class' PostAsync method. Ensures that a proper Post object results in Status201Created.
@@ -75,7 +79,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
-                
+
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -250,35 +254,30 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
 
 
-         [Fact]
-        public async Task GetNewsFeedAsync_InvalidOutput_ReturnsNotFound()
+        [Fact]
+        public void GetNewsFeedAsyn_DtoIsNotNull_ReturnsOk()
         {
-            // Arrange
+
+                        // Arrange
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
-            mockRepo.Setup(r => r.GetAsync(It.IsAny<int>()))
-                .Throws(new InvalidOperationException());
+            Mock<Microsoft.Extensions.Logging.ILogger<Fakebook.Posts.RestApi.Controllers.PostsController>> mockLoggerService = new();
+            Mock<ITimeService> mockTimeService = new();
 
-            var client = _factory.WithWebHostBuilder(builder =>
-            {
-                builder.ConfigureTestServices(services =>
-                {
-                    services.AddScoped(sp => mockRepo.Object);
-                    services.AddScoped(sp => mockFollowRepo.Object);
-                    services.AddTransient(sp => mockBlobService.Object);
-                    services.AddAuthentication("Test")
-                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
-                });
-            }).CreateClient();
+            // arrange
+            var controller = new Fakebook.Posts.RestApi.Controllers.PostsController(mockRepo.Object,mockFollowRepo.Object,mockBlobService.Object,mockLoggerService.Object,mockTimeService.Object);
 
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
 
-            // Act
-            var response = await client.GetAsync(new Uri("api/posts/newsfeed", UriKind.Relative));
 
-            // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+
+            // act
+            NewsFeedDto newsFeedDto = new NewsFeedDto();
+            newsFeedDto.Emails = new List<string> { "test@domain.com, test2@domain.com" };
+            var result = controller.GetNewsfeedAsync(newsFeedDto);
+
+            // assert
+            Assert.NotNull(result);
         }
     }
 }
