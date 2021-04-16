@@ -24,8 +24,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
         {
             if (followingEmails != null)
             {
-                List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
-                var emails = followingEmails;
                 var recentPosts = await _context.Posts.Include(p => p.PostLikes)
                     .Include(p => p.Comments)
                     .ThenInclude(c => c.CommentLikes)

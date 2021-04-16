@@ -268,7 +268,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<ITimeService> mockTimeService = new();
 
             // arrange
-            var controller = new Fakebook.Posts.RestApi.Controllers.PostsController(mockRepo.Object, mockFollowRepo.Object, mockBlobService.Object, mockLoggerService.Object, mockTimeService.Object);
 
             var client = _factory.WithWebHostBuilder(builder =>
           {
@@ -282,7 +281,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
               });
           }).CreateClient();
 
-            HttpClient clientAPP = new HttpClient();
 
             NewsFeedDto newsFeedDto = new NewsFeedDto();
             newsFeedDto.Emails = new List<string> { "test@domain.com, test2@domain.com" };
