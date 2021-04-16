@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -232,11 +232,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ActionName(nameof(GetAsync))]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var post = await _postsRepository.GetPostAsync(id);
-            if(post == default){
+            try
+            {
+                var post = await _postsRepository.GetAsync(id);
+                return Ok(post);
+            }
+            catch (InvalidOperationException)
+            {
                 return NotFound();
             }
-            return Ok(post);
         }
 
         /// <summary>

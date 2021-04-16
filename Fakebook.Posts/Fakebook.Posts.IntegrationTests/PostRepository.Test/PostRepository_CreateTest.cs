@@ -1,12 +1,11 @@
-﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 using Xunit;
-
 
 namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
 {
@@ -61,6 +60,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
             Assert.True(result.UserEmail == comment.UserEmail);
             Assert.True(result.CreatedAt == comment.CreatedAt);
         }
+
         [Fact]
         public async Task CreatePost()
         {
@@ -95,9 +95,10 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
         }
 
         [Fact]
-        public void GetPost_GetId_EqualsSetValue()
+        public async Task GetPost_GetId_EqualsSetValue()
         {
             // Arrange
+            int postId = 3;
             using SqliteConnection connection = new("Data Source=:memory:");
             connection.Open();
 
@@ -107,7 +108,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
 
             DataAccess.Models.Post insertedPost = new()
             {
-                Id = 3,
+                Id = postId,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
                 CreatedAt = DateTime.Now
@@ -121,8 +122,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
             PostsRepository repo = new(context);
 
             // Act
-            var result = repo.AsQueryable().FirstOrDefault(
-                p => p.Id == 3);
+            var result = await repo.GetAsync(postId);
 
             // Assert
             Assert.IsAssignableFrom<Domain.Models.Post>(result);
