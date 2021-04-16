@@ -69,7 +69,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+                throw new ArgumentException($"Post { comment.PostId } not found.", nameof(comment));
             }
         }
 
