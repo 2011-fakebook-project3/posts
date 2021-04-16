@@ -21,6 +21,11 @@ using System.Text.Json;
 using Moq;
 using Xunit;
 
+
+
+
+
+
 namespace Fakebook.Posts.IntegrationTests.Controllers
 {
     public class PostCreationTests : IClassFixture<WebApplicationFactory<Startup>>
@@ -75,7 +80,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             // Act
             var response = await client.PostAsync("api/posts", stringContent);
-                
+
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -248,5 +253,48 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+
+
+        [Fact]
+        public async Task GetNewsFeedAsync_DtoIsNotNull_ReturnsOk()
+        {
+
+            // Arrange
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
+           
+            // arrange
+
+            var client = _factory.WithWebHostBuilder(builder =>
+          {
+              builder.ConfigureTestServices(services =>
+              {
+                  services.AddScoped(sp => mockRepo.Object);
+                  services.AddScoped(sp => mockFollowRepo.Object);
+                  services.AddTransient(sp => mockBlobService.Object);
+                  services.AddAuthentication("Test")
+                      .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+              });
+          }).CreateClient();
+
+
+            NewsFeedDto newsFeedDto = new NewsFeedDto();
+            newsFeedDto.Emails = new List<string> { "test@domain.com, test2@domain.com" };
+
+            var json = JsonSerializer.Serialize(newsFeedDto);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            var response = await client.PostAsync(new Uri("api/posts/newsfeed", UriKind.Relative), httpContent);
+
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+
+
+        }
     }
 }
