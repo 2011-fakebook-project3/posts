@@ -57,7 +57,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.PostId) is Models.Post post)
             {
                 var commentDb = comment.ToDataAccess(post);
                 await _context.Comments.AddAsync(commentDb);
@@ -66,7 +66,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+                throw new ArgumentException($"Post { comment.PostId } not found.", nameof(comment));
             }
         }
 
