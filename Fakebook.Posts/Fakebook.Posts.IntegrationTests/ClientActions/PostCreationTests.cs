@@ -23,11 +23,11 @@ using Xunit;
 
 namespace Fakebook.Posts.IntegrationTests.Controllers
 {
-    public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class PostCreationTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
 
-        public PostControllerTest(WebApplicationFactory<Startup> factory)
+        public PostCreationTests(WebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
