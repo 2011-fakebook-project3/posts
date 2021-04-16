@@ -20,29 +20,22 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingemail, int maxPost = 50)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingEmails, int maxPost = 50)
         {
-            if (followingemail != null)
+            if (followingEmails != null)
             {
                 List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
+                var emails = followingEmails;
+                var recentPosts = await _context.Posts.Where(u => followingEmails.Contains(u.UserEmail))
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Take(maxPost)
+                    .ToListAsync();
 
-
-                var recentpost = await _context.Posts.OrderByDescending(t => t.CreatedAt).ToListAsync();
-
-                foreach (var item in recentpost)
-                {
-
-                    if (followingemail.Contains(item.UserEmail))
-                    {
-                        posts.Add(item.ToDomain());
-                    }
-                }
-
-                return posts.Take(maxPost);
+                return recentPosts.Select(p => p.ToDomain());
             }
             else
             {
-                throw new ArgumentNullException(nameof(followingemail), "You can not have null email list.");
+                throw new ArgumentNullException(nameof(followingEmails), "You can not have null email list.");
             }
         }
 

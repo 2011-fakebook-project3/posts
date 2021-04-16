@@ -14,7 +14,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             Domain.Models.Post domainPost = new(post.UserEmail, post.Content);
             domainPost.Id = post.Id;
             domainPost.Picture = post.Picture;
-            domainPost.CreatedAt = post.CreatedAt;
+            domainPost.CreatedAt = post.CreatedAt.LocalDateTime;
             if (post.PostLikes is not null)
                 domainPost.Likes = post.PostLikes
                 .Select(l => l.LikerEmail).ToHashSet();
@@ -31,7 +31,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content);
             domainComment.Id = comment.Id;
             domainComment.Post = post;
-            domainComment.CreatedAt = comment.CreatedAt;
+            domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
             if (comment.CommentLikes is not null)
                 domainComment.Likes = comment.CommentLikes
                     .Select(l => l.LikerEmail).ToHashSet();

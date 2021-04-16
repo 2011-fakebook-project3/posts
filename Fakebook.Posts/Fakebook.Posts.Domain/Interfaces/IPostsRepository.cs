@@ -26,7 +26,7 @@ namespace Fakebook.Posts.Domain.Interfaces
 
         Task<bool> UnlikeCommentAsync(int commentId, string userEmail);
         
-        Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingemail, int maxPost=50);
+        Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingEmails, int maxPost=50);
 
     }
 }

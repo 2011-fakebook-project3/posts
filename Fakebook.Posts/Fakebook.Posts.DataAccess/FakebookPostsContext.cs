@@ -103,14 +103,14 @@ namespace Fakebook.Posts.DataAccess
                         Id = 1,
                         UserEmail = "john.werner@revature.net",
                         Content = "Just made my first post!",
-                        CreatedAt = DateTime.Now
+                        CreatedAt = DateTimeOffset.Now
                     },
                     new Post
                     {
                         Id = 2,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Fakebook is really cool.",
-                        CreatedAt = DateTime.Now
+                        CreatedAt = DateTimeOffset.Now
                     }
                 });
 
@@ -120,7 +120,7 @@ namespace Fakebook.Posts.DataAccess
                         Id = 1,
                         UserEmail = "testaccount@gmail.com",
                         Content = "Nice",
-                        CreatedAt = DateTime.Now,
+                        CreatedAt = DateTimeOffset.Now,
                         PostId = 1
                     }
                 });
