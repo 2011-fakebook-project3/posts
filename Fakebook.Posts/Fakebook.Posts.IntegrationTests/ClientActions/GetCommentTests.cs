@@ -21,15 +21,19 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using Fakebook.Posts.Domain.Constants;
+using Microsoft.EntityFrameworkCore;
+using Fakebook.Posts.DataAccess.Repositories;
 
 namespace Fakebook.Posts.IntegrationTests.ClientActions
 {
     public class GetCommentTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
-        public GetCommentTests(WebApplicationFactory<Startup> factory)
+        private readonly IPostsRepository _postRepository;
+        public GetCommentTests(WebApplicationFactory<Startup> factory, IPostsRepository postRepository)
         {
-        _factory = factory;
+            _factory = factory;
+            _postRepository = postRepository;
         }
 
         private HttpClient BuildTestAuthClient(Mock<IPostsRepository> mockRepo)
@@ -48,30 +52,6 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
             return client;
         }
-
-        public async Task GetCommentAsync_ValidRequest_SendComment()
-        {
-            // Arrange
-            Mock<IPostsRepository> mockRepo = new();
-            List<Comment> comments = new();
-            var date1 = new DateTime(2021, 3, 3, 3, 3, 3);
-            var date2 = new DateTime(2021, 4, 4, 4, 4, 4);
-
-            Post post = new("test.user@email.com", "test content")
-            {
-                Id = 1,
-                Comments = comments,
-                Picture = "picture",
-                CreatedAt = date1
-            };
-            Comment comment = new("testMan.user@email.com", "some comment content", 1)
-            {
-                Id = 2,
-                CreatedAt = date2
-            };
-
-            //mockRepo.Setup(c => c.GetAsync(It.IsAny<int>)))
-            //    .returnsAsync()
-        }
+        // for if/when a getComment is needed--- potentially to be sent to Notifications
     }
 }
