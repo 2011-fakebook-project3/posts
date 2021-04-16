@@ -1,28 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using Moq;
-using System.Text.Json;
 using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Fakebook.Posts.RestApi.Controllers;
-using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net;
-using System.Text;
-using Fakebook.Posts.Domain.Constants;
-using Microsoft.EntityFrameworkCore;
-using Fakebook.Posts.DataAccess.Repositories;
+
 
 namespace Fakebook.Posts.IntegrationTests.ClientActions
 {
@@ -36,7 +23,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             _postRepository = postRepository;
         }
 
-        private HttpClient BuildTestAuthClient(Mock<IPostsRepository> mockRepo)
+        private HttpClient BuildTestAuthClient(Moq.IMock<IPostsRepository> mockRepo)
         {
             var client = _factory.WithWebHostBuilder(builder =>
             {

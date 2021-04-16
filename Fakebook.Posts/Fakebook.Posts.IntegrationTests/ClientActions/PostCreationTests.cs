@@ -82,7 +82,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/posts", stringContent);
+            var response = await client.PostAsync(new Uri("api/posts", UriKind.Relative), stringContent);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -133,7 +133,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             for (int i = 0; i < Constants.PostMaxLength + 1; i++)
             {
-                longPost.Append("X");
+                longPost.Append('X');
             }
 
             //Create New Post DTO objects that will be sent to the API.
@@ -147,9 +147,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent nullContent = new(JsonSerializer.Serialize(nullPost), Encoding.UTF8, "application/json");
 
             // Act
-            var invalidresponseTooMuchContent = await client.PostAsync("api/posts", invalidStringTooMuchContent);
-            var invalidResponseNoContent = await client.PostAsync("api/posts", invalidstringNoContent);
-            var invalidResponseNullContent = await client.PostAsync("api/posts", nullContent);
+            var invalidresponseTooMuchContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), invalidStringTooMuchContent);
+            var invalidResponseNoContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), invalidstringNoContent);
+            var invalidResponseNullContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), nullContent);
 
             // Assert
             // Ensures that the valid request was created, and that posts that are too long or too short are rejected.
@@ -182,7 +182,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             };
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
-                .Returns(ValueTask.FromResult(comment));
+                .ReturnsAsync(await ValueTask.FromResult(comment));
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -201,7 +201,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/comments", stringContent);
+            var response = await client.PostAsync(new Uri("api/comments", UriKind.Relative), stringContent);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -250,7 +250,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/comments", stringContent);
+            var response = await client.PostAsync(new Uri("api/comments", UriKind.Relative), stringContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

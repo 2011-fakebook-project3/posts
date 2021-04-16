@@ -29,7 +29,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             _factory = factory;
         }
 
-        private HttpClient BuildTestAuthClient(Mock<IPostsRepository> mockRepo)
+        private HttpClient BuildTestAuthClient(Moq.IMock<IPostsRepository> mockRepo)
         {
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -78,12 +78,12 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
 
             NewCommentDto newComment = new()
             {
-                PostId = 1,
+                PostId = post.Id,
                 Content = comment.Content
             };
             StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
             // Act
-            var response = await client.PostAsync("api/comments", stringContent);
+            var response = await client.PostAsync(new Uri("api/comments", UriKind.Relative), stringContent);
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -107,7 +107,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
                 Picture = "picture",
                 CreatedAt = date1
             };
-            Comment comment = new("testMan.user@email.com", "some comment content", 1)
+            Comment comment = new("testMan.user@email.com", "some comment content", post.Id)
             {
                 Id = 2,
                 CreatedAt = date2
@@ -121,7 +121,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             StringBuilder longComment = new StringBuilder();
             for (int i = 0; i < Constants.CommentMaxLength + 1; i++)
             {
-                longComment.Append("A");
+                longComment.Append('A');
             }
 
             // Create Comment DTO objects to be sent to the API.
@@ -135,9 +135,9 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             StringContent nullContent = new(JsonSerializer.Serialize(invalidCommentNull), Encoding.UTF8, "application/json");
 
             // Act
-            var invalidresponseTooMuchContent = await client.PostAsync("api/comments", invalidStringTooMuchContent);
-            var invalidResponseNoContent = await client.PostAsync("api/comments", invalidstringNoContent);
-            var invalidResponseNullContent = await client.PostAsync("api/comments", nullContent);
+            var invalidresponseTooMuchContent = await client.PostAsync(new Uri("api/comments", UriKind.Relative), invalidStringTooMuchContent);
+            var invalidResponseNoContent = await client.PostAsync(new Uri("api/comments", UriKind.Relative), invalidstringNoContent);
+            var invalidResponseNullContent = await client.PostAsync(new Uri("api/comments", UriKind.Relative), nullContent);
 
             // Assert
             // Ensures that Comments that are Null, Empty, or too long fail

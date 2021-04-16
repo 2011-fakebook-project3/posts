@@ -1,4 +1,3 @@
-using System.Linq;
 using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
