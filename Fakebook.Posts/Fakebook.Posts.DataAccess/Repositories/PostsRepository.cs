@@ -26,7 +26,10 @@ namespace Fakebook.Posts.DataAccess.Repositories
             {
                 List<Domain.Models.Post> posts = new List<Domain.Models.Post>();
                 var emails = followingEmails;
-                var recentPosts = await _context.Posts.Where(u => followingEmails.Contains(u.UserEmail))
+                var recentPosts = await _context.Posts.Include(p => p.PostLikes)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.CommentLikes)
+                    .Where(u => followingEmails.Contains(u.UserEmail))
                     .OrderByDescending(t => t.CreatedAt)
                     .Take(maxPost)
                     .ToListAsync();
