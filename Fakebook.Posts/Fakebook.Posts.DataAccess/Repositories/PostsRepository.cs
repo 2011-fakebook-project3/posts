@@ -59,7 +59,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         {
             if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
             {
-                var commentDb = comment.ToDataAccess(post);
+                var commentDb = comment.ToDataAccess(post.Id);
                 await _context.Comments.AddAsync(commentDb);
                 await _context.SaveChangesAsync();
                 return commentDb.ToDomain(null);

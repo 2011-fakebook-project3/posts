@@ -56,7 +56,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             DataAccess.Models.Comment dbComent = new()
             {
                 Content = "Comment Content",
-                Post = dbPost,
+                PostId = dbPost.Id,
                 CreatedAt = DateTime.Now,
                 UserEmail = "person2@domain.net",
             };
@@ -96,11 +96,10 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
             domainComment.Likes.Add("a@b.d");
 
             //Act
-            var dbComment = domainComment.ToDataAccess(dbPost);
+            var dbComment = domainComment.ToDataAccess(dbPost.Id);
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
-            Assert.Equal(dbPost, dbComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(dbComment.CommentLikes.Count == 1);

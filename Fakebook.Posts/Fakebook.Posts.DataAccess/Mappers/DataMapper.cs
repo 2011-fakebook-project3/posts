@@ -58,7 +58,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
             dbPost.CreatedAt = post.CreatedAt;
             if (post.Comments is not null)
                 dbPost.Comments = post.Comments
-                    .Select(c => c.ToDataAccess(dbPost)).ToHashSet();
+                    .Select(c => c.ToDataAccess(dbPost.Id)).ToHashSet();
             if (post.Likes is not null)
                 dbPost.PostLikes = post.Likes.Select(c =>
                     new PostLike
@@ -70,14 +70,13 @@ namespace Fakebook.Posts.DataAccess.Mappers
             return dbPost;
 
         }
-        public static Comment ToDataAccess(this Domain.Models.Comment comment, Post post)
+        public static Comment ToDataAccess(this Domain.Models.Comment comment, int postId)
         {
             Comment dbComment = new()
             {
                 Id = comment.Id,
                 UserEmail = comment.UserEmail,
-                PostId = post.Id,
-                Post = post,
+                PostId = postId,
                 Content = comment.Content,
                 CreatedAt = comment.CreatedAt,
                 CommentLikes = comment.Likes.Select(l => new CommentLike { CommentId = comment.Id, LikerEmail = l }).ToHashSet()
