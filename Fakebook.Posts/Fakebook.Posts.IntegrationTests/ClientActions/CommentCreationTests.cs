@@ -45,7 +45,10 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
             return client;
         }
-
+        
+        /// <summary>
+        /// Comment controller test checking that a valid comment can be successfully added to a post.
+        /// </summary>
         [Fact]
         public async Task AddCommentAsync_ValidComment_Creates()
         {
@@ -87,7 +90,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         }
 
         /// <summary>
-        /// Comment Controller tests checking comments that are null, empty, or too long
+        /// Comment Controller tests checking comments that are null, empty, and too long
         /// </summary>
         [Fact]
         public async Task AddCommentAsync_InvalidComment_BadRequest()
