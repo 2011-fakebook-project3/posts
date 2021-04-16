@@ -264,9 +264,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
-            Mock<ILogger<PostsController>> mockLoggerService = new();
-            Mock<ITimeService> mockTimeService = new();
-
+           
             // arrange
 
             var client = _factory.WithWebHostBuilder(builder =>
