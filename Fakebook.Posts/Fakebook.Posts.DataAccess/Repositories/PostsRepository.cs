@@ -20,32 +20,26 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingEmails, int maxPost = 50)
         {
-            var posts = await _context.Posts.FromSqlInterpolated(
-                $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
-            ).ToListAsync();
-            return posts.Select(p => p.ToDomain());
+            if (followingEmails != null)
+            {
+                var recentPosts = await _context.Posts.Include(p => p.PostLikes)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.CommentLikes)
+                    .Where(u => followingEmails.Contains(u.UserEmail))
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Take(maxPost)
+                    .ToListAsync();
+
+                return recentPosts.Select(p => p.ToDomain());
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(followingEmails), "You can not have null email list.");
+            }
         }
 
-        /*
-        SELECT *
-        FROM (
-            SELECT *,
-            ROW_NUMBER() OVER (
-                PARTITION BY "UserEmail"
-                ORDER BY "CreatedAt" DESC
-            ) AS "RowNum"
-            FROM "Fakebook"."Post"
-            WHERE "UserEmail" = @email
-            OR "UserEmail" IN (
-                SELECT "FollowedEmail"
-                FROM "Fakebook"."UserFollows"
-                WHERE "FollowerEmail" = @email
-            )
-        ) AS "RecentPosts"
-        WHERE "RecentPosts"."RowNum" <= @count
-        */
 
         public async ValueTask<Post> AddAsync(Post post)
         {
