@@ -24,7 +24,8 @@ namespace Fakebook.Posts.DataAccess.Repositories
         {
             if (followingEmails != null)
             {
-                var recentPosts = await _context.Posts.Include(p => p.PostLikes)
+                var recentPosts = await _context.Posts
+                    .Include(p => p.PostLikes)
                     .Include(p => p.Comments)
                     .ThenInclude(c => c.CommentLikes)
                     .Where(u => followingEmails.Contains(u.UserEmail))
@@ -57,7 +58,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.PostId) is Models.Post post)
             {
                 var commentDb = comment.ToDataAccess(post.Id);
                 await _context.Comments.AddAsync(commentDb);
@@ -66,7 +67,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+                throw new ArgumentException($"Post { comment.PostId } not found.", nameof(comment));
             }
         }
 

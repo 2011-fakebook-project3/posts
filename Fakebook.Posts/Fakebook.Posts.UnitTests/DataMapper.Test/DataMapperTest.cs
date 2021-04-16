@@ -18,7 +18,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
             {
-                Post = domainPost,
+                PostId = domainPost.Id,
                 CreatedAt = DateTime.Now
             };
 
@@ -127,7 +127,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
-            Assert.Equal(domainPost, domainComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(domainComment.Likes.Count == 1);
