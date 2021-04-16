@@ -57,16 +57,17 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.PostId) is Models.Post post)
             {
+                var domainPost = post.ToDomain();
                 var commentDb = comment.ToDataAccess(post);
                 await _context.Comments.AddAsync(commentDb);
                 await _context.SaveChangesAsync();
-                return commentDb.ToDomain(null);
+                return commentDb.ToDomain(domainPost);
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+                throw new ArgumentException($"Post { comment.PostId } not found.", nameof(comment));
             }
         }
 

@@ -30,7 +30,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
         {
             Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content);
             domainComment.Id = comment.Id;
-            domainComment.Post = post;
+            domainComment.PostId = post.Id;
             domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
             if (comment.CommentLikes is not null)
                 domainComment.Likes = comment.CommentLikes

@@ -176,7 +176,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
@@ -226,7 +226,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Comment comment = new("test.user@email.com", "comment content")
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
