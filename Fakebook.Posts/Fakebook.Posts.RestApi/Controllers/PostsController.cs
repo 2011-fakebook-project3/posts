@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,18 +24,24 @@ namespace Fakebook.Posts.RestApi.Controllers
         private readonly IFollowsRepository _followsRepository;
         private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
+        private readonly ITimeService _timeService;
+        private readonly ICheckSpamService _checkSpamService;
 
         public PostsController(
             IPostsRepository postsRepository,
             IFollowsRepository followsRepository,
             IBlobService blobService,
-            ILogger<PostsController> logger
+            ILogger<PostsController> logger,
+            ITimeService timeService,
+            ICheckSpamService checkSpamService
             )
         {
             _postsRepository = postsRepository;
             _followsRepository = followsRepository;
             _blobService = blobService;
             _logger = logger;
+            _timeService = timeService;
+            _checkSpamService = checkSpamService;
         }
 
         /// <summary>
@@ -63,6 +69,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             Post post = new Post(sessionEmail, postDTO.Content);
 
             post.Id = id;
+
 
             try
             { 
@@ -113,15 +120,23 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
+
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
-            
             Post created;
 
             try
             {
                 Post post = new Post(email, postModel.Content);
-
-                created = await _postsRepository.AddAsync(post);
+                post.CreatedAt = _timeService.CurrentTime;
+                bool postNotSpam = await _checkSpamService.IsPostNotSpam(post);
+                if (postNotSpam)
+                {
+                    created = await _postsRepository.AddAsync(post);
+                }
+                else
+                {
+                    return BadRequest("Post was created too soon to another, or is the same as previous posts");
+                }
             }
             catch (ArgumentException e)
             {

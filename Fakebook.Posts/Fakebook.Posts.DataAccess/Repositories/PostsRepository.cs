@@ -57,15 +57,13 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-
-            DataAccess.Models.Post postforcomment = await _context.Posts.FirstOrDefaultAsync(a => a.Id == comment.PostId);
-            if (postforcomment != default)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.PostId) is Models.Post post)
             {
-                Fakebook.Posts.DataAccess.Models.Comment newcomment = comment.ToDataAccess(postforcomment);
-
-                await _context.Comments.AddAsync(newcomment);
+                var domainPost = post.ToDomain();
+                var commentDb = comment.ToDataAccess(post);
+                await _context.Comments.AddAsync(commentDb);
                 await _context.SaveChangesAsync();
-                return newcomment.ToDomain(null);
+                return commentDb.ToDomain(domainPost);
             }
             else
             {
@@ -141,6 +139,24 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary>
+        /// returns a list of recent posts by userEmail, from the last 'recentInMinutes' minutes 
+        /// </summary>
+        /// <param name="userEmail">Users email having posts.email compared to</param>
+        /// <param name="recentInMinutes">amount of minutes a post had to be created at from in comparison to time 'now'</param>
+        /// <param name="dateNow">the time 'now' usually referring to a new posts time</param>
+        /// <returns></returns>
+        public async Task<List<Post>> GetRecentPostsAsync(string userEmail, int recentInMinutes, DateTime dateNow)
+        {
+            var latestTime = new DateTimeOffset(dateNow - TimeSpan.FromMinutes(recentInMinutes));
+            var query = await _context.Posts
+                .Where(u => u.UserEmail == userEmail)
+                .Where(t => DateTimeOffset.Compare(t.CreatedAt, latestTime) >= 0)
+                .ToListAsync();
+            var queryResult = query.Select(s => s.ToDomain());
+            return queryResult.ToList();
+        }
+        
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
             try

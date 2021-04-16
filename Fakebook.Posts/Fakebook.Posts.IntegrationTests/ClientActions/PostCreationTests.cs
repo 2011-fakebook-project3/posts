@@ -47,6 +47,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
+            Mock<ICheckSpamService> mockSpamService = new();
             List<Comment> comments = new();
             var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
@@ -56,7 +57,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-
+            mockSpamService.Setup(s => s.IsPostNotSpam(It.IsAny<Post>()))
+                .ReturnsAsync(true);
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .ReturnsAsync(post);
 
@@ -64,6 +66,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             {
                 builder.ConfigureTestServices(services =>
                 {
+                    services.AddScoped(sp => mockSpamService.Object);
                     services.AddScoped(sp => mockRepo.Object);
                     services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
@@ -173,7 +176,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
@@ -223,7 +226,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
