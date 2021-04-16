@@ -1,4 +1,5 @@
-﻿using Fakebook.Posts.Domain.Models;
+using System;
+using Fakebook.Posts.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace Fakebook.Posts.Domain.Interfaces
         ValueTask DeletePostAsync(int id);
 
         ValueTask DeleteCommentAsync(int id);
+
+        Task<List<Post>> GetRecentPostsAsync(string userEmail, int recentInMinutes, DateTime dateNow);
 
         Task<bool> LikePostAsync(int postId, string userEmail);
 
