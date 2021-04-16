@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using Moq;
@@ -8,14 +7,12 @@ using System.Text.Json;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
-using Fakebook.Posts.RestApi.Controllers;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
@@ -89,6 +86,9 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
 
+        /// <summary>
+        /// Comment Controller tests checking comments that are null, empty, or too long
+        /// </summary>
         [Fact]
         public async Task AddCommentAsync_InvalidComment_BadRequest()
         {
