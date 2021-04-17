@@ -35,7 +35,7 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
                 Id = 3,
                 UserEmail = "person@domain.net",
                 Content = "New Content",
-                CreatedAt = DateTime.Now
+                CreatedAt = new DateTime(2021, 2, 14)
             };
 
           
