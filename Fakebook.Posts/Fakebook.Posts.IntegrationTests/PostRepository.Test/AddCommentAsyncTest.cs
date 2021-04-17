@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.DataAccess.Mappers;
-using System.Linq;
 
 
 namespace Fakebook.Posts.IntegrationTests.Repositories
