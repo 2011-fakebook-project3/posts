@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Fakebook.Posts.Domain.Models;
-
+using Fakebook.Posts.DataAccess.Mappers;
 
 namespace Fakebook.Posts.IntegrationTests.Repositories
 {
@@ -14,7 +14,7 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
     {
 
         /// <summary>
-        /// Tests the PostsRepository class' UpdateAsync method. Ensures that a proper Post object results in the database being modified.
+        /// Ensures that the comment belongs to the proper post.
         /// </summary>
         [Fact]
         public async Task AddComentAsync_ValidId_AddComment()
@@ -36,19 +36,10 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
                 CreatedAt = DateTime.Now
             };
 
-            DataAccess.Models.Comment insertedComment = new()
-            {
-                Id = 2,
-                PostId = insertedPost.Id,
-                UserEmail = "person@domain.net",
-                Content = "New Content",
-                CreatedAt = DateTime.Now
-            };
-
+          
             using FakebookPostsContext context = new(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
-            context.Comments.Add(insertedComment);
             context.SaveChanges();
 
             PostsRepository repo = new(context);
@@ -60,6 +51,7 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
             context.SaveChanges();
 
            
+            var databaseComment = (await context.Comments.SingleAsync(i => i.Id == 1)).ToDomain(insertedPost.ToDomain());
 
 
             // Assert
