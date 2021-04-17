@@ -46,7 +46,7 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
 
             //Act
 
-            Domain.Models.Comment comment = new("person@domain.net", "New Content", insertedPost.Id);
+            Comment comment = new("person@domain.net", "New Content", insertedPost.Id);
             await repo.AddCommentAsync(comment);
             context.SaveChanges();
 
