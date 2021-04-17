@@ -65,7 +65,7 @@ namespace Fakebook.Posts.RestApi
             }).AddJwtBearer(o =>
             {
                 // change url to real identity url
-                o.Authority = "https://localhost:5001";
+                o.Authority = "https://localhost:44374";
                 o.Audience = "fakebookApi";
                 o.RequireHttpsMetadata = false;
             });
