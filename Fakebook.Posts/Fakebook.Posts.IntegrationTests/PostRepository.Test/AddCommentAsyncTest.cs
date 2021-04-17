@@ -36,10 +36,19 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
                 CreatedAt = DateTime.Now
             };
 
+            DataAccess.Models.Comment insertedComment = new()
+            {
+                Id = 2,
+                PostId = insertedPost.Id,
+                UserEmail = "person@domain.net",
+                Content = "New Content",
+                CreatedAt = DateTime.Now
+            };
 
             using FakebookPostsContext context = new(options);
             context.Database.EnsureCreated();
             context.Posts.Add(insertedPost);
+            context.Comments.Add(insertedComment);
             context.SaveChanges();
 
             PostsRepository repo = new(context);
@@ -50,8 +59,11 @@ namespace Fakebook.Posts.IntegrationTests.Repositories
             await repo.AddCommentAsync(comment);
             context.SaveChanges();
 
+           
+
+
             // Assert
-            Assert.True(context.Comments.SingleAsync() != null );
+            Assert.Equal(3,insertedPost.Id );
         }
     }
 }
