@@ -40,7 +40,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
         }
 
-
         public async ValueTask<Post> AddAsync(Post post)
         {
             var postDb = post.ToDataAccess();
@@ -54,7 +53,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             var post = (await _context.Posts
                          .Include(p => p.PostLikes)
                          .Include(p => p.Comments)
-                         .ThenInclude(c => c.CommentLikes)       
+                         .ThenInclude(c => c.CommentLikes)
                          .FirstOrDefaultAsync(b => b.Id == postId)).ToDomain();
             return post;
         }
@@ -86,6 +85,11 @@ namespace Fakebook.Posts.DataAccess.Repositories
             {
                 throw new ArgumentException("Post with given id not found.", nameof(id));
             }
+        }
+
+        public async Task<Comment> GetCommentAsync(int id)
+        {
+            return default;
         }
 
         public async ValueTask DeleteCommentAsync(int id)
@@ -144,7 +148,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
-        /// returns a list of recent posts by userEmail, from the last 'recentInMinutes' minutes 
+        /// returns a list of recent posts by userEmail, from the last 'recentInMinutes' minutes
         /// </summary>
         /// <param name="userEmail">Users email having posts.email compared to</param>
         /// <param name="recentInMinutes">amount of minutes a post had to be created at from in comparison to time 'now'</param>
@@ -160,7 +164,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
             var queryResult = query.Select(s => s.ToDomain());
             return queryResult.ToList();
         }
-        
+
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
             try
