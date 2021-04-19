@@ -16,9 +16,9 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 CreatedAt = DateTime.Now
             };
 
-            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content", 1)
             {
-                Post = domainPost,
+                PostId = domainPost.Id,
                 CreatedAt = DateTime.Now
             };
 
@@ -89,7 +89,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
                 Comments = new HashSet<DataAccess.Models.Comment>()
             };
 
-            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content")
+            Domain.Models.Comment domainComment = new("person1@domain.net", "Comment Content",0)
             {
                 CreatedAt = DateTime.Now
             };
@@ -100,7 +100,6 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
-            Assert.Equal(dbPost, dbComment.Post);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(dbComment.CommentLikes.Count == 1);
@@ -128,7 +127,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(dbComment.Content == domainComment.Content);
-            Assert.Equal(domainPost, domainComment.Post);
+            Assert.Equal(domainPost.Id, domainComment.PostId);
             Assert.True(dbComment.CreatedAt == domainComment.CreatedAt);
             Assert.True(dbComment.UserEmail == domainComment.UserEmail);
             Assert.True(domainComment.Likes.Count == 1);
@@ -149,7 +148,7 @@ namespace Fakebook.Posts.UnitTests.DataMapper_Testing
 
             //Assert
             Assert.True(domainUser.FollowerEmail == dbUser.FollowerEmail);
-            Assert.True(domainUser.FollowedEmail == domainUser.FollowedEmail);
+            Assert.True(domainUser.FollowedEmail == dbUser.FollowedEmail);
         }
 
         [Fact]

@@ -1,13 +1,13 @@
+using Fakebook.Posts.DataAccess.Mappers;
+using Fakebook.Posts.Domain.Interfaces;
+using Fakebook.Posts.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Fakebook.Posts.DataAccess.Mappers;
-using Fakebook.Posts.Domain.Interfaces;
-using Fakebook.Posts.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Fakebook.Posts.DataAccess.Repositories
 {
@@ -20,31 +20,26 @@ namespace Fakebook.Posts.DataAccess.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> NewsfeedAsync(string email, int count)
+        public async Task<IEnumerable<Post>> NewsfeedAsync(ICollection<string> followingEmails, int maxPost = 50)
         {
-            var posts = await _context.Posts.FromSqlInterpolated(
-                $"SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY \"UserEmail\" ORDER BY \"CreatedAt\" DESC ) AS \"RowNum\" FROM \"Fakebook\".\"Post\" WHERE \"UserEmail\" = {email} OR \"UserEmail\" IN ( SELECT \"FollowedEmail\" FROM \"Fakebook\".\"UserFollows\" WHERE \"FollowerEmail\" = {email} ) ) AS \"RecentPosts\" WHERE \"RecentPosts\".\"RowNum\" <= {count}"
-            ).ToListAsync();
-            return posts.Select(p => p.ToDomain());
+            if (followingEmails != null)
+            {
+                var recentPosts = await _context.Posts.Include(p => p.PostLikes)
+                    .Include(p => p.Comments)
+                    .ThenInclude(c => c.CommentLikes)
+                    .Where(u => followingEmails.Contains(u.UserEmail))
+                    .OrderByDescending(t => t.CreatedAt)
+                    .Take(maxPost)
+                    .ToListAsync();
+
+                return recentPosts.Select(p => p.ToDomain());
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(followingEmails), "You can not have null email list.");
+            }
         }
-        /*
-        SELECT *
-        FROM (
-            SELECT *,
-            ROW_NUMBER() OVER (
-                PARTITION BY "UserEmail"
-                ORDER BY "CreatedAt" DESC
-            ) AS "RowNum"
-            FROM "Fakebook"."Post"
-            WHERE "UserEmail" = @email
-            OR "UserEmail" IN (
-                SELECT "FollowedEmail"
-                FROM "Fakebook"."UserFollows"
-                WHERE "FollowerEmail" = @email
-            )
-        ) AS "RecentPosts"
-        WHERE "RecentPosts"."RowNum" <= @count
-        */
+
 
         public async ValueTask<Post> AddAsync(Post post)
         {
@@ -54,18 +49,29 @@ namespace Fakebook.Posts.DataAccess.Repositories
             return postDb.ToDomain();
         }
 
+        public async ValueTask<Post> GetAsync(int postId)
+        {
+            var post = (await _context.Posts
+                         .Include(p => p.PostLikes)
+                         .Include(p => p.Comments)
+                         .ThenInclude(c => c.CommentLikes)       
+                         .FirstOrDefaultAsync(b => b.Id == postId)).ToDomain();
+            return post;
+        }
+
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
         {
-            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.Post.Id) is Models.Post post)
+            if (await _context.Posts.FirstOrDefaultAsync(p => p.Id == comment.PostId) is Models.Post post)
             {
+                var domainPost = post.ToDomain();
                 var commentDb = comment.ToDataAccess(post);
                 await _context.Comments.AddAsync(commentDb);
                 await _context.SaveChangesAsync();
-                return commentDb.ToDomain(null);
+                return commentDb.ToDomain(domainPost);
             }
             else
             {
-                throw new ArgumentException($"Post { comment.Post.Id } not found.", nameof(comment));
+                throw new ArgumentException($"Post { comment.PostId } not found.", nameof(comment));
             }
         }
 
@@ -137,6 +143,24 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary>
+        /// returns a list of recent posts by userEmail, from the last 'recentInMinutes' minutes 
+        /// </summary>
+        /// <param name="userEmail">Users email having posts.email compared to</param>
+        /// <param name="recentInMinutes">amount of minutes a post had to be created at from in comparison to time 'now'</param>
+        /// <param name="dateNow">the time 'now' usually referring to a new posts time</param>
+        /// <returns></returns>
+        public async Task<List<Post>> GetRecentPostsAsync(string userEmail, int recentInMinutes, DateTime dateNow)
+        {
+            var latestTime = new DateTimeOffset(dateNow - TimeSpan.FromMinutes(recentInMinutes));
+            var query = await _context.Posts
+                .Where(u => u.UserEmail == userEmail)
+                .Where(t => DateTimeOffset.Compare(t.CreatedAt, latestTime) >= 0)
+                .ToListAsync();
+            var queryResult = query.Select(s => s.ToDomain());
+            return queryResult.ToList();
+        }
+        
         public async Task<bool> LikePostAsync(int postId, string userEmail)
         {
             try

@@ -9,6 +9,7 @@ using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
+using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -20,13 +21,18 @@ using System.Text.Json;
 using Moq;
 using Xunit;
 
+
+
+
+
+
 namespace Fakebook.Posts.IntegrationTests.Controllers
 {
-    public class PostControllerTest : IClassFixture<WebApplicationFactory<Startup>>
+    public class PostCreationTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         private readonly WebApplicationFactory<Startup> _factory;
 
-        public PostControllerTest(WebApplicationFactory<Startup> factory)
+        public PostCreationTests(WebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -41,6 +47,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Mock<IPostsRepository> mockRepo = new();
             Mock<IFollowsRepository> mockFollowRepo = new();
             Mock<IBlobService> mockBlobService = new();
+            Mock<ICheckSpamService> mockSpamService = new();
             List<Comment> comments = new();
             var date = new DateTime(2021, 4, 4);
             Post post = new("test.user@email.com", "test content")
@@ -50,7 +57,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-
+            mockSpamService.Setup(s => s.IsPostNotSpam(It.IsAny<Post>()))
+                .ReturnsAsync(true);
             mockRepo.Setup(r => r.AddAsync(It.IsAny<Post>()))
                 .ReturnsAsync(post);
 
@@ -58,6 +66,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             {
                 builder.ConfigureTestServices(services =>
                 {
+                    services.AddScoped(sp => mockSpamService.Object);
                     services.AddScoped(sp => mockRepo.Object);
                     services.AddScoped(sp => mockFollowRepo.Object);
                     services.AddTransient(sp => mockBlobService.Object);
@@ -73,8 +82,8 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newPost), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/posts", stringContent);
-                
+            var response = await client.PostAsync(new Uri("api/posts", UriKind.Relative), stringContent);
+
             // Assert
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -124,7 +133,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
 
             for (int i = 0; i < Constants.PostMaxLength + 1; i++)
             {
-                longPost.Append("X");
+                longPost.Append('X');
             }
 
             //Create New Post DTO objects that will be sent to the API.
@@ -138,9 +147,9 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent nullContent = new(JsonSerializer.Serialize(nullPost), Encoding.UTF8, "application/json");
 
             // Act
-            var invalidresponseTooMuchContent = await client.PostAsync("api/posts", invalidStringTooMuchContent);
-            var invalidResponseNoContent = await client.PostAsync("api/posts", invalidstringNoContent);
-            var invalidResponseNullContent = await client.PostAsync("api/posts", nullContent);
+            var invalidresponseTooMuchContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), invalidStringTooMuchContent);
+            var invalidResponseNoContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), invalidstringNoContent);
+            var invalidResponseNullContent = await client.PostAsync(new Uri("api/posts", UriKind.Relative), nullContent);
 
             // Assert
             // Ensures that the valid request was created, and that posts that are too long or too short are rejected.
@@ -164,16 +173,16 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            Comment comment = new("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
 
             mockRepo.Setup(r => r.AddCommentAsync(It.IsAny<Comment>()))
-                .Returns(ValueTask.FromResult(comment));
+                .ReturnsAsync(await ValueTask.FromResult(comment));
 
             var client = _factory.WithWebHostBuilder(builder =>
             {
@@ -192,7 +201,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/comments", stringContent);
+            var response = await client.PostAsync(new Uri("api/comments", UriKind.Relative), stringContent);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -214,10 +223,10 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            Comment comment = new("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
@@ -241,11 +250,54 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             StringContent stringContent = new(JsonSerializer.Serialize(newComment), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await client.PostAsync("api/comments", stringContent);
+            var response = await client.PostAsync(new Uri("api/comments", UriKind.Relative), stringContent);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+
+
+        [Fact]
+        public async Task GetNewsFeedAsync_DtoIsNotNull_ReturnsOk()
+        {
+
+            // Arrange
+            Mock<IPostsRepository> mockRepo = new();
+            Mock<IFollowsRepository> mockFollowRepo = new();
+            Mock<IBlobService> mockBlobService = new();
+           
+            // arrange
+
+            var client = _factory.WithWebHostBuilder(builder =>
+          {
+              builder.ConfigureTestServices(services =>
+              {
+                  services.AddScoped(sp => mockRepo.Object);
+                  services.AddScoped(sp => mockFollowRepo.Object);
+                  services.AddTransient(sp => mockBlobService.Object);
+                  services.AddAuthentication("Test")
+                      .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+              });
+          }).CreateClient();
+
+
+            NewsFeedDto newsFeedDto = new NewsFeedDto();
+            newsFeedDto.Emails = new List<string> { "test@domain.com, test2@domain.com" };
+
+            var json = JsonSerializer.Serialize(newsFeedDto);
+
+            StringContent httpContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Test");
+            var response = await client.PostAsync(new Uri("api/posts/newsfeed", UriKind.Relative), httpContent);
+
+
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+
+
+        }
     }
 }

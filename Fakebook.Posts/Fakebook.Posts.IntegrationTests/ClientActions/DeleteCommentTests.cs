@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi;
+using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -42,10 +43,10 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            Comment comment = new("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
@@ -95,10 +96,10 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 Picture = "picture",
                 CreatedAt = date
             };
-            Comment comment = new("test.user@email.com", "comment content")
+            Comment comment = new("test.user@email.com", "comment content", 1)
             {
                 Id = 1,
-                Post = post,
+                PostId = post.Id,
                 Content = "picture",
                 CreatedAt = date,
             };
