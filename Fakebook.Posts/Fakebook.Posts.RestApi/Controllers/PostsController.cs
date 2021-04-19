@@ -192,46 +192,6 @@ namespace Fakebook.Posts.RestApi.Controllers
         }
 
         /// <summary>
-        /// Likes a comment for a User given a comment ID.
-        /// </summary>
-        /// <param name="commentId">Comment ID of comment to be liked</param>
-        /// <returns>
-        /// An IActionResult containing either a:
-        /// <br/>200 OK on success
-        /// <br/>404 Not Found if Comment can't be found
-        /// </returns>
-        [Authorize]
-        [HttpPost("{id}/comments/{commentId}/like")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> LikeCommentAsync(int commentId)
-        {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            if (await _postsRepository.LikeCommentAsync(commentId, email)) return Ok();
-            return NotFound();
-        }
-
-        /// <summary>
-        /// Unlikes a comment for a User given a comment ID.
-        /// </summary>
-        /// <param name="commentId">Comment ID of comment to be unliked</param>
-        /// <returns>
-        /// An IActionResult containing either a:
-        /// <br/>200 OK on success
-        /// <br/>404 Not Found if Comment can't be found
-        /// </returns>
-        [Authorize]
-        [HttpPost("{id}/comments/{commentId}/unlike")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UnlikeCommentAsync(int commentId)
-        {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            if (await _postsRepository.UnlikeCommentAsync(commentId, email)) return Ok();
-            return NotFound();
-        }
-
-        /// <summary>
         /// Gets a post by ID
         /// </summary>
         /// <param name="id">Id of Post</param>
