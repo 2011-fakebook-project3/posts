@@ -82,7 +82,6 @@ namespace Fakebook.Posts.RestApi
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("ApiReader", policy => policy.RequireClaim("scope", "api.read"));
-                options.AddPolicy("Consumer", policy => policy.RequireClaim(ClaimTypes.Role, "consumer"));
             });
         }
 
