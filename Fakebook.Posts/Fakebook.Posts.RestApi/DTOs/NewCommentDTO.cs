@@ -8,5 +8,8 @@ namespace Fakebook.Posts.RestApi.Dtos
         [Required]
         [StringLength(Constants.CommentMaxLength, ErrorMessage = "Could not post new comment, too long", MinimumLength = Constants.MinimumLength)]
         public string Content { get; set; }
+
+        [Required]
+        public int PostId{get;set;}
     }
 }

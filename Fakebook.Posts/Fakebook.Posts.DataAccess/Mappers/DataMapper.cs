@@ -28,7 +28,7 @@ namespace Fakebook.Posts.DataAccess.Mappers
         public static Domain.Models.Comment ToDomain(this Comment comment,
             Domain.Models.Post post)
         {
-            Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content);
+            Domain.Models.Comment domainComment = new(comment.UserEmail, comment.Content, comment.PostId);
             domainComment.Id = comment.Id;
             domainComment.PostId = post.Id;
             domainComment.CreatedAt = comment.CreatedAt.LocalDateTime;
@@ -77,7 +77,6 @@ namespace Fakebook.Posts.DataAccess.Mappers
                 Id = comment.Id,
                 UserEmail = comment.UserEmail,
                 PostId = post.Id,
-                Post = post,
                 Content = comment.Content,
                 CreatedAt = comment.CreatedAt,
                 CommentLikes = comment.Likes.Select(l => new CommentLike { CommentId = comment.Id, LikerEmail = l }).ToHashSet()

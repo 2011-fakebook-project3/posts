@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Fakebook.Posts.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,6 +8,7 @@ namespace Fakebook.Posts.Domain.Interfaces
     public interface IPostsRepository : IEnumerable<Post>, IAsyncEnumerable<Post>
     {
         ValueTask<Post> AddAsync(Post post);
+        
 
         ValueTask<Post> GetAsync(int postId);
 
