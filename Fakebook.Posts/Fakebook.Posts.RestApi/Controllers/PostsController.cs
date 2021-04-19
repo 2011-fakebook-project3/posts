@@ -1,4 +1,7 @@
-﻿using Fakebook.Posts.Domain.Interfaces;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
 using Fakebook.Posts.RestApi.Dtos;
 using Fakebook.Posts.RestApi.Services;
@@ -7,28 +10,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
+
     [Route("api/posts")]
     [ApiController]
     public class PostsController : ControllerBase
     {
+
         private readonly IPostsRepository _postsRepository;
         private readonly IFollowsRepository _followsRepository;
         private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
         private readonly ITimeService _timeService;
+        private readonly ICheckSpamService _checkSpamService;
 
         public PostsController(
             IPostsRepository postsRepository,
             IFollowsRepository followsRepository,
             IBlobService blobService,
             ILogger<PostsController> logger,
-            ITimeService timeService
+            ITimeService timeService,
+            ICheckSpamService checkSpamService
             )
         {
             _postsRepository = postsRepository;
@@ -36,6 +40,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             _blobService = blobService;
             _logger = logger;
             _timeService = timeService;
+            _checkSpamService = checkSpamService;
         }
 
         /// <summary>
@@ -64,8 +69,9 @@ namespace Fakebook.Posts.RestApi.Controllers
 
             post.Id = id;
 
+
             try
-            {
+            { 
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
                 if (sessionEmail != postEmail)
@@ -113,15 +119,23 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewPostDto postModel)
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
 
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value; // Get user email from session.
             Post created;
 
             try
             {
                 Post post = new Post(email, postModel.Content);
                 post.CreatedAt = _timeService.CurrentTime;
-                created = await _postsRepository.AddAsync(post);
+                bool postNotSpam = await _checkSpamService.IsPostNotSpam(post);
+                if (postNotSpam)
+                {
+                    created = await _postsRepository.AddAsync(post);
+                }
+                else
+                {
+                    return BadRequest("Post was created too soon to another, or is the same as previous posts");
+                }
             }
             catch (ArgumentException e)
             {
@@ -346,6 +360,7 @@ namespace Fakebook.Posts.RestApi.Controllers
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+
         }
 
         /// <summary>
@@ -358,22 +373,18 @@ namespace Fakebook.Posts.RestApi.Controllers
         /// <br/>200 OK on success
         /// </returns>
         [Authorize]
-        [HttpGet("newsfeed")]
+        [HttpPost("newsfeed")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetNewsfeedAsync()
+        public async Task<IActionResult> GetNewsfeedAsync(NewsFeedDto newsfeedemails)
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var newsfeedPosts = await _postsRepository.NewsfeedAsync(email, 3);
-            // var followedUserEmails = _followsRepository.GetFollowedEmails(email);
-            // followedUserEmails.Add(email);
-            // // TODO: This query MUST be tested as EF may may not be able to convert it to sql!
-            // // In case it doesn't work the posts repo will use the sql in NewsfeedAsync.
-            // var newsfeedPosts = await _postsRepository.AsQueryable()
-            // .Where(p => followedUserEmails.Contains(p.UserEmail))
-            // .GroupBy(p => p.UserEmail)
-            // .SelectMany(g => g.OrderByDescending(p => p.CreatedAt).Take(3))
-            // .ToListAsync();
-            return Ok(newsfeedPosts);
+           
+                var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+                newsfeedemails.Emails.Add(email);
+
+
+                var newsfeedPosts = await _postsRepository.NewsfeedAsync(newsfeedemails.Emails);
+                return Ok(newsfeedPosts);
+            
         }
     }
 }
