@@ -51,8 +51,12 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async ValueTask<Post> GetAsync(int postId)
         {
-            var post = await _context.Posts.FirstAsync(p => p.Id == postId);
-            return post.ToDomain();
+            var post = (await _context.Posts
+                         .Include(p => p.PostLikes)
+                         .Include(p => p.Comments)
+                         .ThenInclude(c => c.CommentLikes)       
+                         .FirstOrDefaultAsync(b => b.Id == postId)).ToDomain();
+            return post;
         }
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
@@ -205,14 +209,6 @@ namespace Fakebook.Posts.DataAccess.Repositories
                 return true;
             }
             return false;
-        }
-
-        public async ValueTask<Post> GetPostAsync(int id)
-        {
-
-            var post = (await _context.Posts.FirstOrDefaultAsync(b => b.Id == id)).ToDomain();
-
-            return post;
         }
     }
 }
