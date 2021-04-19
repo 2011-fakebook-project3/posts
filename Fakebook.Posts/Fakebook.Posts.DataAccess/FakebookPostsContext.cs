@@ -33,7 +33,7 @@ namespace Fakebook.Posts.DataAccess
 
                 entity.Property(e => e.CreatedAt)
                       .HasColumnType("timestamp with time zone")
-                      .HasDefaultValueSql("NOW()")
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP")
                       .ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Picture)
@@ -52,7 +52,7 @@ namespace Fakebook.Posts.DataAccess
 
                 entity.Property(e => e.CreatedAt)
                       .HasColumnType("timestamp with time zone")
-                      .HasDefaultValueSql("NOW()")
+                      .HasDefaultValueSql("CURRENT_TIMESTAMP")
                       .ValueGeneratedOnAdd();
 
                 entity.HasOne(e => e.Post)

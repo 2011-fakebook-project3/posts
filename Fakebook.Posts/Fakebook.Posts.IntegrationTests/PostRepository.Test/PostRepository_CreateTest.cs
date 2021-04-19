@@ -1,4 +1,4 @@
-﻿using Fakebook.Posts.DataAccess;
+using Fakebook.Posts.DataAccess;
 using Fakebook.Posts.DataAccess.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +35,7 @@ namespace Fakebook.Posts.IntegrationTests.PostRepository.Test
                 CreatedAt = DateTime.Now
             };
 
-            Domain.Models.Comment comment = new("person@domain.net", "content")
+            Domain.Models.Comment comment = new("person@domain.net", "content", 3)
             {
                 Id = 2,
                 PostId = domainModelPost.Id,

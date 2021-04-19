@@ -206,5 +206,13 @@ namespace Fakebook.Posts.DataAccess.Repositories
             }
             return false;
         }
+
+        public async ValueTask<Post> GetPostAsync(int id)
+        {
+
+            var post = (await _context.Posts.FirstOrDefaultAsync(b => b.Id == id)).ToDomain();
+
+            return post;
+        }
     }
 }

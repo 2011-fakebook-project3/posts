@@ -97,14 +97,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-
+    
             Comment created;
 
             try
             {
-                Comment newComment = new Comment(email, comment.Content);
+                Comment newComment = new Comment(email, comment.Content, comment.PostId);
                 newComment.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddCommentAsync(newComment);
+                
             }
             catch (ArgumentException e)
             {
