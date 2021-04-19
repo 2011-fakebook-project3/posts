@@ -33,7 +33,7 @@ namespace Fakebook.Posts.RestApi.Services
 			// posts can't be the same content within 'recentInMin' minutes
 			int recentInMin = 5;
 			// can't make new posts within 'secondsTimeout' seconds of another
-			int secondsTimeOut = 10;
+			int secondsTimeOut = 5;
 			var dateNow = _timeService.CurrentTime;
 			string userEmail = userPost.UserEmail;
 			string userEmailContent = userPost.Content;
