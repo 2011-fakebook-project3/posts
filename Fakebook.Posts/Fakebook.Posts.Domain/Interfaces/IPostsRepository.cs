@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Fakebook.Posts.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,7 +9,6 @@ namespace Fakebook.Posts.Domain.Interfaces
     {
         ValueTask<Post> AddAsync(Post post);
         
-        ValueTask<Post> GetPostAsync(int id);
 
         ValueTask<Post> GetAsync(int postId);
 
