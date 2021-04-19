@@ -13,7 +13,7 @@ namespace Fakebook.Posts.DataAccess.Migrations
                 table: "Post",
                 type: "timestamp with time zone",
                 nullable: false,
-                defaultValueSql: "CURRENT_TIMESTAMP()",
+                defaultValueSql: "CURRENT_TIMESTAMP",
                 oldClrType: typeof(DateTimeOffset),
                 oldType: "timestamp with time zone",
                 oldDefaultValueSql: "NOW()");
@@ -24,7 +24,7 @@ namespace Fakebook.Posts.DataAccess.Migrations
                 table: "Comment",
                 type: "timestamp with time zone",
                 nullable: false,
-                defaultValueSql: "CURRENT_TIMESTAMP()",
+                defaultValueSql: "CURRENT_TIMESTAMP",
                 oldClrType: typeof(DateTimeOffset),
                 oldType: "timestamp with time zone",
                 oldDefaultValueSql: "NOW()");
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.DataAccess.Migrations
                 defaultValueSql: "NOW()",
                 oldClrType: typeof(DateTimeOffset),
                 oldType: "timestamp with time zone",
-                oldDefaultValueSql: "CURRENT_TIMESTAMP()");
+                oldDefaultValueSql: "CURRENT_TIMESTAMP");
 
             migrationBuilder.AlterColumn<DateTimeOffset>(
                 name: "CreatedAt",
@@ -76,7 +76,7 @@ namespace Fakebook.Posts.DataAccess.Migrations
                 defaultValueSql: "NOW()",
                 oldClrType: typeof(DateTimeOffset),
                 oldType: "timestamp with time zone",
-                oldDefaultValueSql: "CURRENT_TIMESTAMP()");
+                oldDefaultValueSql: "CURRENT_TIMESTAMP");
 
             migrationBuilder.UpdateData(
                 schema: "Fakebook",
