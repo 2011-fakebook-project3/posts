@@ -52,12 +52,11 @@ namespace Fakebook.Posts.DataAccess.Repositories
         public async ValueTask<Post> GetAsync(int postId)
         {
             var post = (await _context.Posts
-                    // .Include(p => p.PostLikes)
-                    // .Include(p => p.Comments)
-                    // .ThenInclude(c => c.CommentLikes)
-                    // .AsSplitQuery()
-                    .FirstOrDefaultAsync(b => b.Id == postId)).ToDomain();
-                    return post;
+                         .Include(p => p.PostLikes)
+                         .Include(p => p.Comments)
+                         .ThenInclude(c => c.CommentLikes)       
+                         .FirstOrDefaultAsync(b => b.Id == postId)).ToDomain();
+            return post;
         }
 
         public async ValueTask<Comment> AddCommentAsync(Comment comment)
