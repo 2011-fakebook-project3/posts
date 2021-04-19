@@ -210,7 +210,7 @@ namespace Fakebook.Posts.DataAccess.Repositories
         public async ValueTask<Post> GetPostAsync(int id)
         {
 
-            var post = await _context.Posts.Where(b => b.Id == id).Select(b => b.ToDomain()).SingleOrDefaultAsync();
+            var post = (await _context.Posts.FirstOrDefaultAsync(b => b.Id == id)).ToDomain();
 
             return post;
         }
