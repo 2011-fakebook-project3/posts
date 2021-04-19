@@ -1,15 +1,15 @@
-﻿using Fakebook.Posts.Domain.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Fakebook.Posts.Domain.Interfaces;
 using Fakebook.Posts.Domain.Models;
-using Fakebook.Posts.IntegrationTests.Services;
 using Fakebook.Posts.RestApi;
+using Fakebook.Posts.IntegrationTests.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Fakebook.Posts.IntegrationTests.Controllers
@@ -51,8 +51,6 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 CreatedAt = date,
             };
             post.Comments.Add(comment);
-
-            mockRepo.Setup(r => r.GetCommentAsync(It.IsAny<int>())).ReturnsAsync(comment);
 
             HashSet<Post> posts = new() { post };
 

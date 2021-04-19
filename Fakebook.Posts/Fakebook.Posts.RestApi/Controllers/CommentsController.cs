@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Fakebook.Posts.RestApi.Controllers
@@ -46,16 +47,20 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int commentId)
         {
-            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            var comment = await _postsRepository.GetCommentAsync(commentId);
-            if (comment == default)
+            try
             {
-                return NotFound();
+                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+                var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
+                var comment = post.Comments.First(c => c.Id == commentId);
+                if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail)
+                {
+                    return Forbid();
+                }
             }
-
-            if (sessionEmail != comment.UserEmail)
+            catch (InvalidOperationException e)
             {
-                return Forbid();
+                _logger.LogInformation(e, $"Found no comment entry with Id: {commentId}.");
+                return NotFound(e.Message);
             }
 
             try
@@ -92,7 +97,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-
+    
             Comment created;
 
             try
@@ -100,6 +105,7 @@ namespace Fakebook.Posts.RestApi.Controllers
                 Comment newComment = new Comment(email, comment.Content, comment.PostId);
                 newComment.CreatedAt = _timeService.CurrentTime;
                 created = await _postsRepository.AddCommentAsync(newComment);
+                
             }
             catch (ArgumentException e)
             {
@@ -130,11 +136,13 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var comment = await _postsRepository.GetAsync(id);
-
-            if (comment != default)
+            if (await _postsRepository.AsQueryable()
+                .Include(x => x.Comments).FirstOrDefaultAsync(p =>
+                    p.Comments.Any(c => c.Id == id)) is Post post)
+            {
+                var comment = post.Comments.First(c => c.Id == id);
                 return Ok(comment);
-
+            }
             return NotFound();
         }
     }
