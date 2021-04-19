@@ -46,17 +46,17 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int commentId)
         {
-            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
             var comment = await _postsRepository.GetCommentAsync(commentId);
             if (comment == default)
             {
-                var sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
-                var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
-                var comment = post.Comments.First(c => c.Id == commentId);
-                if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail)
-                {
-                    return Forbid();
-                }
+                //sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
+                //var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
+                //comment = post.Comments.First(c => c.Id == commentId);
+                //if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail)
+                //{
+                //    return Forbid();
+                //}
             }
 
             if (sessionEmail != comment.UserEmail)
