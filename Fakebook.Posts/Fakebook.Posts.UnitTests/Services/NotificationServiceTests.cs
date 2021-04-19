@@ -10,6 +10,7 @@ using Xunit;
 using Moq;
 using Moq.Protected;
 using System.Threading;
+using Microsoft.Extensions.Configuration;
 
 namespace Fakebook.Posts.UnitTests.Services
 {
@@ -41,8 +42,12 @@ namespace Fakebook.Posts.UnitTests.Services
                   ItExpr.IsAny<HttpRequestMessage>(),
                   ItExpr.IsAny<CancellationToken>())
                .ReturnsAsync(response);
-            var httpClient = new HttpClient(handlerMock.Object);
-            INotificationService notificationService = new NotificationService(httpClient);
+            HttpClient httpClient = new(handlerMock.Object);
+            //httpClient.Setup(c => c.PostAsync(It.IsAny<Uri>(), It.IsAny<HttpContent>())).ReturnsAsync(response);
+            Mock<IConfiguration> configuration = new ();
+            configuration.Setup(c => c[It.IsAny<string>()]).Returns("http://mockvalue");
+
+            INotificationService notificationService = new NotificationService(httpClient, configuration.Object);
 
             // act
             var newResponse = await notificationService.SendNotificationAsync(endpoint, notification);
