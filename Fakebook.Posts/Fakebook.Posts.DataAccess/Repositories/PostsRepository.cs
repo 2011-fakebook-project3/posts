@@ -89,7 +89,12 @@ namespace Fakebook.Posts.DataAccess.Repositories
 
         public async Task<Comment> GetCommentAsync(int id)
         {
-            return default;
+            var comment = await _context.Comments
+                .Include(c => c.CommentLikes)
+                .Include(c => c.Post)
+                .SingleOrDefaultAsync(c => c.Id == id);
+
+            return comment?.ToDomain(comment.Post.ToDomain());
         }
 
         public async ValueTask DeleteCommentAsync(int id)
