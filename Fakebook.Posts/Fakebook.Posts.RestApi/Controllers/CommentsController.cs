@@ -120,7 +120,7 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return BadRequest(e.Message);
             }
 
-            await _notificationService.SendNotificationAsync("like", new DTOs.NotificationDTO()
+            await _notificationService.SendNotificationAsync("comment", new DTOs.NotificationDTO()
             {
                 LoggedInUser = email,
                 TriggeredUser = _postsRepository.AsQueryable().First(p => p.Id == created.Id).UserEmail,
