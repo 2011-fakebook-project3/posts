@@ -46,7 +46,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int commentId)
         {
-            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
+            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             var comment = await _postsRepository.GetCommentAsync(commentId);
             if (comment == default)
             {
@@ -97,7 +97,7 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("email")).Value;
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             Comment created;
 
             try
