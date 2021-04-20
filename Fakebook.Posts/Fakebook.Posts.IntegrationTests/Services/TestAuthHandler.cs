@@ -16,7 +16,7 @@ namespace Fakebook.Posts.IntegrationTests.Services
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = new[] { new Claim(ClaimTypes.Email, "test.user@email.com") };
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "test.user@email.com") };
             ClaimsIdentity identity = new(claims, "Test");
             ClaimsPrincipal principal = new(identity);
             AuthenticationTicket ticket = new(principal, "Test");

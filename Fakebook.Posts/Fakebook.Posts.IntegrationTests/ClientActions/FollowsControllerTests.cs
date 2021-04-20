@@ -43,7 +43,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             return client;
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void PostAsync_NewEmail_NoContent()
         {
             //Given
@@ -78,7 +78,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void PostAsync_OldEmail_BadRequest()
         {
             //Given
@@ -104,7 +104,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void PutAsync_NewEmail_NoContent()
         {
             //Given
@@ -122,7 +122,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void PutAsync_OldEmail_BadRequest()
         {
             //Given
@@ -139,7 +139,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void DeleteAsync_OldEmail_NoContent()
         {
             //Given
@@ -157,7 +157,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
             Assert.Equal(System.Net.HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async void DeleteAsync_NewEmail_BadRequest()
         {
             //Given
