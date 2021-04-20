@@ -27,7 +27,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         /// Tests the PostsController class' DeleteAsync method. Ensures that a proper id results in status 204NoContent.
         /// </summary>
 
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async Task DeleteAsync_ValidId_Deletes()
         {
             // Arrange
@@ -65,7 +65,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
                 {
                     services.AddScoped(sp => mockRepo.Object);
                     services.AddAuthentication("Test")
-                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => {});
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
                 });
             }).CreateClient();
 
@@ -82,7 +82,7 @@ namespace Fakebook.Posts.IntegrationTests.Controllers
         /// <summary>
         /// Tests the PostsController class' PutAsync method. Ensures that an improper Post object results in status 400BadRequest with an error message in the body.
         /// </summary>
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async Task DeleteAsync_InvalidId_NotFound()
         {
             // Arrange

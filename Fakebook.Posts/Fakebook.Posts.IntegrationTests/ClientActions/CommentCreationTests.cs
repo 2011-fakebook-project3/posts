@@ -49,7 +49,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         /// <summary>
         /// Comment controller test checking that a valid comment can be successfully added to a post.
         /// </summary>
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async Task AddCommentAsync_ValidComment_Creates()
         {
             // Arrange
@@ -92,7 +92,7 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
         /// <summary>
         /// Comment Controller tests checking comments that are null, empty, and too long
         /// </summary>
-        [Fact(Skip = "Skipping until after presentation")]
+        [Fact]
         public async Task AddCommentAsync_InvalidComment_BadRequest()
         {
             Mock<IPostsRepository> mockRepo = new();

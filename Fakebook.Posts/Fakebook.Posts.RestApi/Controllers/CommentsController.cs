@@ -42,21 +42,15 @@ namespace Fakebook.Posts.RestApi.Controllers
         [HttpDelete("{commentId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteAsync(int commentId)
         {
-            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
+            var sessionEmail = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
             var comment = await _postsRepository.GetCommentAsync(commentId);
             if (comment == default)
             {
-                //sessionEmail = User.FindFirst(ct => ct.Type.Contains("email")).Value;
-                //var post = _postsRepository.AsQueryable().Include(x => x.Comments).First(p => p.Comments.Any(c => c.Id == commentId));
-                //comment = post.Comments.First(c => c.Id == commentId);
-                //if (sessionEmail != post.UserEmail && sessionEmail != comment.UserEmail)
-                //{
-                //    return Forbid();
-                //}
+                return NotFound();
             }
 
             if (sessionEmail != comment.UserEmail)
@@ -97,7 +91,8 @@ namespace Fakebook.Posts.RestApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PostAsync(NewCommentDto comment)
         {
-            var email = User.FindFirst(ct => ct.Type.Contains("email")).Value;
+            var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
+
             Comment created;
 
             try
