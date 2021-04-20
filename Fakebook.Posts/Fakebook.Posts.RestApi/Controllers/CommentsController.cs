@@ -123,7 +123,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             await _notificationService.SendNotificationAsync("comment", new DTOs.NotificationDTO()
             {
                 LoggedInUser = email,
-                TriggeredUser = _postsRepository.AsQueryable().First(p => p.Id == created.Id).UserEmail,
+                TriggeredUser = _postsRepository.GetAsync(comment.PostId).Result.UserEmail,
                 PostId = created.Id,
             });
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
