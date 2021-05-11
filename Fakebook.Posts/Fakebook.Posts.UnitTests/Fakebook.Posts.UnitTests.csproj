@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -34,5 +34,4 @@
     <ProjectReference Include="..\Fakebook.Posts.Domain\Fakebook.Posts.Domain.csproj" />
     <ProjectReference Include="..\Fakebook.Posts.RestApi\Fakebook.Posts.RestApi.csproj" />
   </ItemGroup>
-
 </Project>

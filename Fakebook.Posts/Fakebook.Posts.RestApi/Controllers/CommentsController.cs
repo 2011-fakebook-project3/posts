@@ -19,12 +19,14 @@ namespace Fakebook.Posts.RestApi.Controllers
         private readonly IPostsRepository _postsRepository;
         private readonly ILogger<CommentsController> _logger;
         private readonly ITimeService _timeService;
+        private readonly INotificationService _notificationService;
 
-        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger, ITimeService timeService)
+        public CommentsController(IPostsRepository postsRepository, ILogger<CommentsController> logger, ITimeService timeService, INotificationService notificationService)
         {
             _postsRepository = postsRepository;
             _logger = logger;
             _timeService = timeService;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -112,6 +114,12 @@ namespace Fakebook.Posts.RestApi.Controllers
                 return BadRequest(e.Message);
             }
 
+            await _notificationService.SendNotificationAsync("comment", new DTOs.NotificationDTO()
+            {
+                LoggedInUser = email,
+                TriggeredUser = _postsRepository.GetAsync(comment.PostId).Result.UserEmail,
+                PostId = created.Id,
+            });
             return CreatedAtAction(nameof(GetAsync), new { id = created.Id }, created);
         }
 

@@ -18,6 +18,8 @@ using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
 using Fakebook.Posts.Domain.Constants;
+using Fakebook.Posts.RestApi.Services;
+using Fakebook.Posts.RestApi.DTOs;
 
 namespace Fakebook.Posts.IntegrationTests.ClientActions
 {
@@ -75,6 +77,8 @@ namespace Fakebook.Posts.IntegrationTests.ClientActions
             mockRepo.Setup(c => c.AddCommentAsync(It.IsAny<Comment>()))
                 .ReturnsAsync(comment);
             var client = BuildTestAuthClient(mockRepo);
+
+            
 
             NewCommentDto newComment = new()
             {

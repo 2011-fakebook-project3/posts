@@ -13,18 +13,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Fakebook.Posts.RestApi.Controllers
 {
-
     [Route("api/posts")]
     [ApiController]
     public class PostsController : ControllerBase
     {
-
         private readonly IPostsRepository _postsRepository;
         private readonly IFollowsRepository _followsRepository;
         private readonly IBlobService _blobService;
         private readonly ILogger<PostsController> _logger;
         private readonly ITimeService _timeService;
         private readonly ICheckSpamService _checkSpamService;
+        private readonly INotificationService _notificationService;
 
         public PostsController(
             IPostsRepository postsRepository,
@@ -32,7 +31,8 @@ namespace Fakebook.Posts.RestApi.Controllers
             IBlobService blobService,
             ILogger<PostsController> logger,
             ITimeService timeService,
-            ICheckSpamService checkSpamService
+            ICheckSpamService checkSpamService,
+            INotificationService notificationService
             )
         {
             _postsRepository = postsRepository;
@@ -41,6 +41,7 @@ namespace Fakebook.Posts.RestApi.Controllers
             _logger = logger;
             _timeService = timeService;
             _checkSpamService = checkSpamService;
+            _notificationService = notificationService;
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Fakebook.Posts.RestApi.Controllers
 
 
             try
-            { 
+            {
                 var postEmail = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail;
 
                 if (sessionEmail != postEmail)
@@ -167,7 +168,16 @@ namespace Fakebook.Posts.RestApi.Controllers
         public async Task<IActionResult> LikePostAsync(int id)
         {
             var email = User.FindFirst(ct => ct.Type.Contains("nameidentifier")).Value;
-            if (await _postsRepository.LikePostAsync(id, email)) return Ok();
+            if (await _postsRepository.LikePostAsync(id, email))
+            {
+                await _notificationService.SendNotificationAsync("like", new DTOs.NotificationDTO()
+                {
+                    LoggedInUser = email,
+                    TriggeredUser = _postsRepository.AsQueryable().First(p => p.Id == id).UserEmail,
+                    PostId = id,
+                });
+                return Ok();
+            }
             return NotFound();
         }
 
@@ -360,7 +370,6 @@ namespace Fakebook.Posts.RestApi.Controllers
                 _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-
         }
 
         /// <summary>

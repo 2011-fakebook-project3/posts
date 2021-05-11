@@ -40,6 +40,7 @@ namespace Fakebook.Posts.RestApi
             services.AddScoped<ICheckSpamService, CheckSpamService>();
 
             services.AddControllers();
+            services.AddHttpClient<INotificationService, NotificationService>();
 
             services.AddSwaggerGen(c =>
             {
